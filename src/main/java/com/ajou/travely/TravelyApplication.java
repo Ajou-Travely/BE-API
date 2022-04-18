@@ -9,6 +9,7 @@ public class TravelyApplication {
 	public static void main(String[] args) {
 		System.out.println("testtesttest");
 		SpringApplication.run(TravelyApplication.class, args);
+		System.out.println("test");
 	}
 
 }
