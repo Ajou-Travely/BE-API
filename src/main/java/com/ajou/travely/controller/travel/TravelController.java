@@ -1,4 +1,4 @@
-package com.ajou.travely.controller;
+package com.ajou.travely.controller.travel;
 
 import com.ajou.travely.service.TravelService;
 import org.springframework.stereotype.Controller;
