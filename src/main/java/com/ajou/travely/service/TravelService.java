@@ -1,16 +1,18 @@
 package com.ajou.travely.service;
 
+import com.ajou.travely.controller.travel.dto.TravelSaveRequestDto;
 import com.ajou.travely.repository.TravelRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
-
+@RequiredArgsConstructor
 @Service
-@Transactional
 public class TravelService {
     private final TravelRepository travelRepository;
 
-    public TravelService(TravelRepository travelRepository) {
-        this.travelRepository = travelRepository;
+    @Transactional
+    public Long save(TravelSaveRequestDto requestDto) {
+        return travelRepository.save(requestDto.toEntity()).getId();
     }
 }
