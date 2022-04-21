@@ -13,15 +13,15 @@ public class Post {
     @Id
     @GeneratedValue
     @Column(name = "post_id")
-    private Long id;
+    private final Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "schedule_id")
-    private Schedule schedule;
+    private final Schedule schedule;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User user;
+    private final User user;
 
     @Column(columnDefinition = "TEXT")
     private String text;

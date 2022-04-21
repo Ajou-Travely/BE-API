@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@NoArgsConstructor
 @Getter
+@NoArgsConstructor
 public class Comment {
     @Id
     @GeneratedValue
