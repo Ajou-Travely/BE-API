@@ -11,7 +11,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class Branch {
     @Id
-    @GeneratedValue()
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "branch_id")
     private Long id;
 
