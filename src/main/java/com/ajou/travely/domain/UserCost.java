@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Getter
 public class UserCost {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_cost_id")
     private Long id;
 
