@@ -33,6 +33,7 @@ dependencies {
 
 	// swagger setting
 	implementation 'io.springfox:springfox-boot-starter:3.0.0'
+	implementation 'mysql:mysql-connector-java'
 
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.h2database:h2:1.4.200'

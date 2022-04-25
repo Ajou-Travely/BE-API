@@ -34,13 +34,12 @@ public class Oauth2Service {
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
     @Value("${auth.kakaoOauth2ClinetId}")
-    private final String kakaoOauth2ClinetId;
+    private String kakaoOauth2ClinetId;
     @Value("${auth.frontendRedirectUrl}")
-    private final String frontendRedirectUrl;
+    private String frontendRedirectUrl;
 
     public AuthorizationKakao callTokenApi(String code) {
         String grantType = "authorization_code";
-
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
@@ -93,7 +92,7 @@ public class Oauth2Service {
 
     public String setSessionOrRedirectToSignUp(Long kakaoId) {
         Optional<User> user = userRepository.findByKakaoId(kakaoId);
-        if(user.isPresent()) {
+        if(!user.isPresent()) {
             return "회원가입이 필요한 상태";
         } else {
             SecurityContext context = SecurityContextHolder.getContext();
