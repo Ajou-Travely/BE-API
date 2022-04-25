@@ -4,6 +4,10 @@ spring:
     username: root
     password: password
     driver-class-name: org.mariadb.jdbc.Driver
+  # swagger setting
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
 
   jpa:
     hibernate:
