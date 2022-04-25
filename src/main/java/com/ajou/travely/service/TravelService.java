@@ -1,5 +1,6 @@
 package com.ajou.travely.service;
 
+import com.ajou.travely.controller.travel.dto.travel.TravelCreateRequestDto;
 import com.ajou.travely.controller.travel.dto.travel.TravelResponseDto;
 import com.ajou.travely.controller.travel.dto.user.SimpleUserInfoDto;
 import com.ajou.travely.domain.Travel;
@@ -27,10 +28,10 @@ public class TravelService {
     private final UserTravelRepository userTravelRepository;
 
     @Transactional
-    public TravelResponseDto createTravel(String title, LocalDate startDate, LocalDate endDate, Long userId) {
-        Travel travel = Travel.noMemoBuilder().title(title).startDate(startDate).endDate(endDate).build();
+    public TravelResponseDto createTravel(TravelCreateRequestDto travelCreateRequestDto) {
+        Travel travel = travelCreateRequestDto.toEntity();
         travelRepository.save(travel);
-        Optional<User> user = userRepository.findById(userId);
+        Optional<User> user = userRepository.findById(travelCreateRequestDto.getUserId());
         if (user.isEmpty()) {
             throw new RuntimeException("유저 없음 ㅋㅋ");
         }

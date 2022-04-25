@@ -21,7 +21,7 @@ public class TravelController {
 
     @PostMapping("/api/v1/travels")
     public TravelResponseDto createTravel(@RequestBody TravelCreateRequestDto travelCreateRequestDto) {
-        return travelService.createTravel(travelCreateRequestDto.getTitle(), travelCreateRequestDto.getStartDate(), travelCreateRequestDto.getEndDate(), travelCreateRequestDto.getUserId());
+        return travelService.createTravel(travelCreateRequestDto);
     }
 
     @PostMapping("/api/v1/travels/{travelId}/add/{userId}")
