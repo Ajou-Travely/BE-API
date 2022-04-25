@@ -1,6 +1,7 @@
 package com.ajou.travely.domain;
 
 import com.ajou.travely.domain.user.User;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -15,11 +16,17 @@ public class UserTravel {
     @Column(name="user_travel_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "travel_id")
     private Travel travel;
+
+    @Builder
+    public UserTravel(User user, Travel travel) {
+        this.user = user;
+        this.travel = travel;
+    }
 }
