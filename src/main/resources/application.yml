@@ -1,13 +1,13 @@
 spring:
-#  datasource:
-#    url: jdbc:mariadb://localhost:3306/travely
-#    username: root
-#    password: password
-#    driver-class-name: org.mariadb.jdbc.Driver
+  datasource:
+    url: jdbc:mariadb://localhost:3306/travely
+    username: root
+    password: password
+    driver-class-name: org.mariadb.jdbc.Driver
 
   jpa:
-    hibernate:
-      ddl-auto: create
+#    hibernate:
+#      ddl-auto: create
     properties:
       hibernate:
         show_sql: true
@@ -15,6 +15,9 @@ spring:
   profiles:
     include:
       - "auth"
+    active: default
+  jackson:
+    serialization.WRITE_DATES_AS_TIMESTAMPS=false
 
 logging:
   level:

@@ -2,7 +2,11 @@ spring:
   datasource:
     url: jdbc:h2:mem:testdb
     username: sa
+    password:
     driver-class-name: org.h2.Driver
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
 
   jpa:
     hibernate:
@@ -13,6 +17,8 @@ spring:
         format_sql: true
   profiles:
     active: test
+  jackson:
+    serialization.WRITE_DATES_AS_TIMESTAMPS=false
 
 logging:
   level:

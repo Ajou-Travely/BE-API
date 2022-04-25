@@ -1,11 +1,11 @@
 package com.ajou.travely.domain;
 
 import java.time.LocalDate;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.*;
+
+import com.ajou.travely.domain.user.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,11 +28,25 @@ public class Travel {
     @Column(columnDefinition = "TEXT")
     private String memo;
 
+    @OneToMany(mappedBy = "travel")
+    private List<UserTravel> userTravels = new ArrayList<>();
+
+    @Builder(builderMethodName = "noMemoBuilder")
+    public Travel(String title, LocalDate startDate, LocalDate endDate) {
+        this.title = title;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
+
     @Builder
     public Travel(String title, String memo, LocalDate startDate, LocalDate endDate) {
         this.title = title;
         this.memo = memo;
         this.startDate = startDate;
         this.endDate = endDate;
+    }
+
+    public void addUserTravel(UserTravel userTravel) {
+        this.userTravels.add(userTravel);
     }
 }

@@ -9,9 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
 @NoArgsConstructor
@@ -23,16 +21,20 @@ public class User {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column()
+    @NonNull
     private Type type;
 
-    @Column(nullable = false, length = 400)
+    @Column(length = 400)
+    @NonNull
     private String email;
 
-    @Column(nullable = false, length = 20)
+    @Column(length = 20)
+    @NonNull
     private String name;
 
-    @Column(nullable = false, length = 30)
+    @Column(length = 30)
+    @NonNull
     private String phoneNumber;
 
     @Column(length = 5)
@@ -45,4 +47,11 @@ public class User {
 
     private LocalDate birthday;
 
+    @Builder
+    public User(@NonNull Type type, @NonNull String email, @NonNull String name, @NonNull String phoneNumber) {
+        this.type = type;
+        this.email = email;
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+    }
 }

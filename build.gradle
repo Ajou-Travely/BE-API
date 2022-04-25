@@ -30,6 +30,10 @@ dependencies {
 	implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
 //	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 	implementation 'org.springframework.session:spring-session-jdbc'
+
+	// swagger setting
+	implementation 'io.springfox:springfox-boot-starter:3.0.0'
+
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.h2database:h2:1.4.200'
 	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
