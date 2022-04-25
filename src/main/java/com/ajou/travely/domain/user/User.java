@@ -8,6 +8,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -38,6 +40,8 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     private Mbti mbti;
+
+    private Long kakaoId;
 
     private LocalDate birthday;
 

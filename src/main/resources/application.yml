@@ -1,9 +1,9 @@
 spring:
-  datasource:
-    url: jdbc:mariadb://localhost:3306/travely
-    username: root
-    password: password
-    driver-class-name: org.mariadb.jdbc.Driver
+#  datasource:
+#    url: jdbc:mariadb://localhost:3306/travely
+#    username: root
+#    password: password
+#    driver-class-name: org.mariadb.jdbc.Driver
 
   jpa:
     hibernate:
@@ -13,7 +13,8 @@ spring:
         show_sql: true
         format_sql: true
   profiles:
-    active: default
+    include:
+      - "auth"
 
 logging:
   level:
