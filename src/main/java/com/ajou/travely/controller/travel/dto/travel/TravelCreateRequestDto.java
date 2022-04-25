@@ -1,4 +1,4 @@
-package com.ajou.travely.controller.travel.dto;
+package com.ajou.travely.controller.travel.dto.travel;
 
 import com.ajou.travely.domain.Travel;
 import java.time.LocalDate;
@@ -8,24 +8,23 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class TravelSaveRequestDto {
+public class TravelCreateRequestDto {
     private String title;
     private LocalDate startDate;
     private LocalDate endDate;
-    private String memo;
+    private Long userId;
 
     @Builder
-    public TravelSaveRequestDto(String title, String memo, LocalDate startDate, LocalDate endDate) {
+    public TravelCreateRequestDto(String title, LocalDate startDate, LocalDate endDate, Long userId) {
         this.title = title;
-        this.memo = memo;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.userId = userId;
     }
 
     public Travel toEntity() {
         return Travel.builder()
             .title(title)
-            .memo(memo)
             .startDate(startDate)
             .endDate(endDate)
             .build();

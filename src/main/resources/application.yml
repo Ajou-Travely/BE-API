@@ -6,14 +6,16 @@ spring:
     driver-class-name: org.mariadb.jdbc.Driver
 
   jpa:
-    hibernate:
-      ddl-auto: create
+#    hibernate:
+#      ddl-auto: create
     properties:
       hibernate:
         show_sql: true
         format_sql: true
   profiles:
     active: default
+  jackson:
+    serialization.WRITE_DATES_AS_TIMESTAMPS=false
 
 logging:
   level:
