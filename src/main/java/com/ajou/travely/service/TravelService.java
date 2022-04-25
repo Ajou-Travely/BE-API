@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -44,9 +45,11 @@ public class TravelService {
 
     @Transactional
     public List<TravelResponseDto> getAllTravels() {
-        List<TravelResponseDto> travels = new ArrayList<>();
-        travelRepository.findAll().forEach(t -> travels.add(new TravelResponseDto(t)));
-        return travels;
+        return travelRepository
+                .findAll()
+                .stream()
+                .map(TravelResponseDto::new)
+                .collect(Collectors.toList());
     }
 
     @Transactional
@@ -70,20 +73,20 @@ public class TravelService {
 
     @Transactional
     public List<User> getUsersOfTravel(Long travelId) {
-        Travel travel = getTravelById(travelId);
-        List<User> users = new ArrayList<>();
-        travel.getUserTravels().forEach(ut -> users.add(ut.getUser()));
-        return users;
+        return getTravelById(travelId)
+                .getUserTravels()
+                .stream()
+                .map(UserTravel::getUser)
+                .collect(Collectors.toList());
     }
 
     @Transactional
     public List<SimpleUserInfoDto> getSimpleUsersOfTravel(Long travelId) {
-        Travel travel = getTravelById(travelId);
-        List<SimpleUserInfoDto> users = new ArrayList<>();
-        travel.getUserTravels().forEach(ut -> {
-            User user = ut.getUser();
-            users.add(new SimpleUserInfoDto(user.getId(), user.getName()));
-        });
-        return users;
+        return getTravelById(travelId)
+                .getUserTravels()
+                .stream()
+                .map(UserTravel::getUser)
+                .map(u -> new SimpleUserInfoDto(u.getId(), u.getName()))
+                .collect(Collectors.toList());
     }
 }

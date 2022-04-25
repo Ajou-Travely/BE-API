@@ -24,7 +24,7 @@ public class TravelController {
         return travelService.createTravel(travelCreateRequestDto);
     }
 
-    @PostMapping("/api/v1/travels/{travelId}/add/{userId}")
+    @PostMapping("/api/v1/travels/{travelId}/users/{userId}")
     public TravelResponseDto addUserToTravel(@PathVariable Long travelId, @PathVariable Long userId) {
         travelService.addUserToTravel(travelId, userId);
         return new TravelResponseDto(travelService.getTravelById(travelId));

@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -24,8 +25,10 @@ public class UserService {
     }
 
     public List<UserResponseInfoDto> getAllUsers() {
-        List<UserResponseInfoDto> users = new ArrayList<>();
-        userRepository.findAll().forEach(u -> users.add(new UserResponseInfoDto(u)));
-        return users;
+        return userRepository
+                .findAll()
+                .stream()
+                .map(UserResponseInfoDto::new)
+                .collect(Collectors.toList());
     }
 }

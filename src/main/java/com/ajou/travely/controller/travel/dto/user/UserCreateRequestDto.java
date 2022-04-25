@@ -3,7 +3,6 @@ package com.ajou.travely.controller.travel.dto.user;
 import com.ajou.travely.domain.user.Type;
 import com.ajou.travely.domain.user.User;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 @Getter
 public class UserCreateRequestDto {
