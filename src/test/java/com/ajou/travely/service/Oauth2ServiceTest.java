@@ -9,6 +9,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.client.RestTemplate;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -45,9 +48,11 @@ class Oauth2ServiceTest {
         userRepository.save(user);
 
         String s1 = oauth2Service.setSessionOrRedirectToSignUp(kakaoId);
+        Long kakaoIdInAuthenticationDetail = (Long) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String s2 = oauth2Service.setSessionOrRedirectToSignUp(123L);
 
         assertThat(s1).isEqualTo("세션 저장 완료");
         assertThat(s2).isEqualTo("회원가입이 필요한 상태");
+        assertThat(kakaoIdInAuthenticationDetail).isEqualTo(kakaoId);
     }
 }
