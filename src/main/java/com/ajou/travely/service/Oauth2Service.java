@@ -1,5 +1,6 @@
 package com.ajou.travely.service;
 
+import com.ajou.travely.config.CustomAuthentication;
 import com.ajou.travely.domain.AuthorizationKakao;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.repository.UserRepository;
@@ -10,10 +11,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
@@ -24,7 +22,10 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -90,51 +91,20 @@ public class Oauth2Service {
         }
     }
 
-    public String setSessionOrRedirectToSignUp(Long kakaoId) {
+    public JSONObject setSessionOrRedirectToSignUp(Long kakaoId) {
         Optional<User> user = userRepository.findByKakaoId(kakaoId);
+        JSONObject result = new JSONObject();
         if(!user.isPresent()) {
-            return "회원가입이 필요한 상태";
+            result.put("status", 301);
+            result.put("kakaoId", kakaoId);
+            return result;
         } else {
             SecurityContext context = SecurityContextHolder.getContext();
             User exUser = user.get();
-            context.setAuthentication(new Authentication() {
-                @Override
-                public Collection<? extends GrantedAuthority> getAuthorities() {
-                    return null;
-                }
-                // 권한 추가
-                @Override
-                public Object getCredentials() {
-                    return null;
-                }
-
-                @Override
-                public Object getDetails() {
-                    return kakaoId;
-                }
-
-                @Override
-                public Object getPrincipal() {
-                    return null;
-                }
-
-                @Override
-                public boolean isAuthenticated() {
-                    return true;
-                }
-
-                @Override
-                public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
-
-                }
-
-                @Override
-                public String getName() {
-                    return null;
-                }
-            });
-            return "세션 저장 완료";
+            context.setAuthentication(new CustomAuthentication(kakaoId));
+            result.put("status", 200);
         }
+        return result;
     }
     public JSONObject StringToJson(String userInfo) throws ParseException {
         JSONParser jsonParser = new JSONParser();

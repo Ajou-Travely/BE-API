@@ -4,6 +4,7 @@ import com.ajou.travely.domain.user.Type;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.json.simple.JSONObject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,12 +48,12 @@ class Oauth2ServiceTest {
 
         userRepository.save(user);
 
-        String s1 = oauth2Service.setSessionOrRedirectToSignUp(kakaoId);
+        JSONObject s1 = oauth2Service.setSessionOrRedirectToSignUp(kakaoId);
         Long kakaoIdInAuthenticationDetail = (Long) SecurityContextHolder.getContext().getAuthentication().getDetails();
-        String s2 = oauth2Service.setSessionOrRedirectToSignUp(123L);
+        JSONObject s2 = oauth2Service.setSessionOrRedirectToSignUp(123L);
 
-        assertThat(s1).isEqualTo("세션 저장 완료");
-        assertThat(s2).isEqualTo("회원가입이 필요한 상태");
+        assertThat(s1.get("status")).isEqualTo(200);
+        assertThat(s2.get("status")).isEqualTo(301);
         assertThat(kakaoIdInAuthenticationDetail).isEqualTo(kakaoId);
     }
 }
