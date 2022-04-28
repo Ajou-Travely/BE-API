@@ -1,8 +1,10 @@
 package com.ajou.travely.domain;
 
 import com.ajou.travely.domain.user.User;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 import javax.persistence.*;
 
@@ -26,4 +28,12 @@ public class UserCost {
     private Long amount;
 
     private Boolean isRequested;
+
+    @Builder
+    public UserCost(@NonNull Cost cost, @NonNull User user, @NonNull Long amount, @NonNull Boolean isRequested) {
+        this.cost = cost;
+        this.user = user;
+        this.amount = amount;
+        this.isRequested = isRequested;
+    }
 }

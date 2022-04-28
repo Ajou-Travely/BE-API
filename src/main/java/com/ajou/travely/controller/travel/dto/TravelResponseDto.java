@@ -1,13 +1,12 @@
-package com.ajou.travely.controller.travel.dto.travel;
+package com.ajou.travely.controller.travel.dto;
 
-import com.ajou.travely.controller.travel.dto.user.SimpleUserInfoDto;
+import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.domain.Travel;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.ajou.travely.domain.UserTravel;
-import com.ajou.travely.domain.user.User;
 import lombok.Getter;
 
 @Getter
@@ -27,7 +26,7 @@ public class TravelResponseDto {
         this.memo = entity.getMemo();
         this.users = new ArrayList<>();
         for (UserTravel userTravel:entity.getUserTravels()) {
-            SimpleUserInfoDto user = new SimpleUserInfoDto(userTravel.getUser().getId(), userTravel.getUser().getName());
+            SimpleUserInfoDto user = new SimpleUserInfoDto(userTravel.getUser());
             users.add(user);
         }
     }

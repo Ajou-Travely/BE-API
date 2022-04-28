@@ -1,8 +1,10 @@
 package com.ajou.travely.domain;
 
 import com.ajou.travely.domain.user.User;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 import javax.persistence.*;
 
@@ -25,4 +27,11 @@ public class Comment {
 
     @Column(columnDefinition = "TEXT")
     private String content;
+
+    @Builder
+    public Comment(@NonNull Post post, @NonNull User user, @NonNull String content) {
+        this.post = post;
+        this.user = user;
+        this.content = content;
+    }
 }

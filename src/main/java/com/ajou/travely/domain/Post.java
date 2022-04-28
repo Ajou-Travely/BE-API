@@ -1,8 +1,10 @@
 package com.ajou.travely.domain;
 
 import com.ajou.travely.domain.user.User;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 import javax.persistence.*;
 
@@ -25,4 +27,14 @@ public class Post {
 
     @Column(columnDefinition = "TEXT")
     private String text;
+
+    private String title;
+
+    @Builder
+    public Post(@NonNull Schedule schedule, @NonNull User user, String text, @NonNull String title) {
+        this.schedule = schedule;
+        this.user = user;
+        this.text = text;
+        this.title = title;
+    }
 }
