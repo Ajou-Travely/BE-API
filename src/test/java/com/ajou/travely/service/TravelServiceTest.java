@@ -17,14 +17,18 @@ import java.util.List;
 
 @SpringBootTest
 class TravelServiceTest {
-    @Autowired
-    TravelRepository travelRepository;
+    private final TravelRepository travelRepository;
+
+    private final UserRepository userRepository;
+
+    private final TravelService travelService;
 
     @Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    TravelService travelService;
+    TravelServiceTest(TravelRepository travelRepository, UserRepository userRepository, TravelService travelService) {
+        this.travelRepository = travelRepository;
+        this.userRepository = userRepository;
+        this.travelService = travelService;
+    }
 
     @Test
     @DisplayName("여행 객체를 만들 수 있다.")
@@ -38,7 +42,7 @@ class TravelServiceTest {
     @Test
     @DisplayName("여행에 유저를 초대할 수 있다.")
     public void testAddUserToTravel() {
-        User user = userRepository.save(new User(Type.USER, "sophoca@ajou.ac.kr", "홍성빈", "112", 0L));
+        User user = userRepository.save(new User(Type.USER, "sophoca1@ajou.ac.kr", "홍성빈", "112", 0L));
         Travel travel = travelService.insertTravel(Travel.builder().title("첫 여행").startDate(LocalDate.now()).endDate(LocalDate.now()).managerId(user.getId()).build());
 
         User newUser = userRepository.save(new User(Type.USER, "errander@ajou.ac.kr", "이호용", "119", 0L));

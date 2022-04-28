@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 import lombok.*;
+import org.hibernate.validator.constraints.UniqueElements;
 
 @Getter
 @NoArgsConstructor
@@ -25,7 +26,7 @@ public class User {
     @NonNull
     private Type type;
 
-    @Column(length = 400)
+    @Column(length = 400, unique = true)
     @NonNull
     private String email;
 
