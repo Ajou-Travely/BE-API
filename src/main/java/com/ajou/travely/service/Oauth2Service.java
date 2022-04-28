@@ -77,8 +77,8 @@ public class Oauth2Service {
         String url = "https://kapi.kakao.com/v2/user/me";
         try {
             ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
-//            SecurityContext context = SecurityContextHolder.getContext();
-            JSONObject userInfo = StringToJson(response.getBody());
+            SecurityContext context = SecurityContextHolder.getContext();
+            JSONObject userInfo = stringToJson(response.getBody());
 //            System.out.println("userInfo.get(\"id\") = " + userInfo.get("id"));
 //            JSONObject properties = (JSONObject) userInfo.get("properties");
 //            System.out.println("properties.get(\"nickname\") = " + properties.get("nickname"));
@@ -106,7 +106,7 @@ public class Oauth2Service {
         }
         return result;
     }
-    public JSONObject StringToJson(String userInfo) throws ParseException {
+    public JSONObject stringToJson(String userInfo) throws ParseException {
         JSONParser jsonParser = new JSONParser();
         Object object = jsonParser.parse(userInfo);
         JSONObject jsonObject = (JSONObject) object;
