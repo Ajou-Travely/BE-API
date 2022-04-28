@@ -1,8 +1,8 @@
 package com.ajou.travely.service;
 
-import com.ajou.travely.controller.travel.dto.travel.TravelCreateRequestDto;
-import com.ajou.travely.controller.travel.dto.travel.TravelResponseDto;
-import com.ajou.travely.controller.travel.dto.user.SimpleUserInfoDto;
+import com.ajou.travely.controller.travel.dto.TravelCreateRequestDto;
+import com.ajou.travely.controller.travel.dto.TravelResponseDto;
+import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.domain.Travel;
 import com.ajou.travely.domain.UserTravel;
 import com.ajou.travely.domain.user.User;
@@ -13,8 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -29,27 +27,23 @@ public class TravelService {
     private final UserTravelRepository userTravelRepository;
 
     @Transactional
-    public TravelResponseDto createTravel(TravelCreateRequestDto travelCreateRequestDto) {
-        Travel travel = travelCreateRequestDto.toEntity();
-        travelRepository.save(travel);
-        Optional<User> user = userRepository.findById(travelCreateRequestDto.getUserId());
+    public Travel insertTravel(Travel travel) {
+        Optional<User> user = userRepository.findById(travel.getManagerId());
         if (user.isEmpty()) {
             throw new RuntimeException("유저 없음 ㅋㅋ");
         }
+        travelRepository.save(travel);
         UserTravel userTravel = UserTravel.builder().user(user.get()).travel(travel).build();
         userTravelRepository.save(userTravel);
         travel.addUserTravel(userTravel);
         travelRepository.save(travel);
-        return new TravelResponseDto(travel);
+        return travel;
     }
 
     @Transactional
-    public List<TravelResponseDto> getAllTravels() {
+    public List<Travel> getAllTravels() {
         return travelRepository
-                .findAll()
-                .stream()
-                .map(TravelResponseDto::new)
-                .collect(Collectors.toList());
+                .findAll();
     }
 
     @Transactional
@@ -86,7 +80,7 @@ public class TravelService {
                 .getUserTravels()
                 .stream()
                 .map(UserTravel::getUser)
-                .map(u -> new SimpleUserInfoDto(u.getId(), u.getName()))
+                .map(SimpleUserInfoDto::new)
                 .collect(Collectors.toList());
     }
 }

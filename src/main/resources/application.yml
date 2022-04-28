@@ -1,9 +1,9 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/travely
+    url: jdbc:mariadb://localhost:3306/travely
     username: root
-    password: ajoulee1214
-    driver-class-name: com.mysql.jdbc.Driver
+    password: password
+    driver-class-name: org.mariadb.jdbc.Driver
   # swagger setting
   mvc:
     pathmatch:
@@ -15,8 +15,8 @@ spring:
       initialize-schema: always
 
   jpa:
-    hibernate:
-      ddl-auto: create
+#    hibernate:
+#      ddl-auto: create
     properties:
       hibernate:
         show_sql: true
