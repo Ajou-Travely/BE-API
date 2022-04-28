@@ -1,6 +1,8 @@
 package com.ajou.travely.domain;
 
 import com.ajou.travely.domain.user.User;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,11 +32,22 @@ public class Post {
 
     private String title;
 
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    private List<Photo> photos = new ArrayList<>();
+
     @Builder
     public Post(@NonNull Schedule schedule, @NonNull User user, String text, @NonNull String title) {
         this.schedule = schedule;
         this.user = user;
         this.text = text;
         this.title = title;
+    }
+
+    public void update(String title, String text){
+        this.title = title;
+        this.text = text;
     }
 }
