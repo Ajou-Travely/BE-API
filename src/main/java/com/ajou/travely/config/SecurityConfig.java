@@ -1,5 +1,6 @@
 package com.ajou.travely.config;
 
+import com.ajou.travely.domain.user.Type;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -14,6 +15,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
         http.authorizeRequests()
-                .antMatchers("/**").permitAll();
+                .antMatchers("/api/v1/**").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+//                .antMatchers("/api/v2/**").access("hasRole('ROLE_ADMIN')")
+                .antMatchers("/oauth2/authorization/kakao", "/isLogin", "/signup").permitAll();
     }
 }

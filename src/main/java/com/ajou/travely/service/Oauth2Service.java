@@ -101,7 +101,7 @@ public class Oauth2Service {
         } else {
             SecurityContext context = SecurityContextHolder.getContext();
             User exUser = user.get();
-            context.setAuthentication(new CustomAuthentication(kakaoId));
+            context.setAuthentication(new CustomAuthentication(exUser));
             result.put("status", 200);
         }
         return result;

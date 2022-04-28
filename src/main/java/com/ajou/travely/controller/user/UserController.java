@@ -21,7 +21,7 @@ public class UserController {
         return userService.getAllUsers();
     }
 
-    @PostMapping("/api/v1/users")
+    @PostMapping("/signup")
     public UserResponseInfoDto createUser(@RequestBody UserCreateRequestDto userCreateRequestDto) {
         return userService.createUser(userCreateRequestDto);
     }

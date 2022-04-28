@@ -1,21 +1,32 @@
 package com.ajou.travely.config;
 
+import com.ajou.travely.domain.user.User;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.security.auth.Subject;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 
-public class CustomAuthentication implements Authentication, Serializable {
-    private final Long kakaoId;
+public class CustomAuthentication implements Authentication {
+    private final User user;
 
-    public CustomAuthentication(Long kakaoId) {
-        this.kakaoId = kakaoId;
+    public CustomAuthentication(User user) {
+        this.user = user;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        Collection<GrantedAuthority> grantedAuthorityCollection = new ArrayList<>();
+        grantedAuthorityCollection.add(new GrantedAuthority() {
+            @Override
+            public String getAuthority() {
+                return user.getType().getKey();
+            }
+        });
+        return grantedAuthorityCollection;
     }
 
     @Override
@@ -25,12 +36,12 @@ public class CustomAuthentication implements Authentication, Serializable {
 
     @Override
     public Object getDetails() {
-        return kakaoId;
+        return user;
     }
 
     @Override
     public Object getPrincipal() {
-        return null;
+        return user.getKakaoId();
     }
 
     @Override
