@@ -11,5 +11,4 @@ public class TravelyApplication {
 		SpringApplication.run(TravelyApplication.class, args);
 		System.out.println("test");
 	}
-
 }

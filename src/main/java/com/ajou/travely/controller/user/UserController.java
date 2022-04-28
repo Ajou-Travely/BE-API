@@ -24,7 +24,7 @@ public class UserController {
         return userService.getAllUsers().stream().map(UserResponseInfoDto::new).collect(Collectors.toList());
     }
 
-    @PostMapping("/api/v1/users")
+    @PostMapping("/api/v1/signup")
     public UserResponseInfoDto createUser(@Valid @RequestBody UserCreateRequestDto userCreateRequestDto) {
         User user = userService.insertUser(userCreateRequestDto.toEntity());
         return new UserResponseInfoDto(user);

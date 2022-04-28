@@ -49,11 +49,15 @@ class Oauth2ServiceTest {
         userRepository.save(user);
 
         JSONObject s1 = oauth2Service.setSessionOrRedirectToSignUp(kakaoId);
-        Long kakaoIdInAuthenticationDetail = (Long) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        User kakaoIdInAuthenticationDetail = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
         JSONObject s2 = oauth2Service.setSessionOrRedirectToSignUp(123L);
 
+        System.out.println("SecurityContextHolder.getContext().getAuthentication().getDetails() = " + SecurityContextHolder.getContext().getAuthentication().getDetails());
+        SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().forEach(grantedAuthority -> {
+            System.out.println("grantedAuthority.getAuthority().toString() = " + grantedAuthority.getAuthority().toString());
+        });
         assertThat(s1.get("status")).isEqualTo(200);
         assertThat(s2.get("status")).isEqualTo(301);
-        assertThat(kakaoIdInAuthenticationDetail).isEqualTo(kakaoId);
+        assertThat(kakaoIdInAuthenticationDetail.getKakaoId()).isEqualTo(kakaoId);
     }
 }
