@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,7 +25,7 @@ public class UserController {
     }
 
     @PostMapping("/api/v1/users")
-    public UserResponseInfoDto createUser(@RequestBody UserCreateRequestDto userCreateRequestDto) {
+    public UserResponseInfoDto createUser(@Valid @RequestBody UserCreateRequestDto userCreateRequestDto) {
         User user = userService.insertUser(userCreateRequestDto.toEntity());
         return new UserResponseInfoDto(user);
     }

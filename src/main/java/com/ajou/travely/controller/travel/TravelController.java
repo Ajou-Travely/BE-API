@@ -7,6 +7,7 @@ import com.ajou.travely.service.TravelService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,7 +23,7 @@ public class TravelController {
     }
 
     @PostMapping("/api/v1/travels")
-    public TravelResponseDto createTravel(@RequestBody TravelCreateRequestDto travelCreateRequestDto) {
+    public TravelResponseDto createTravel(@Valid @RequestBody TravelCreateRequestDto travelCreateRequestDto) {
         Travel travel = travelService.insertTravel(travelCreateRequestDto.toEntity());
         return new TravelResponseDto(travel);
     }
