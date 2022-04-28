@@ -17,6 +17,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/api/v1/**").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
 //                .antMatchers("/api/v2/**").access("hasRole('ROLE_ADMIN')")
-                .antMatchers("/oauth2/authorization/kakao", "/isLogin", "/signup").permitAll();
+                .antMatchers("api/v1/oauth2/authorization/kakao", "api/v1/isLogin", "api/v1/signup").permitAll();
     }
 }
