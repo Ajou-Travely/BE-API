@@ -43,13 +43,16 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Mbti mbti;
 
+    private Long kakaoId;
+
     private LocalDate birthday;
 
     @Builder
-    public User(@NonNull Type type, @NonNull String email, @NonNull String name, @NonNull String phoneNumber) {
+    public User(@NonNull Type type, @NonNull String email, @NonNull String name, @NonNull String phoneNumber, @NonNull Long kakaoId) {
         this.type = type;
         this.email = email;
         this.name = name;
         this.phoneNumber = phoneNumber;
+        this.kakaoId = kakaoId;
     }
 }
