@@ -2,6 +2,7 @@ package com.ajou.travely.controller.travel;
 
 import com.ajou.travely.controller.travel.dto.TravelResponseDto;
 import com.ajou.travely.controller.travel.dto.TravelCreateRequestDto;
+import com.ajou.travely.domain.Travel;
 import com.ajou.travely.service.TravelService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +23,8 @@ public class TravelController {
 
     @PostMapping("/api/v1/travels")
     public TravelResponseDto createTravel(@RequestBody TravelCreateRequestDto travelCreateRequestDto) {
-        return travelService.insertTravel(travelCreateRequestDto.toEntity());
+        Travel travel = travelService.insertTravel(travelCreateRequestDto.toEntity());
+        return new TravelResponseDto(travel);
     }
 
     @PostMapping("/api/v1/travels/{travelId}/users/{userId}")

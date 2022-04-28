@@ -27,7 +27,7 @@ public class TravelService {
     private final UserTravelRepository userTravelRepository;
 
     @Transactional
-    public TravelResponseDto insertTravel(Travel travel) {
+    public Travel insertTravel(Travel travel) {
         Optional<User> user = userRepository.findById(travel.getManagerId());
         if (user.isEmpty()) {
             throw new RuntimeException("유저 없음 ㅋㅋ");
@@ -37,7 +37,7 @@ public class TravelService {
         userTravelRepository.save(userTravel);
         travel.addUserTravel(userTravel);
         travelRepository.save(travel);
-        return new TravelResponseDto(travel);
+        return travel;
     }
 
     @Transactional
