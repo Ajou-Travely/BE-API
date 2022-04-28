@@ -4,6 +4,7 @@ import com.ajou.travely.domain.user.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 import javax.persistence.*;
 
@@ -25,7 +26,7 @@ public class UserTravel {
     private Travel travel;
 
     @Builder
-    public UserTravel(User user, Travel travel) {
+    public UserTravel(@NonNull User user, @NonNull Travel travel) {
         this.user = user;
         this.travel = travel;
     }

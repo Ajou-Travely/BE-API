@@ -10,6 +10,7 @@ import javax.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 @Getter
 @NoArgsConstructor
@@ -35,16 +36,8 @@ public class Travel {
     @OneToMany(mappedBy = "travel")
     private List<UserTravel> userTravels = new ArrayList<>();
 
-    @Builder(builderMethodName = "noMemoBuilder")
-    public Travel(String title, Long managerId, LocalDate startDate, LocalDate endDate) {
-        this.title = title;
-        this.managerId = managerId;
-        this.startDate = startDate;
-        this.endDate = endDate;
-    }
-
     @Builder
-    public Travel(String title, Long managerId, String memo, LocalDate startDate, LocalDate endDate) {
+    public Travel(@NonNull String title, @NonNull Long managerId, String memo, @NonNull LocalDate startDate, @NonNull LocalDate endDate) {
         this.title = title;
         this.managerId = managerId;
         this.memo = memo;
