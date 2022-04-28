@@ -1,7 +1,9 @@
 package com.ajou.travely.domain;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 import javax.persistence.*;
 
@@ -19,4 +21,10 @@ public class Photo {
     private Post post;
 
     private String path;
+
+    @Builder
+    public Photo(@NonNull Post post, @NonNull String path) {
+        this.post = post;
+        this.path = path;
+    }
 }

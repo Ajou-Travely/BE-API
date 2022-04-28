@@ -1,9 +1,16 @@
 package com.ajou.travely.domain;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@NoArgsConstructor
+@Getter
 public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,11 +25,18 @@ public class Reservation {
     @JoinColumn(name = "travel_id")
     private Travel travel;
 
-    private String title;
-
     private LocalDateTime startTime;
 
     private LocalDateTime endTime;
 
     private String bookerName;
+
+    @Builder
+    public Reservation(@NonNull Place place, Travel travel, @NonNull LocalDateTime startTime, @NonNull LocalDateTime endTime, @NonNull String bookerName) {
+        this.place = place;
+        this.travel = travel;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.bookerName = bookerName;
+    }
 }

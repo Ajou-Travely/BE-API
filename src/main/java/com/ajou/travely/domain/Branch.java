@@ -1,8 +1,10 @@
 package com.ajou.travely.domain;
 
 import com.ajou.travely.domain.user.User;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 import javax.persistence.*;
 
@@ -22,4 +24,11 @@ public class Branch {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "schedule_id")
     private Schedule schedule;
+
+    @Builder
+    public Branch(@NonNull User user, @NonNull Schedule schedule) {
+        this.id = id;
+        this.user = user;
+        this.schedule = schedule;
+    }
 }

@@ -1,11 +1,10 @@
-package com.ajou.travely.controller.travel.dto.user;
+package com.ajou.travely.controller.user.dto;
 
 import com.ajou.travely.domain.user.User;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
-@RequiredArgsConstructor
 public class UserResponseInfoDto {
     private final Long userId;
     private final String userType;

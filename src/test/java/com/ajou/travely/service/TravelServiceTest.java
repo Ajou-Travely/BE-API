@@ -1,8 +1,7 @@
 package com.ajou.travely.service;
 
-import com.ajou.travely.controller.travel.dto.travel.TravelCreateRequestDto;
-import com.ajou.travely.controller.travel.dto.travel.TravelResponseDto;
-import com.ajou.travely.controller.travel.dto.user.SimpleUserInfoDto;
+import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
+import com.ajou.travely.domain.Travel;
 import com.ajou.travely.domain.user.Type;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.repository.TravelRepository;
@@ -31,20 +30,20 @@ class TravelServiceTest {
     @DisplayName("여행 객체를 만들 수 있다.")
     public void testCreateTravel() {
         User user = userRepository.save(new User(Type.USER, "sophoca@ajou.ac.kr", "홍성빈", "112", 0L));
-        TravelResponseDto travelResponseDto = travelService.createTravel(new TravelCreateRequestDto("첫 여행", LocalDate.now(), LocalDate.of(2030, 11, 9), user.getId()));
+        Travel travel = travelService.insertTravel(Travel.builder().title("첫 여행").startDate(LocalDate.now()).endDate(LocalDate.now()).managerId(user.getId()).build());
         Assertions.assertThat(travelRepository.findAll()).hasSize(1);
-        Assertions.assertThat(travelResponseDto.getUsers()).hasSize(1);
+        Assertions.assertThat(travel.getUserTravels()).hasSize(1);
     }
 
     @Test
     @DisplayName("여행에 유저를 초대할 수 있다.")
     public void testAddUserToTravel() {
         User user = userRepository.save(new User(Type.USER, "sophoca@ajou.ac.kr", "홍성빈", "112", 0L));
-        TravelResponseDto travelResponseDto = travelService.createTravel(new TravelCreateRequestDto("첫 여행", LocalDate.now(), LocalDate.of(2030, 11, 9), user.getId()));
+        Travel travel = travelService.insertTravel(Travel.builder().title("첫 여행").startDate(LocalDate.now()).endDate(LocalDate.now()).managerId(user.getId()).build());
 
         User newUser = userRepository.save(new User(Type.USER, "errander@ajou.ac.kr", "이호용", "119", 0L));
-        travelService.addUserToTravel(travelResponseDto.getId(), newUser.getId());
-        List<SimpleUserInfoDto> users = travelService.getSimpleUsersOfTravel(travelResponseDto.getId());
+        travelService.addUserToTravel(travel.getId(), newUser.getId());
+        List<SimpleUserInfoDto> users = travelService.getSimpleUsersOfTravel(travel.getId());
         Assertions.assertThat(users).hasSize(2);
         users.forEach(u -> System.out.println(u.toString()));
     }
