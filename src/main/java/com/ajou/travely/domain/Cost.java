@@ -35,7 +35,7 @@ public class Cost {
     @OneToMany(mappedBy = "cost")
     private List<UserCost> userCosts = new ArrayList<>();
 
-    @OneToOne(mappedBy = "cost", fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User payer;
 

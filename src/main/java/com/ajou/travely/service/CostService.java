@@ -45,12 +45,14 @@ public class CostService {
                 .build();
         // 사용자_지출 객체 생성
         for (Long userId : amountsPerUser.keySet()) {
-            cost.addUserCost(UserCost.builder()
+            UserCost userCost = UserCost.builder()
                     .cost(cost)
                     .user(userRepository.findById(userId)
                             .orElseThrow(() -> new RuntimeException("유저 없음 ㅋㅋ")))
                     .amount(amountsPerUser.get(userId))
-                    .build());
+                    .build();
+            userCostRepository.save(userCost);
+            cost.addUserCost(userCost);
         }
         costRepository.save(cost);
 
