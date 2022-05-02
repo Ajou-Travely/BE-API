@@ -17,18 +17,14 @@ import java.util.List;
 
 @SpringBootTest
 class TravelServiceTest {
-    private final TravelRepository travelRepository;
-
-    private final UserRepository userRepository;
-
-    private final TravelService travelService;
+    @Autowired
+    TravelRepository travelRepository;
 
     @Autowired
-    TravelServiceTest(TravelRepository travelRepository, UserRepository userRepository, TravelService travelService) {
-        this.travelRepository = travelRepository;
-        this.userRepository = userRepository;
-        this.travelService = travelService;
-    }
+    UserRepository userRepository;
+
+    @Autowired
+    TravelService travelService;
 
     @Test
     @DisplayName("여행 객체를 만들 수 있다.")

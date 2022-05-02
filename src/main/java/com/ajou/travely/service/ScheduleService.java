@@ -38,20 +38,29 @@ public class ScheduleService {
 
     @Transactional
     public Schedule createSchedule(Long travelId, Long placeId, LocalDateTime startTime, LocalDateTime endTime) {
-        Travel travel = travelRepository.findById(travelId).orElseThrow(() -> new RuntimeException("해당 travel이 존재하지 않습니다."));
-        Place place = placeRepository.findById(placeId).orElseThrow(() -> new RuntimeException("해당 place가 존재하지 않습니다."));
-        return scheduleRepository.save(Schedule.builder().travel(travel).place(place).startTime(startTime).endTime(endTime).build());
+        Travel travel = travelRepository.findById(travelId)
+                .orElseThrow(() -> new RuntimeException("해당 travel이 존재하지 않습니다."));
+        Place place = placeRepository.findById(placeId)
+                .orElseThrow(() -> new RuntimeException("해당 place가 존재하지 않습니다."));
+        return scheduleRepository.save(
+                Schedule.builder()
+                        .travel(travel)
+                        .place(place)
+                        .startTime(startTime)
+                        .endTime(endTime)
+                        .build());
     }
 
     @Transactional
     public Schedule getScheduleById(Long scheduleId) {
-        return scheduleRepository.findById(scheduleId).orElseThrow(() -> new RuntimeException("해당 일정이 존재하지 않습니다."));
+        return scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new RuntimeException("해당 일정이 존재하지 않습니다."));
     }
 
     @Transactional
     public Schedule getScheduleWithPlaceById(Long scheduleId) {
-        Schedule schedule = scheduleRepository.findScheduleByIdWithPlace(scheduleId).orElseThrow(() -> new RuntimeException("해당 일정이 존재하지 않습니다."));
-        return schedule;
+        return scheduleRepository.findScheduleByIdWithPlace(scheduleId)
+                .orElseThrow(() -> new RuntimeException("해당 일정이 존재하지 않습니다."));
     }
 
     @Transactional
@@ -67,6 +76,11 @@ public class ScheduleService {
     @Transactional
     public List<Schedule> getSchedulesByTravelId(Long travelId) {
         return scheduleRepository.findSchedulesByTravelId(travelId);
+    }
+
+    @Transactional
+    public List<Schedule> getSchedulesWithPlaceByTravelId(Long travelId) {
+        return scheduleRepository.findSchedulesWithPlaceByTravelId(travelId);
     }
 
     @Transactional
