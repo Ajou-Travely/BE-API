@@ -16,6 +16,7 @@ public class TravelResponseDto {
     private LocalDate startDate;
     private LocalDate endDate;
     private String memo;
+    private Long managerId;
     private List<SimpleUserInfoDto> users;
 
     public TravelResponseDto(Travel entity) {
@@ -24,6 +25,7 @@ public class TravelResponseDto {
         this.startDate = entity.getStartDate();
         this.endDate = entity.getEndDate();
         this.memo = entity.getMemo();
+        this.managerId = entity.getManagerId();
         this.users = new ArrayList<>();
         for (UserTravel userTravel:entity.getUserTravels()) {
             SimpleUserInfoDto user = new SimpleUserInfoDto(userTravel.getUser());

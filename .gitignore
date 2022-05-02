@@ -36,4 +36,4 @@ out/
 ### VS Code ###
 .vscode/
 
-*.application-auth.yml
+**/application-auth.yml
