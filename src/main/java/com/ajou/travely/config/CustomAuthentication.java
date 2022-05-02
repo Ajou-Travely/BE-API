@@ -3,7 +3,6 @@ package com.ajou.travely.config;
 import com.ajou.travely.domain.user.User;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.security.auth.Subject;
 import java.io.Serializable;
