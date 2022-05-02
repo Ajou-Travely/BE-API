@@ -38,7 +38,7 @@ class TravelServiceTest {
     @Test
     @DisplayName("여행에 유저를 초대할 수 있다.")
     public void testAddUserToTravel() {
-        User user = userRepository.save(new User(Type.USER, "sophoca@ajou.ac.kr", "홍성빈", "112", 0L));
+        User user = userRepository.save(new User(Type.USER, "sophoca1@ajou.ac.kr", "홍성빈", "112", 0L));
         Travel travel = travelService.insertTravel(Travel.builder().title("첫 여행").startDate(LocalDate.now()).endDate(LocalDate.now()).managerId(user.getId()).build());
 
         User newUser = userRepository.save(new User(Type.USER, "errander@ajou.ac.kr", "이호용", "119", 0L));

@@ -83,4 +83,9 @@ public class TravelService {
                 .map(SimpleUserInfoDto::new)
                 .collect(Collectors.toList());
     }
+
+    @Transactional
+    public void deleteAllTravels() {
+        travelRepository.deleteAll();
+    }
 }
