@@ -22,6 +22,14 @@ public class PlaceCreateRequestDto {
     private String placeUrl;
 
     public Place toEntity() {
-        return Place.builder().x(this.x).y(this.y).placeName(this.placeName).phoneNumber(this.phoneNumber).addressName(this.addressName).addressRoadName(this.addressRoadName).placeUrl(this.placeUrl).build();
+        return Place.builder()
+                .x(this.x)
+                .y(this.y)
+                .placeName(this.placeName)
+                .phoneNumber(this.phoneNumber)
+                .addressName(this.addressName)
+                .addressRoadName(this.addressRoadName)
+                .placeUrl(this.placeUrl)
+                .build();
     }
 }
