@@ -15,6 +15,7 @@ import org.hibernate.validator.constraints.UniqueElements;
 @Getter
 @NoArgsConstructor
 @Entity
+@ToString
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
