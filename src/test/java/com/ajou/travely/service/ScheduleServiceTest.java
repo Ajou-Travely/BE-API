@@ -91,19 +91,16 @@ class ScheduleServiceTest {
     @Test
     @DisplayName("생성한 Schedule을 DB에 삽입할 수 있다.")
     public void testCreateSchedule() {
-        Schedule schedule = Schedule.builder()
-                .travel(travel)
-                .place(ajouUniv)
-                .startTime(LocalDateTime.now())
-                .endTime(LocalDateTime.now().plusDays(1))
-                .build();
-        scheduleService.insertSchedule(schedule);
+        Schedule schedule = scheduleService.createSchedule(
+                travel.getId(),
+                ajouUniv.getId(),
+                LocalDateTime.now(),
+                LocalDateTime.now().plusDays(1)
+        );
 
-        Schedule findSchedule = scheduleService.getScheduleWithPlaceById(schedule.getId());
-
-        assertThat(findSchedule.getPlace().getId(), is(ajouUniv.getId()));
-        assertThat(findSchedule.getTravel().getId(), is(travel.getId()));
-        assertThat(findSchedule.getId(), is(schedule.getId()));
+        assertThat(schedule.getPlace().getId(), is(ajouUniv.getId()));
+        assertThat(schedule.getTravel().getId(), is(travel.getId()));
+        assertThat(schedule.getId(), is(schedule.getId()));
     }
 
     @Test
