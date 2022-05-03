@@ -35,14 +35,12 @@ public class Cost {
     @OneToMany(mappedBy = "cost")
     private List<UserCost> userCosts = new ArrayList<>();
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User payer;
+    private Long payerId;
 
     @Builder
-    public Cost(@NonNull Travel travel, @NonNull Long totalAmount, String content, @NonNull String title, @NonNull Boolean isEquallyDivided, @NonNull User payer) {
+    public Cost(@NonNull Travel travel, @NonNull Long totalAmount, String content, @NonNull String title, @NonNull Boolean isEquallyDivided, @NonNull Long payerId) {
         this.travel = travel;
-        this.payer = payer;
+        this.payerId = payerId;
         this.totalAmount = totalAmount;
         this.content = content;
         this.title = title;

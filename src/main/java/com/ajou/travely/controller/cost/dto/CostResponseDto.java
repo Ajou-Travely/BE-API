@@ -20,14 +20,14 @@ public class CostResponseDto {
     private List<UserCost> userCosts;
     private User payer;
 
-    public CostResponseDto(Cost entity) {
+    public CostResponseDto(Cost entity, User payer) {
         this.id = entity.getId();
         this.travel = entity.getTravel();
         this.totalAmount = entity.getTotalAmount();
         this.content = entity.getContent();
         this.title = entity.getTitle();
         this.isEquallyDivided = entity.getIsEquallyDivided();
-        this.payer = entity.getPayer();
+        this.payer = payer;
         this.userCosts = entity.getUserCosts();
     }
 }

@@ -40,22 +40,56 @@ class CostServiceTest {
     @Test
     @DisplayName("지출 객체를 생성할 수 있다.")
     public void testCreateCost() {
-        User user1 = userRepository.save(new User(Type.USER, "test1@ajou.ac.kr", "테스트1", "112", 0L));
-        User user2 = userRepository.save(new User(Type.USER, "test2@ajou.ac.kr", "테스트2", "113", 1L));
-        User user3 = userRepository.save(new User(Type.USER, "test3@ajou.ac.kr", "테스트3", "114", 2L));
-        Travel travel = travelService.insertTravel(Travel.builder().title("첫 여행").startDate(LocalDate.now()).endDate(LocalDate.now()).managerId(user1.getId()).build());
+        User user1 = userRepository.save(
+                new User(
+                        Type.USER,
+                        "test1@ajou.ac.kr",
+                        "테스트1",
+                        "112",
+                        0L
+                ));
+        User user2 = userRepository.save(
+                new User(
+                        Type.USER,
+                        "test2@ajou.ac.kr",
+                        "테스트2",
+                        "113",
+                        1L
+                ));
+        User user3 = userRepository.save(
+                new User(
+                        Type.USER,
+                        "test3@ajou.ac.kr",
+                        "테스트3",
+                        "114",
+                        2L
+                ));
+        Travel travel = travelService.insertTravel(
+                Travel.builder()
+                        .title("첫 여행")
+                        .startDate(LocalDate.now())
+                        .endDate(LocalDate.now())
+                        .managerId(user1.getId())
+                        .build()
+        );
         Map<Long, Long> amountPerUser = new HashMap<>();
         amountPerUser.put(user1.getId(), 10000L);
         amountPerUser.put(user2.getId(), 10000L);
         amountPerUser.put(user3.getId(), 10000L);
-        Cost cost = costService.insertCost(30000L, travel.getId(), "TestTitle", "안녕난이거야", false, amountPerUser, user1.getId());
-        CostResponseDto costResponseDto = new CostResponseDto(cost);
-        for (UserCost userCost : costResponseDto.getUserCosts()) {
-            System.out.println("userCost.getUser().getId() = " + userCost.getUser().getId());
-        }
-        Assertions.assertThat(cost.getTotalAmount()).isEqualTo(30000L);
-        Assertions.assertThat(cost.getTravel().getId()).isEqualTo(travel.getId());
-        Assertions.assertThat(cost.getPayer().getId()).isEqualTo(user1.getId());
+        CostResponseDto costResponseDto = costService.createCost(
+                30000L,
+                travel.getId(),
+                "TestTitle",
+                "안녕난이거야",
+                false,
+                amountPerUser,
+                user1.getId()
+        );
+
+        Assertions.assertThat(costResponseDto.getTotalAmount()).isEqualTo(30000L);
+        Assertions.assertThat(costResponseDto.getTravel().getId()).isEqualTo(travel.getId());
+        Assertions.assertThat(costResponseDto.getPayer().getId()).isEqualTo(user1.getId());
+        Assertions.assertThat(costResponseDto.getUserCosts().get(0).getUser().getKakaoId()).isEqualTo(0L);
     }
 
 

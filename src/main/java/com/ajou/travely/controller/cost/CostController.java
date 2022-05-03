@@ -16,9 +16,9 @@ import javax.validation.Valid;
 public class CostController {
     private final CostService costService;
 
-    @PostMapping("/api/v1/cost")
+    @PostMapping("/api/v1/costs")
     public CostResponseDto createCost(@Valid @RequestBody CostCreateRequestDto costCreateRequestDto) {
-        Cost cost = costService.insertCost(
+        CostResponseDto costResponseDto = costService.createCost(
                 costCreateRequestDto.getTotalAmount(),
                 costCreateRequestDto.getTravelId(),
                 costCreateRequestDto.getTitle(),
@@ -27,6 +27,6 @@ public class CostController {
                 costCreateRequestDto.getAmountsPerUser(),
                 costCreateRequestDto.getPayerId()
         );
-        return new CostResponseDto(cost);
+        return costResponseDto;
     }
 }

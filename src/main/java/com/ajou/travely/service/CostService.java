@@ -1,5 +1,6 @@
 package com.ajou.travely.service;
 
+import com.ajou.travely.controller.cost.dto.CostResponseDto;
 import com.ajou.travely.domain.Cost;
 import com.ajou.travely.domain.Travel;
 import com.ajou.travely.domain.UserCost;
@@ -27,7 +28,7 @@ public class CostService {
     private final TravelRepository travelRepository;
 
     @Transactional
-    public Cost insertCost(Long totalAmount, Long travelId, String title, String content, Boolean isEquallyDivided, Map<Long, Long> amountsPerUser, Long payerId) {
+    public CostResponseDto createCost(Long totalAmount, Long travelId, String title, String content, Boolean isEquallyDivided, Map<Long, Long> amountsPerUser, Long payerId) {
         // 여행 객체 생성
         Travel travel = travelRepository.findById(travelId)
                 .orElseThrow(() -> new RuntimeException("여행 없음 ㅋㅋ"));
@@ -40,7 +41,7 @@ public class CostService {
                 .content(content)
                 .title(title)
                 .travel(travel)
-                .payer(payer)
+                .payerId(payerId)
                 .isEquallyDivided(isEquallyDivided)
                 .build();
         // 사용자_지출 객체 생성
@@ -51,11 +52,12 @@ public class CostService {
                             .orElseThrow(() -> new RuntimeException("유저 없음 ㅋㅋ")))
                     .amount(amountsPerUser.get(userId))
                     .build();
+            org.hibernate.Hibernate.initialize(userCost.getUser());
             userCostRepository.save(userCost);
             cost.addUserCost(userCost);
         }
         costRepository.save(cost);
 
-        return cost;
+        return new CostResponseDto(cost, payer);
     }
 }

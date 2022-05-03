@@ -36,5 +36,6 @@ public class UserCost {
         this.cost = cost;
         this.user = user;
         this.amount = amount;
+        this.isRequested = false;
     }
 }
