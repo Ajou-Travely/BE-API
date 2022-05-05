@@ -9,10 +9,11 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 import javax.persistence.*;
+import lombok.ToString;
 
-@Entity
 @Getter
 @NoArgsConstructor
+@Entity
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,8 +47,21 @@ public class Post {
         this.title = title;
     }
 
-    public void update(String title, String text){
+    public void update(String title, String text) {
         this.title = title;
         this.text = text;
+    }
+
+    public void addPhoto(Photo photo) {
+        this.photos.add(photo);
+    }
+
+    public void removePhoto(Photo photo) {
+        this.photos.remove(photo);
+    }
+
+    @Override
+    public String toString() {
+        return new String(this.id.toString());
     }
 }
