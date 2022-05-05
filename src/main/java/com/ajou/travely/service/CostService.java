@@ -52,7 +52,6 @@ public class CostService {
                             .orElseThrow(() -> new RuntimeException("유저 없음 ㅋㅋ")))
                     .amount(amountsPerUser.get(userId))
                     .build();
-            org.hibernate.Hibernate.initialize(userCost.getUser());
             userCostRepository.save(userCost);
             cost.addUserCost(userCost);
         }
