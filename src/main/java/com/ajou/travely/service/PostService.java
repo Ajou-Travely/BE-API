@@ -1,15 +1,18 @@
 package com.ajou.travely.service;
 
+import com.ajou.travely.controller.post.dto.PostCreateRequestDto;
+import com.ajou.travely.domain.Photo;
 import com.ajou.travely.domain.Post;
 import com.ajou.travely.domain.Schedule;
 import com.ajou.travely.domain.user.User;
+import com.ajou.travely.repository.PhotoRepository;
 import com.ajou.travely.repository.PostRepository;
 import com.ajou.travely.repository.ScheduleRepository;
 import com.ajou.travely.repository.UserRepository;
-import java.util.Optional;
+import java.util.List;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -23,22 +26,34 @@ public class PostService {
 
     private final ScheduleRepository scheduleRepository;
 
-    public Post createPost(Long userId, Long scheduleId, String title, String text){
+    private final PhotoRepository photoRepository;
+
+    public Long createPost(Long userId, PostCreateRequestDto requestDto){
         User user = findUserById(userId);
-        Schedule schedule = findScheduleById(scheduleId);
+        Schedule schedule = findScheduleById(requestDto.getScheduleId());
         Post post = Post.builder()
             .schedule(schedule)
             .user(user)
-            .text(text)
-            .title(title)
+            .text(requestDto.getText())
+            .title(requestDto.getTitle())
             .build();
 
-        return postRepository.save(post);
+        requestDto.getPhotoPaths()
+            .forEach(photoPath ->{
+                    Photo photo = new Photo(post, photoPath);
+                    post.addPhoto(photoRepository.save(photo));
+                }
+            );
+
+        return postRepository.save(post).getId();
     }
 
     public Post findPostById(Long postId){
-        return postRepository.findById(postId)
+        Post post = postRepository.findById(postId)
             .orElseThrow(() -> new RuntimeException("게시글 없음 ㅋㅋ"));
+        Hibernate.initialize(post.getPhotos());
+        Hibernate.initialize(post.getComments());
+        return post;
     }
 
     public void updatePost(Long postId, String title, String text){

@@ -1,5 +1,6 @@
 package com.ajou.travely.service;
 
+import com.ajou.travely.controller.post.dto.PostCreateRequestDto;
 import com.ajou.travely.domain.Place;
 import com.ajou.travely.domain.Post;
 import com.ajou.travely.domain.Schedule;
@@ -12,6 +13,9 @@ import com.ajou.travely.repository.TravelRepository;
 import com.ajou.travely.repository.UserRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -42,6 +46,7 @@ public class PostServiceTest {
     public Place place;
     public User user;
     public Schedule schedule;
+    public List<String> photoPaths = new ArrayList<>(Arrays.asList("link1", "link2"));
 
     @BeforeEach
     public void setUp() {
@@ -81,9 +86,11 @@ public class PostServiceTest {
         // given
         String title = "title";
         String text = "text";
+        Schedule schedule = scheduleRepository.findAll().get(0);
+        PostCreateRequestDto requestDto = new PostCreateRequestDto(schedule.getId(), title, text, photoPaths);
 
         // when
-        Post result = postService.createPost(user.getId(), schedule.getId(), title, text);
+        Post result = postService.findPostById(postService.createPost(user.getId(), requestDto));
 
         // then
         assertThat(result.getId()).isNotNull();
@@ -91,6 +98,7 @@ public class PostServiceTest {
         assertThat(result.getSchedule().getId()).isEqualTo(schedule.getId());
         assertThat(result.getText()).isEqualTo(text);
         assertThat(result.getTitle()).isEqualTo(title);
+        assertThat(result.getPhotos()).hasSize(2);
     }
 
     @DisplayName("Post 수정")
@@ -99,17 +107,19 @@ public class PostServiceTest {
         // given
         String title = "title";
         String text = "text";
-        Post post = postService.createPost(user.getId(), schedule.getId(), title, text);
-        String updateTitle = "title2";
-        String updateText = "text2";
+        Schedule schedule = scheduleRepository.findAll().get(0);
+        PostCreateRequestDto requestDto = new PostCreateRequestDto(schedule.getId(), title, text, photoPaths);
+        Long postId = postService.createPost(user.getId(), requestDto);
+        Post post = postService.findPostById(postId);
 
         // when
+        String updateTitle = "title2";
+        String updateText = "text2";
         postService.updatePost(post.getId(), updateTitle, updateText);
         post = postService.findPostById(post.getId());
 
         // then
         assertThat(post.getText()).isEqualTo(updateText);
         assertThat(post.getTitle()).isEqualTo(updateTitle);
-
     }
 }
