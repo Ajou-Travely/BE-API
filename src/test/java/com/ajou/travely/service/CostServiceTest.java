@@ -1,9 +1,7 @@
 package com.ajou.travely.service;
 
-import com.ajou.travely.controller.cost.dto.CostResponseDto;
-import com.ajou.travely.domain.Cost;
+import com.ajou.travely.controller.cost.dto.CostCreateResponseDto;
 import com.ajou.travely.domain.Travel;
-import com.ajou.travely.domain.UserCost;
 import com.ajou.travely.domain.user.Type;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.repository.CostRepository;
@@ -19,8 +17,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class CostServiceTest {
@@ -76,7 +72,7 @@ class CostServiceTest {
         amountPerUser.put(user1.getId(), 10000L);
         amountPerUser.put(user2.getId(), 10000L);
         amountPerUser.put(user3.getId(), 10000L);
-        CostResponseDto costResponseDto = costService.createCost(
+        CostCreateResponseDto costCreateResponseDto = costService.createCost(
                 30000L,
                 travel.getId(),
                 "TestTitle",
@@ -86,10 +82,10 @@ class CostServiceTest {
                 user1.getId()
         );
 
-        Assertions.assertThat(costResponseDto.getTotalAmount()).isEqualTo(30000L);
-        Assertions.assertThat(costResponseDto.getTravel().getId()).isEqualTo(travel.getId());
-        Assertions.assertThat(costResponseDto.getPayer().getId()).isEqualTo(user1.getId());
-        Assertions.assertThat(costResponseDto.getUserCosts().get(0).getUser().getKakaoId()).isEqualTo(0L);
+        Assertions.assertThat(costCreateResponseDto.getTotalAmount()).isEqualTo(30000L);
+        Assertions.assertThat(costCreateResponseDto.getTravel().getId()).isEqualTo(travel.getId());
+        Assertions.assertThat(costCreateResponseDto.getPayer().getId()).isEqualTo(user1.getId());
+        Assertions.assertThat(costCreateResponseDto.getUserCosts().get(0).getUser().getKakaoId()).isEqualTo(0L);
     }
 
 

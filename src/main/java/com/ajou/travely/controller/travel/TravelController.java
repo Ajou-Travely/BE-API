@@ -1,5 +1,6 @@
 package com.ajou.travely.controller.travel;
 
+import com.ajou.travely.controller.travel.dto.CostsResponseDto;
 import com.ajou.travely.controller.travel.dto.TravelResponseDto;
 import com.ajou.travely.controller.travel.dto.TravelCreateRequestDto;
 import com.ajou.travely.domain.Travel;
@@ -32,5 +33,10 @@ public class TravelController {
     public TravelResponseDto addUserToTravel(@PathVariable Long travelId, @PathVariable Long userId) {
         travelService.addUserToTravel(travelId, userId);
         return new TravelResponseDto(travelService.getTravelById(travelId));
+    }
+
+    @GetMapping("/api/v1/travels/{travelId}/costs")
+    public List<CostsResponseDto> getCostsByTravelId(@PathVariable Long travelId) {
+        return travelService.getCostsByTravelId(travelId);
     }
 }

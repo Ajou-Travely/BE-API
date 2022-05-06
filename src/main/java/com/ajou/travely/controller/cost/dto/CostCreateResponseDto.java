@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-public class CostResponseDto {
+public class CostCreateResponseDto {
     private Long id;
     private Travel travel;
     private Long totalAmount;
@@ -20,7 +20,7 @@ public class CostResponseDto {
     private List<UserCost> userCosts;
     private User payer;
 
-    public CostResponseDto(Cost entity, User payer) {
+    public CostCreateResponseDto(Cost entity, User payer) {
         this.id = entity.getId();
         this.travel = entity.getTravel();
         this.totalAmount = entity.getTotalAmount();

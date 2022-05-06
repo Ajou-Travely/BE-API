@@ -1,11 +1,13 @@
 package com.ajou.travely.service;
 
-import com.ajou.travely.controller.travel.dto.TravelCreateRequestDto;
-import com.ajou.travely.controller.travel.dto.TravelResponseDto;
+import com.ajou.travely.controller.travel.dto.CostsResponseDto;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
+import com.ajou.travely.domain.Cost;
 import com.ajou.travely.domain.Travel;
+import com.ajou.travely.domain.UserCost;
 import com.ajou.travely.domain.UserTravel;
 import com.ajou.travely.domain.user.User;
+import com.ajou.travely.repository.CostRepository;
 import com.ajou.travely.repository.TravelRepository;
 import com.ajou.travely.repository.UserRepository;
 import com.ajou.travely.repository.UserTravelRepository;
@@ -13,8 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -25,6 +26,8 @@ public class TravelService {
     private final UserRepository userRepository;
 
     private final UserTravelRepository userTravelRepository;
+
+    private final CostRepository costRepository;
 
     @Transactional
     public Travel insertTravel(Travel travel) {
@@ -87,5 +90,32 @@ public class TravelService {
     @Transactional
     public void deleteAllTravels() {
         travelRepository.deleteAll();
+    }
+
+    @Transactional
+    public List<CostsResponseDto> getCostsByTravelId(Long travelId) {
+        List<Cost> costs = costRepository.findCostsByTravelId(travelId);
+        List<User> usersByTravelId = userRepository.findUsersByTravelId(travelId);
+        Map<Long, String> usersInfo = new HashMap<>();
+        usersByTravelId.forEach(user -> {
+            usersInfo.put(user.getId(), user.getName());
+        });
+        List<CostsResponseDto> costsResponseDtos = new ArrayList<>();
+
+        costs.forEach(cost -> {
+            Map<Long, String> userInfoPerCost = new HashMap<>();
+            cost.getUserCosts().forEach(userCost -> {
+                userInfoPerCost.put(userCost.getUser().getId(), usersInfo.get(userCost.getUser().getId()));
+            });
+            costsResponseDtos.add(new CostsResponseDto(
+                    cost.getId(),
+                    cost.getTotalAmount(),
+                    cost.getTitle(),
+                    userInfoPerCost,
+                    cost.getPayerId()
+            ));
+        });
+
+        return costsResponseDtos;
     }
 }
