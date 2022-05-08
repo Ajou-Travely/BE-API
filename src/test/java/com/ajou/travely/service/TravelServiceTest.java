@@ -112,9 +112,6 @@ class TravelServiceTest {
         );
         List<CostsResponseDto> costsByTravelId = travelService.getCostsByTravelId(travel.getId());
 
-        for (CostsResponseDto costsResponseDto : costsByTravelId) {
-            System.out.println("costsResponseDto.getCostId() = " + costsResponseDto.getCostId());
-        }
         Assertions.assertThat(costsByTravelId).hasSize(2);
 
         Assertions.assertThat(costsByTravelId.get(0).getTitle()).isEqualTo("TestTitle");

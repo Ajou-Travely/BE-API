@@ -2,11 +2,10 @@ package com.ajou.travely.controller.cost;
 
 import com.ajou.travely.controller.cost.dto.CostCreateRequestDto;
 import com.ajou.travely.controller.cost.dto.CostCreateResponseDto;
+import com.ajou.travely.controller.cost.dto.CostResponseDto;
 import com.ajou.travely.service.CostService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -27,5 +26,10 @@ public class CostController {
                 costCreateRequestDto.getPayerId()
         );
         return costCreateResponseDto;
+    }
+
+    @GetMapping("/api/v1/costs/{costId}")
+    public CostResponseDto getCostById(@PathVariable Long costId) {
+        return this.costService.getCostById(costId);
     }
 }

@@ -14,4 +14,9 @@ public class SimpleUserInfoDto {
         this.userId = entity.getId();
         this.userName = entity.getName();
     }
+
+    public SimpleUserInfoDto(Long userId, String userName) {
+        this.userId = userId;
+        this.userName = userName;
+    }
 }
