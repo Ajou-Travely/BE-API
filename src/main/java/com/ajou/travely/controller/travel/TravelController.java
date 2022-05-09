@@ -1,5 +1,6 @@
 package com.ajou.travely.controller.travel;
 
+import com.ajou.travely.controller.travel.dto.SimpleTravelResponseDto;
 import com.ajou.travely.controller.travel.dto.TravelResponseDto;
 import com.ajou.travely.controller.travel.dto.TravelCreateRequestDto;
 import com.ajou.travely.domain.Travel;
@@ -18,8 +19,8 @@ public class TravelController {
     private final TravelService travelService;
 
     @GetMapping("/api/v1/travels")
-    public List<TravelResponseDto> getAllTravels() {
-        return travelService.getAllTravels().stream().map(TravelResponseDto::new).collect(Collectors.toList());
+    public List<SimpleTravelResponseDto> getAllTravels() {
+        return travelService.getAllTravels();
     }
 
     @PostMapping("/api/v1/travels")

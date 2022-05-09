@@ -1,6 +1,6 @@
 package com.ajou.travely.service;
 
-import com.ajou.travely.controller.travel.dto.TravelCreateRequestDto;
+import com.ajou.travely.controller.travel.dto.SimpleTravelResponseDto;
 import com.ajou.travely.controller.travel.dto.TravelResponseDto;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.domain.Travel;
@@ -41,9 +41,12 @@ public class TravelService {
     }
 
     @Transactional
-    public List<Travel> getAllTravels() {
-        return travelRepository
-                .findAll();
+    public List<SimpleTravelResponseDto> getAllTravels() {
+        return travelRepository.
+                findAllTravelsWithUser().
+                stream().
+                map(SimpleTravelResponseDto::new).
+                collect(Collectors.toList());
     }
 
     @Transactional
