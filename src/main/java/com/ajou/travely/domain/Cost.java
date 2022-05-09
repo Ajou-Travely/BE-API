@@ -30,14 +30,24 @@ public class Cost {
 
     private String title;
 
+    private Boolean isEquallyDivided;
+
     @OneToMany(mappedBy = "cost")
     private List<UserCost> userCosts = new ArrayList<>();
 
+    private Long payerId;
+
     @Builder
-    public Cost(@NonNull Travel travel, @NonNull Long totalAmount, String content, @NonNull String title) {
+    public Cost(@NonNull Travel travel, @NonNull Long totalAmount, String content, @NonNull String title, @NonNull Boolean isEquallyDivided, @NonNull Long payerId) {
         this.travel = travel;
+        this.payerId = payerId;
         this.totalAmount = totalAmount;
         this.content = content;
         this.title = title;
+        this.isEquallyDivided = isEquallyDivided;
+    }
+
+    public void addUserCost(UserCost userCost) {
+        this.userCosts.add(userCost);
     }
 }

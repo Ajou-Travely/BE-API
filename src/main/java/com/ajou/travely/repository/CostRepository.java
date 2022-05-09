@@ -9,5 +9,5 @@ import java.util.List;
 
 public interface CostRepository extends JpaRepository<Cost, Long> {
     @Query("select c, ucs from Cost c join c.travel t join fetch c.userCosts ucs where t.id = :travelId")
-    public List<CostsResponseDto> test();
+    List<CostsResponseDto> test();
 }
