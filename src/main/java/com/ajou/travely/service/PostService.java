@@ -1,6 +1,7 @@
 package com.ajou.travely.service;
 
 import com.ajou.travely.controller.post.dto.PostCreateRequestDto;
+import com.ajou.travely.controller.post.dto.PostResponseDto;
 import com.ajou.travely.controller.post.dto.PostUpdateRequestDto;
 import com.ajou.travely.domain.Photo;
 import com.ajou.travely.domain.Post;
@@ -30,7 +31,7 @@ public class PostService {
 
     private final PhotoRepository photoRepository;
 
-    public Long createPost(Long userId, PostCreateRequestDto requestDto){
+    public Long createPost(Long userId, PostCreateRequestDto requestDto) {
         User user = findUserById(userId);
         Schedule schedule = findScheduleById(requestDto.getScheduleId());
         Post post = Post.builder()
@@ -50,19 +51,11 @@ public class PostService {
         return postRepository.save(post).getId();
     }
 
-    public Post findPostById(Long postId){
-        return postRepository.findById(postId)
-            .orElseThrow(() -> new RuntimeException("게시글 없음 ㅋㅋ"));
+    public PostResponseDto getPost(Long postId) {
+        return new PostResponseDto(initializePostInfo(postId));
     }
 
-    public Post initializePostInfo(Long postId) {
-        Post post = findPostById(postId);
-        Hibernate.initialize(post.getPhotos());
-        Hibernate.initialize(post.getComments());
-        return post;
-    }
-
-    public void updatePost(Long postId, PostUpdateRequestDto requestDto){
+    public void updatePost(Long postId, PostUpdateRequestDto requestDto) {
         Post post = initializePostInfo(postId);
         post.update(requestDto.getTitle(), requestDto.getText());
         List<Photo> addedPhotos = requestDto.getAddedPhotoPaths()
@@ -75,6 +68,18 @@ public class PostService {
 
     public void deletePost(Long postId){
         postRepository.deleteById(postId);
+    }
+
+    public Post findPostById(Long postId) {
+        return postRepository.findById(postId)
+            .orElseThrow(() -> new RuntimeException("게시글 없음 ㅋㅋ"));
+    }
+
+    public Post initializePostInfo(Long postId) {
+        Post post = findPostById(postId);
+        Hibernate.initialize(post.getPhotos());
+        Hibernate.initialize(post.getComments());
+        return post;
     }
 
     public User findUserById(Long userId) {
