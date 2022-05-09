@@ -1,6 +1,8 @@
 package com.ajou.travely.service;
 
 import com.ajou.travely.controller.post.dto.PostCreateRequestDto;
+import com.ajou.travely.controller.post.dto.PostUpdateRequestDto;
+import com.ajou.travely.domain.Photo;
 import com.ajou.travely.domain.Place;
 import com.ajou.travely.domain.Post;
 import com.ajou.travely.domain.Schedule;
@@ -16,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -110,16 +113,21 @@ public class PostServiceTest {
         Schedule schedule = scheduleRepository.findAll().get(0);
         PostCreateRequestDto requestDto = new PostCreateRequestDto(schedule.getId(), title, text, photoPaths);
         Long postId = postService.createPost(user.getId(), requestDto);
-        Post post = postService.findPostById(postId);
+        Post post = postService.initializePostInfo(postId);
 
         // when
         String updateTitle = "title2";
         String updateText = "text2";
-        postService.updatePost(post.getId(), updateTitle, updateText);
-        post = postService.findPostById(post.getId());
+        List<String> addedPhotoPaths = new ArrayList<>(Arrays.asList("link3", "link4", "link5"));
+        List<Long> removedPhotoIds = new ArrayList<>(Arrays.asList(1L, 2L));
+        PostUpdateRequestDto updateRequestDto =
+            new PostUpdateRequestDto(updateTitle, updateText, addedPhotoPaths, removedPhotoIds);
+        postService.updatePost(postId, updateRequestDto);
+        Post result = postService.initializePostInfo(postId);
 
         // then
-        assertThat(post.getText()).isEqualTo(updateText);
-        assertThat(post.getTitle()).isEqualTo(updateTitle);
+        assertThat(result.getText()).isEqualTo(updateText);
+        assertThat(result.getTitle()).isEqualTo(updateTitle);
+        assertThat(result.getPhotos()).hasSize(3);
     }
 }
