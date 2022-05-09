@@ -67,11 +67,11 @@ public class CostService {
 
     @Transactional(readOnly = true)
     public CostResponseDto getCostById(Long costId) {
-        Cost costFoundById = costRepository.getCostById(costId)
+        Cost cost = costRepository.getCostById(costId)
                 .orElseThrow(() -> new RuntimeException("해당 지출을 찾을 수 없습니다."));
 
         List<UserCostResponseDto> userCostResponseDtos = new ArrayList<>();
-        costFoundById.getUserCosts().forEach(userCost -> {
+        cost.getUserCosts().forEach(userCost -> {
             userCostResponseDtos.add(new UserCostResponseDto(
                     userCost.getId(),
                     userCost.getAmount(),
@@ -83,13 +83,13 @@ public class CostService {
             ));
         });
         CostResponseDto costResponseDto = new CostResponseDto(
-                costFoundById.getId(),
-                costFoundById.getTotalAmount(),
-                costFoundById.getContent(),
-                costFoundById.getTitle(),
-                costFoundById.getIsEquallyDivided(),
+                cost.getId(),
+                cost.getTotalAmount(),
+                cost.getContent(),
+                cost.getTitle(),
+                cost.getIsEquallyDivided(),
                 userCostResponseDtos,
-                costFoundById.getPayerId()
+                cost.getPayerId()
         );
 
         return costResponseDto;

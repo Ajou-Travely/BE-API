@@ -11,16 +11,20 @@ import com.ajou.travely.repository.TravelRepository;
 import com.ajou.travely.repository.UserCostRepository;
 import com.ajou.travely.repository.UserRepository;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.*;
 
 @SpringBootTest
+@Transactional
 class CostServiceTest {
     @Autowired
     TravelRepository travelRepository;
@@ -37,6 +41,7 @@ class CostServiceTest {
 
     @Test
     @DisplayName("지출 객체를 생성할 수 있다.")
+    @Rollback
     public void testCreateCost() {
         User user1 = userRepository.save(
                 new User(
@@ -92,6 +97,7 @@ class CostServiceTest {
 
     @Test
     @DisplayName("지출 아이디를 통해 해당 지출을 가져올 수 있다.")
+    @Rollback
     public void testGetCostById() {
         List<Long> numbers = new ArrayList<>(Arrays.asList(1L, 2L, 3L, 4L));
         List<User> users = new ArrayList<>();
