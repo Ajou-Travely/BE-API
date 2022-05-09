@@ -2,6 +2,7 @@ package com.ajou.travely.service;
 
 import com.ajou.travely.controller.cost.dto.CostCreateResponseDto;
 import com.ajou.travely.controller.travel.dto.CostsResponseDto;
+import com.ajou.travely.controller.travel.dto.CostsWithUsersInTravelResponseDto;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.domain.Travel;
 import com.ajou.travely.domain.user.Type;
@@ -110,18 +111,24 @@ class TravelServiceTest {
                 amountPerUser2,
                 users.get(2).getId()
         );
-        List<CostsResponseDto> costsByTravelId = travelService.getCostsByTravelId(travel.getId());
+        CostsWithUsersInTravelResponseDto costsWithUsersInTravelResponseDto = travelService.getCostsByTravelId(travel.getId());
+        List<User> userList = costsWithUsersInTravelResponseDto.getUsersByTravelId();
+        List<CostsResponseDto> costsByTravelId = costsWithUsersInTravelResponseDto.getCostsResponseDtos();
 
         Assertions.assertThat(costsByTravelId).hasSize(2);
 
         Assertions.assertThat(costsByTravelId.get(0).getTitle()).isEqualTo("TestTitle");
         Assertions.assertThat(costsByTravelId.get(0).getTotalAmount()).isEqualTo(11000L);
-        Assertions.assertThat(costsByTravelId.get(0).getUserInfo().keySet().stream().toArray()).isEqualTo(Arrays.asList(users.get(0).getId(), users.get(1).getId()).toArray());
-        Assertions.assertThat(costsByTravelId.get(0).getUserInfo().values().toArray()).isEqualTo(Arrays.asList(users.get(0).getName(), users.get(1).getName()).toArray());
+        Assertions.assertThat(costsByTravelId.get(0).getUserIds().stream().toArray()).isEqualTo(Arrays.asList(users.get(0).getId(), users.get(1).getId()).toArray());
 
         Assertions.assertThat(costsByTravelId.get(1).getTitle()).isEqualTo("SecondTitle");
         Assertions.assertThat(costsByTravelId.get(1).getTotalAmount()).isEqualTo(20000L);
-        Assertions.assertThat(costsByTravelId.get(1).getUserInfo().keySet().stream().toArray()).isEqualTo(Arrays.asList(users.get(2).getId(), users.get(3).getId()).toArray());
-        Assertions.assertThat(costsByTravelId.get(1).getUserInfo().values().toArray()).isEqualTo(Arrays.asList(users.get(2).getName(), users.get(3).getName()).toArray());
+        Assertions.assertThat(costsByTravelId.get(1).getUserIds().stream().toArray()).isEqualTo(Arrays.asList(users.get(2).getId(), users.get(3).getId()).toArray());
+
+        Assertions.assertThat(userList.stream().map(user -> {
+            return Arrays.asList(user.getId(), user.getName());
+        }).toArray()).isEqualTo(users.stream().map(user -> {
+            return Arrays.asList(user.getId(), user.getName());
+        }).toArray());
     }
 }

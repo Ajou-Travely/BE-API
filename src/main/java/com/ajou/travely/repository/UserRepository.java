@@ -12,7 +12,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select u from User u where u.kakaoId = :kakaoId")
     public Optional<User> findByKakaoId(@Param("kakaoId") Long kakaoId);
 
-    @Query("select u " +
+    @Query("select " +
+            "distinct u " +
             "from Travel t " +
             "join t.userTravels uts " +
             "join uts.user u " +

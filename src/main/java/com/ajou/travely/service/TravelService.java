@@ -1,6 +1,7 @@
 package com.ajou.travely.service;
 
 import com.ajou.travely.controller.travel.dto.CostsResponseDto;
+import com.ajou.travely.controller.travel.dto.CostsWithUsersInTravelResponseDto;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.domain.Cost;
 import com.ajou.travely.domain.Travel;
@@ -92,30 +93,26 @@ public class TravelService {
         travelRepository.deleteAll();
     }
 
-    @Transactional
-    public List<CostsResponseDto> getCostsByTravelId(Long travelId) {
+    @Transactional(readOnly = true)
+    public CostsWithUsersInTravelResponseDto getCostsByTravelId(Long travelId) {
         List<Cost> costs = costRepository.findCostsByTravelId(travelId);
         List<User> usersByTravelId = userRepository.findUsersByTravelId(travelId);
-        Map<Long, String> usersInfo = new HashMap<>();
-        usersByTravelId.forEach(user -> {
-            usersInfo.put(user.getId(), user.getName());
-        });
         List<CostsResponseDto> costsResponseDtos = new ArrayList<>();
 
         costs.forEach(cost -> {
-            Map<Long, String> userInfoPerCost = new HashMap<>();
+            List<Long> userIdsPerCost = new ArrayList<>();
             cost.getUserCosts().forEach(userCost -> {
-                userInfoPerCost.put(userCost.getUser().getId(), usersInfo.get(userCost.getUser().getId()));
+                userIdsPerCost.add(userCost.getUser().getId());
             });
             costsResponseDtos.add(new CostsResponseDto(
                     cost.getId(),
                     cost.getTotalAmount(),
                     cost.getTitle(),
-                    userInfoPerCost,
+                    userIdsPerCost,
                     cost.getPayerId()
             ));
         });
 
-        return costsResponseDtos;
+        return new CostsWithUsersInTravelResponseDto(usersByTravelId, costsResponseDtos);
     }
 }

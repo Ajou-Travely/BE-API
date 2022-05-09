@@ -3,7 +3,7 @@ package com.ajou.travely.service;
 import com.ajou.travely.controller.cost.dto.CostCreateResponseDto;
 import com.ajou.travely.controller.cost.dto.CostResponseDto;
 import com.ajou.travely.controller.cost.dto.UserCostResponseDto;
-import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
+import com.ajou.travely.controller.cost.dto.UserInfoResponseDto;
 import com.ajou.travely.domain.Cost;
 import com.ajou.travely.domain.Travel;
 import com.ajou.travely.domain.UserCost;
@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+
 
 @RequiredArgsConstructor
 @Service
@@ -67,15 +67,15 @@ public class CostService {
 
     @Transactional(readOnly = true)
     public CostResponseDto getCostById(Long costId) {
-        Optional<Cost> costFoundById = Optional.ofNullable(costRepository.getCostById(costId)
-                .orElseThrow(() -> new RuntimeException("해당 지출을 찾을 수 없습니다.")));
-        Cost cost = costFoundById.get();
+        Cost costFoundById = costRepository.getCostById(costId)
+                .orElseThrow(() -> new RuntimeException("해당 지출을 찾을 수 없습니다."));
+
         List<UserCostResponseDto> userCostResponseDtos = new ArrayList<>();
-        cost.getUserCosts().forEach(userCost -> {
+        costFoundById.getUserCosts().forEach(userCost -> {
             userCostResponseDtos.add(new UserCostResponseDto(
                     userCost.getId(),
                     userCost.getAmount(),
-                    new SimpleUserInfoDto(
+                    new UserInfoResponseDto(
                             userCost.getUser().getId(),
                             userCost.getUser().getName()
                     ),
@@ -83,13 +83,13 @@ public class CostService {
             ));
         });
         CostResponseDto costResponseDto = new CostResponseDto(
-                cost.getId(),
-                cost.getTotalAmount(),
-                cost.getContent(),
-                cost.getTitle(),
-                cost.getIsEquallyDivided(),
+                costFoundById.getId(),
+                costFoundById.getTotalAmount(),
+                costFoundById.getContent(),
+                costFoundById.getTitle(),
+                costFoundById.getIsEquallyDivided(),
                 userCostResponseDtos,
-                cost.getPayerId()
+                costFoundById.getPayerId()
         );
 
         return costResponseDto;
