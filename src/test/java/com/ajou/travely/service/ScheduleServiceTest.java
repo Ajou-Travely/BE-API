@@ -1,5 +1,7 @@
 package com.ajou.travely.service;
 
+import com.ajou.travely.controller.scheduler.dto.ScheduleCreateRequestDto;
+import com.ajou.travely.controller.scheduler.dto.ScheduleResponseDto;
 import com.ajou.travely.domain.Place;
 import com.ajou.travely.domain.Schedule;
 import com.ajou.travely.domain.Travel;
@@ -12,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -91,15 +94,16 @@ class ScheduleServiceTest {
     @Test
     @DisplayName("생성한 Schedule을 DB에 삽입할 수 있다.")
     public void testCreateSchedule() {
-        Schedule schedule = scheduleService.createSchedule(
-                travel.getId(),
-                ajouUniv.getId(),
-                LocalDateTime.now(),
-                LocalDateTime.now().plusDays(1)
+        ScheduleResponseDto schedule = scheduleService.createSchedule(
+                new ScheduleCreateRequestDto(travel.getId(),
+                        ajouUniv.getId(),
+                        LocalDateTime.now(),
+                        LocalDateTime.now().plusDays(1),
+                        new ArrayList<>())
+
         );
 
         assertThat(schedule.getPlace().getId(), is(ajouUniv.getId()));
-        assertThat(schedule.getTravel().getId(), is(travel.getId()));
         assertThat(schedule.getId(), is(schedule.getId()));
     }
 

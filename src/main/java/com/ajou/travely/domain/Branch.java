@@ -25,9 +25,7 @@ public class Branch {
     @JoinColumn(name = "schedule_id")
     private Schedule schedule;
 
-    @Builder
     public Branch(@NonNull User user, @NonNull Schedule schedule) {
-        this.id = id;
         this.user = user;
         this.schedule = schedule;
     }

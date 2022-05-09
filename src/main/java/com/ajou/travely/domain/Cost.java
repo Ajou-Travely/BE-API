@@ -1,11 +1,14 @@
 package com.ajou.travely.domain;
 
+import com.ajou.travely.domain.user.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -26,6 +29,9 @@ public class Cost {
     private String content;
 
     private String title;
+
+    @OneToMany(mappedBy = "cost")
+    private List<UserCost> userCosts = new ArrayList<>();
 
     @Builder
     public Cost(@NonNull Travel travel, @NonNull Long totalAmount, String content, @NonNull String title) {
