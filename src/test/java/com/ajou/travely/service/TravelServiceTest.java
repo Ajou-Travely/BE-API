@@ -2,7 +2,6 @@ package com.ajou.travely.service;
 
 import com.ajou.travely.controller.cost.dto.CostCreateResponseDto;
 import com.ajou.travely.controller.travel.dto.CostsResponseDto;
-import com.ajou.travely.controller.travel.dto.CostsWithUsersInTravelResponseDto;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.domain.Travel;
 import com.ajou.travely.domain.user.Type;
@@ -111,9 +110,7 @@ class TravelServiceTest {
                 amountPerUser2,
                 users.get(2).getId()
         );
-        CostsWithUsersInTravelResponseDto costsWithUsersInTravelResponseDto = travelService.getCostsByTravelId(travel.getId());
-        List<User> userList = costsWithUsersInTravelResponseDto.getUsersByTravelId();
-        List<CostsResponseDto> costsByTravelId = costsWithUsersInTravelResponseDto.getCostsResponseDtos();
+        List<CostsResponseDto> costsByTravelId = travelService.getCostsByTravelId(travel.getId());
 
         Assertions.assertThat(costsByTravelId).hasSize(2);
 
@@ -124,11 +121,5 @@ class TravelServiceTest {
         Assertions.assertThat(costsByTravelId.get(1).getTitle()).isEqualTo("SecondTitle");
         Assertions.assertThat(costsByTravelId.get(1).getTotalAmount()).isEqualTo(20000L);
         Assertions.assertThat(costsByTravelId.get(1).getUserIds().stream().toArray()).isEqualTo(Arrays.asList(users.get(2).getId(), users.get(3).getId()).toArray());
-
-        Assertions.assertThat(userList.stream().map(user -> {
-            return Arrays.asList(user.getId(), user.getName());
-        }).toArray()).isEqualTo(users.stream().map(user -> {
-            return Arrays.asList(user.getId(), user.getName());
-        }).toArray());
     }
 }

@@ -3,7 +3,7 @@ package com.ajou.travely.service;
 import com.ajou.travely.controller.cost.dto.CostCreateResponseDto;
 import com.ajou.travely.controller.cost.dto.CostResponseDto;
 import com.ajou.travely.controller.cost.dto.UserCostResponseDto;
-import com.ajou.travely.controller.cost.dto.UserInfoResponseDto;
+import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.domain.Cost;
 import com.ajou.travely.domain.Travel;
 import com.ajou.travely.domain.UserCost;
@@ -75,7 +75,7 @@ public class CostService {
             userCostResponseDtos.add(new UserCostResponseDto(
                     userCost.getId(),
                     userCost.getAmount(),
-                    new UserInfoResponseDto(
+                    new SimpleUserInfoDto(
                             userCost.getUser().getId(),
                             userCost.getUser().getName()
                     ),

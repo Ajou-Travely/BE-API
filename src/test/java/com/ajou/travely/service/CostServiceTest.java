@@ -141,7 +141,7 @@ class CostServiceTest {
             return userCost.getId();
         }).toArray());
         Assertions.assertThat(costById.getUserCostResponseDtos().stream().map(userCostResponseDto -> {
-            return Arrays.asList(userCostResponseDto.getUserInfoResponseDto().getUserId(), userCostResponseDto.getUserInfoResponseDto().getUserName());
+            return Arrays.asList(userCostResponseDto.getSimpleUserInfoDto().getUserId(), userCostResponseDto.getSimpleUserInfoDto().getUserName());
         }).toArray()).isEqualTo(createdCost.getUserCosts().stream().map(userCost -> {
             return Arrays.asList(userCost.getUser().getId(), userCost.getUser().getName());
         }).toArray());

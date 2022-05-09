@@ -1,11 +1,9 @@
 package com.ajou.travely.service;
 
 import com.ajou.travely.controller.travel.dto.CostsResponseDto;
-import com.ajou.travely.controller.travel.dto.CostsWithUsersInTravelResponseDto;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.domain.Cost;
 import com.ajou.travely.domain.Travel;
-import com.ajou.travely.domain.UserCost;
 import com.ajou.travely.domain.UserTravel;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.repository.CostRepository;
@@ -94,25 +92,11 @@ public class TravelService {
     }
 
     @Transactional(readOnly = true)
-    public CostsWithUsersInTravelResponseDto getCostsByTravelId(Long travelId) {
+    public List<CostsResponseDto> getCostsByTravelId(Long travelId) {
         List<Cost> costs = costRepository.findCostsByTravelId(travelId);
         List<User> usersByTravelId = userRepository.findUsersByTravelId(travelId);
         List<CostsResponseDto> costsResponseDtos = new ArrayList<>();
 
-        costs.forEach(cost -> {
-            List<Long> userIdsPerCost = new ArrayList<>();
-            cost.getUserCosts().forEach(userCost -> {
-                userIdsPerCost.add(userCost.getUser().getId());
-            });
-            costsResponseDtos.add(new CostsResponseDto(
-                    cost.getId(),
-                    cost.getTotalAmount(),
-                    cost.getTitle(),
-                    userIdsPerCost,
-                    cost.getPayerId()
-            ));
-        });
-
-        return new CostsWithUsersInTravelResponseDto(usersByTravelId, costsResponseDtos);
+        return costs.stream().map(CostsResponseDto::new).collect(Collectors.toList());
     }
 }

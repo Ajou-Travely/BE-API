@@ -1,9 +1,11 @@
 package com.ajou.travely.controller.travel.dto;
 
+import com.ajou.travely.domain.Cost;
 import com.ajou.travely.domain.UserCost;
 import lombok.Getter;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 public class CostsResponseDto {
@@ -13,11 +15,11 @@ public class CostsResponseDto {
     private List<Long> userIds;
     private Long payerId;
 
-    public CostsResponseDto(Long costId, Long totalAmount, String title, List<Long> userIds, Long payerId) {
-        this.costId = costId;
-        this.totalAmount = totalAmount;
-        this.title = title;
-        this.userIds = userIds;
-        this.payerId = payerId;
+    public CostsResponseDto(Cost entity) {
+        this.costId = entity.getId();
+        this.totalAmount = entity.getTotalAmount();
+        this.title = entity.getTitle();
+        this.userIds = entity.getUserCosts().stream().map(uc -> uc.getUser().getId()).collect(Collectors.toList());
+        this.payerId = entity.getPayerId();
     }
 }
