@@ -1,8 +1,10 @@
 package com.ajou.travely.service;
 
 import com.ajou.travely.controller.travel.dto.SimpleTravelResponseDto;
+import com.ajou.travely.controller.travel.dto.TravelCreateRequestDto;
 import com.ajou.travely.controller.travel.dto.TravelResponseDto;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
+import com.ajou.travely.domain.Schedule;
 import com.ajou.travely.domain.Travel;
 import com.ajou.travely.domain.UserTravel;
 import com.ajou.travely.domain.user.User;
@@ -14,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -27,17 +28,22 @@ public class TravelService {
     private final UserTravelRepository userTravelRepository;
 
     @Transactional
-    public Travel insertTravel(Travel travel) {
-        Optional<User> user = userRepository.findById(travel.getManagerId());
-        if (user.isEmpty()) {
-            throw new RuntimeException("유저 없음 ㅋㅋ");
-        }
-        travelRepository.save(travel);
-        UserTravel userTravel = UserTravel.builder().user(user.get()).travel(travel).build();
+    public Long createTravel(Long userId, TravelCreateRequestDto travelCreateRequestDto) {
+        User user = userRepository
+                .findById(userId)
+                .orElseThrow(() -> new RuntimeException("해당 id의 유저가 존재하지 않습니다."));
+        Travel travel = travelRepository.save(
+                Travel.builder()
+                        .title(travelCreateRequestDto.getTitle())
+                        .startDate(travelCreateRequestDto.getStartDate())
+                        .endDate(travelCreateRequestDto.getEndDate())
+                        .managerId(travelCreateRequestDto.getUserId())
+                        .build());
+        UserTravel userTravel = UserTravel.builder().user(user).travel(travel).build();
         userTravelRepository.save(userTravel);
         travel.addUserTravel(userTravel);
         travelRepository.save(travel);
-        return travel;
+        return travel.getId();
     }
 
     @Transactional
@@ -51,26 +57,32 @@ public class TravelService {
 
     @Transactional
     public void addUserToTravel(Long travelId, Long userId) {
-        Travel travel = getTravelById(travelId);
-        Optional<User> user = userRepository.findById(userId);
-        UserTravel userTravel = UserTravel.builder().user(user.get()).travel(travel).build();
+        Travel travel = travelRepository
+                .findTravelWithUsersById(travelId)
+                .orElseThrow(() -> new RuntimeException("해당 id의 여행이 존재하지 않습니다."));
+        User user = userRepository
+                .findById(userId)
+                .orElseThrow(() -> new RuntimeException("해당 id의 유저가 존재하지 않습니다."));
+        UserTravel userTravel = UserTravel.builder().user(user).travel(travel).build();
         userTravelRepository.save(userTravel);
         travel.addUserTravel(userTravel);
         travelRepository.save(travel);
     }
 
     @Transactional
-    public Travel getTravelById(Long travelId) {
-        Optional<Travel> travel = travelRepository.findById(travelId);
-        if (travel.isEmpty()) {
-            throw new RuntimeException("그런 여행 없슴 ㅋㅋ;");
-        }
-        return travel.get();
+    public TravelResponseDto getTravelById(Long travelId) {
+        Travel travel = travelRepository
+                .findTravelWithUsersById(travelId)
+                .orElseThrow(() -> new RuntimeException("해당 id의 여행이 존재하지 않습니다."));
+        List<Schedule> schedules = travelRepository.findSchedulesByTravelId(travel.getId());
+        return new TravelResponseDto(travel, schedules);
     }
 
     @Transactional
     public List<User> getUsersOfTravel(Long travelId) {
-        return getTravelById(travelId)
+        return travelRepository
+                .findById(travelId)
+                .orElseThrow(() -> new RuntimeException("해당 id의 여행이 존재하지 않습니다."))
                 .getUserTravels()
                 .stream()
                 .map(UserTravel::getUser)
@@ -79,7 +91,9 @@ public class TravelService {
 
     @Transactional
     public List<SimpleUserInfoDto> getSimpleUsersOfTravel(Long travelId) {
-        return getTravelById(travelId)
+        return travelRepository
+                .findById(travelId)
+                .orElseThrow(() -> new RuntimeException("해당 id의 여행이 존재하지 않습니다."))
                 .getUserTravels()
                 .stream()
                 .map(UserTravel::getUser)

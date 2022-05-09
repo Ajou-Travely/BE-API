@@ -7,6 +7,7 @@ import com.ajou.travely.domain.Schedule;
 import com.ajou.travely.domain.Travel;
 import com.ajou.travely.domain.user.Type;
 import com.ajou.travely.domain.user.User;
+import com.ajou.travely.repository.TravelRepository;
 import com.ajou.travely.repository.UserTravelRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,7 @@ class ScheduleServiceTest {
     ScheduleService scheduleService;
 
     @Autowired
-    TravelService travelService;
+    TravelRepository travelRepository;
 
     @Autowired
     PlaceService placeService;
@@ -73,7 +74,7 @@ class ScheduleServiceTest {
                         .email("test@test")
                         .kakaoId(1L)
                         .build());
-        travel = travelService.insertTravel(
+        travel = travelRepository.save(
                 Travel.builder()
                         .managerId(user.getId())
                         .startDate(LocalDate.now())
@@ -86,7 +87,7 @@ class ScheduleServiceTest {
     public void cleanUp() {
         scheduleService.deleteAllSchedules();
         userTravelRepository.deleteAll();
-        travelService.deleteAllTravels();
+        travelRepository.deleteAll();
         userService.deleteAllUsers();
         placeService.deleteAllPlaces();
     }

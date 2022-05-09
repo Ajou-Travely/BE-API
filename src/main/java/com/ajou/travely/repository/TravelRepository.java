@@ -19,10 +19,7 @@ public interface TravelRepository extends JpaRepository<Travel, Long> {
     List<Travel> findAllTravelsWithUser();
 
     @Query("select distinct t from Travel t join fetch t.userTravels ut join fetch ut.user where t.id = :travelId")
-    Optional<Travel> findTravelById(@Param("travelId") Long travelId);
-
-    @Query("select distinct c from Cost c join fetch c.userCosts join c.travel t where t.id = :travelId")
-    List<Cost> findCostsByTravelId(@Param("travelId") Long travelId);
+    Optional<Travel> findTravelWithUsersById(@Param("travelId") Long travelId);
 
     @Query("select distinct s from Schedule s join fetch s.place join fetch s.branches join s.travel t where t.id = :travelId")
     List<Schedule> findSchedulesByTravelId(@Param("travelId") Long travelId);

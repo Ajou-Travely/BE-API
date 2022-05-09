@@ -33,8 +33,6 @@ class CostServiceTest {
     @Autowired
     UserCostRepository userCostRepository;
     @Autowired
-    TravelService travelService;
-    @Autowired
     CostService costService;
 
     @Test
@@ -64,7 +62,7 @@ class CostServiceTest {
                         "114",
                         2L
                 ));
-        Travel travel = travelService.insertTravel(
+        Travel travel = travelRepository.save(
                 Travel.builder()
                         .title("첫 여행")
                         .startDate(LocalDate.now())

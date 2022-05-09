@@ -26,10 +26,11 @@ public class SimpleTravelResponseDto {
         this.endDate = entity.getEndDate();
         this.memo = entity.getMemo();
         this.managerId = entity.getManagerId();
-        this.users = entity.getUserTravels().
-                stream().
-                map(UserTravel::getUser).
-                map(SimpleUserInfoDto::new).
-                collect(Collectors.toList());
+        this.users = entity
+                .getUserTravels()
+                .stream()
+                .map(UserTravel::getUser)
+                .map(SimpleUserInfoDto::new)
+                .collect(Collectors.toList());
     }
 }
