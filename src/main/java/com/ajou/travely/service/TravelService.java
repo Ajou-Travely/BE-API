@@ -1,6 +1,6 @@
 package com.ajou.travely.service;
 
-import com.ajou.travely.controller.travel.dto.CostsResponseDto;
+import com.ajou.travely.controller.travel.dto.SimpleCostResponseDto;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.domain.Cost;
 import com.ajou.travely.domain.Travel;
@@ -92,11 +92,11 @@ public class TravelService {
     }
 
     @Transactional(readOnly = true)
-    public List<CostsResponseDto> getCostsByTravelId(Long travelId) {
+    public List<SimpleCostResponseDto> getCostsByTravelId(Long travelId) {
         List<Cost> costs = costRepository.findCostsByTravelId(travelId);
         List<User> usersByTravelId = userRepository.findUsersByTravelId(travelId);
-        List<CostsResponseDto> costsResponseDtos = new ArrayList<>();
+        List<SimpleCostResponseDto> costsResponseDtos = new ArrayList<>();
 
-        return costs.stream().map(CostsResponseDto::new).collect(Collectors.toList());
+        return costs.stream().map(SimpleCostResponseDto::new).collect(Collectors.toList());
     }
 }

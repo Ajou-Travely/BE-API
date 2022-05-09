@@ -2,7 +2,6 @@ package com.ajou.travely.service;
 
 import com.ajou.travely.controller.cost.dto.CostCreateResponseDto;
 import com.ajou.travely.controller.cost.dto.CostResponseDto;
-import com.ajou.travely.controller.travel.dto.CostsResponseDto;
 import com.ajou.travely.domain.Travel;
 import com.ajou.travely.domain.user.Type;
 import com.ajou.travely.domain.user.User;

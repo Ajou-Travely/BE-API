@@ -8,14 +8,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
-public class CostsResponseDto {
+public class SimpleCostResponseDto {
     private Long costId;
     private Long totalAmount;
     private String title;
     private List<Long> userIds;
     private Long payerId;
 
-    public CostsResponseDto(Cost entity) {
+    public SimpleCostResponseDto(Cost entity) {
         this.costId = entity.getId();
         this.totalAmount = entity.getTotalAmount();
         this.title = entity.getTitle();

@@ -1,7 +1,7 @@
 package com.ajou.travely.service;
 
 import com.ajou.travely.controller.cost.dto.CostCreateResponseDto;
-import com.ajou.travely.controller.travel.dto.CostsResponseDto;
+import com.ajou.travely.controller.travel.dto.SimpleCostResponseDto;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.domain.Travel;
 import com.ajou.travely.domain.user.Type;
@@ -110,7 +110,7 @@ class TravelServiceTest {
                 amountPerUser2,
                 users.get(2).getId()
         );
-        List<CostsResponseDto> costsByTravelId = travelService.getCostsByTravelId(travel.getId());
+        List<SimpleCostResponseDto> costsByTravelId = travelService.getCostsByTravelId(travel.getId());
 
         Assertions.assertThat(costsByTravelId).hasSize(2);
 
