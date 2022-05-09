@@ -3,6 +3,7 @@ package com.ajou.travely.domain;
 import com.ajou.travely.domain.user.User;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -56,12 +57,10 @@ public class Post {
         this.photos.add(photo);
     }
 
-    public void removePhoto(Photo photo) {
-        this.photos.remove(photo);
-    }
-
     @Override
     public String toString() {
-        return new String(this.id.toString());
+        return "id: " + this.id.toString() +
+                "title: " + this.title +
+                "text: " + this.text;
     }
 }

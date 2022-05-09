@@ -1,6 +1,7 @@
 package com.ajou.travely.service;
 
 import com.ajou.travely.controller.post.dto.PostCreateRequestDto;
+import com.ajou.travely.controller.post.dto.PostUpdateRequestDto;
 import com.ajou.travely.domain.Photo;
 import com.ajou.travely.domain.Post;
 import com.ajou.travely.domain.Schedule;
@@ -10,6 +11,7 @@ import com.ajou.travely.repository.PostRepository;
 import com.ajou.travely.repository.ScheduleRepository;
 import com.ajou.travely.repository.UserRepository;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Hibernate;
@@ -49,16 +51,26 @@ public class PostService {
     }
 
     public Post findPostById(Long postId){
-        Post post = postRepository.findById(postId)
+        return postRepository.findById(postId)
             .orElseThrow(() -> new RuntimeException("게시글 없음 ㅋㅋ"));
+    }
+
+    public Post initializePostInfo(Long postId) {
+        Post post = findPostById(postId);
         Hibernate.initialize(post.getPhotos());
         Hibernate.initialize(post.getComments());
         return post;
     }
 
-    public void updatePost(Long postId, String title, String text){
-        Post post = findPostById(postId);
-        post.update(title, text);
+    public void updatePost(Long postId, PostUpdateRequestDto requestDto){
+        Post post = initializePostInfo(postId);
+        post.update(requestDto.getTitle(), requestDto.getText());
+        List<Photo> addedPhotos = requestDto.getAddedPhotoPaths()
+            .stream()
+            .map(photoPath -> new Photo(post, photoPath))
+            .collect(Collectors.toList());
+        photoRepository.saveAll(addedPhotos);
+        photoRepository.deleteAllPhotosByIdInQuery(requestDto.getRemovedPhotoIds());
     }
 
     public void deletePost(Long postId){
