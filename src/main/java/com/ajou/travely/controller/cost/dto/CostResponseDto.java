@@ -1,9 +1,12 @@
 package com.ajou.travely.controller.cost.dto;
 
+import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
+import com.ajou.travely.domain.Cost;
 import com.ajou.travely.domain.UserCost;
 import lombok.Getter;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 public class CostResponseDto {
@@ -15,21 +18,23 @@ public class CostResponseDto {
     private List<UserCostResponseDto> userCostResponseDtos;
     private Long payerId;
 
-    public CostResponseDto(
-            Long costId,
-            Long totalAmount,
-            String content,
-            String title,
-            Boolean isEquallyDivided,
-            List<UserCostResponseDto> userCostResponseDtos,
-            Long payerId
-    ) {
-        this.costId = costId;
-        this.totalAmount = totalAmount;
-        this.content = content;
-        this.title = title;
-        this.isEquallyDivided = isEquallyDivided;
-        this.userCostResponseDtos = userCostResponseDtos;
-        this.payerId = payerId;
+    public CostResponseDto(Cost entity) {
+        this.costId = entity.getId();
+        this.totalAmount = entity.getTotalAmount();
+        this.content = entity.getContent();
+        this.title = entity.getTitle();
+        this.isEquallyDivided = entity.getIsEquallyDivided();
+        this.userCostResponseDtos = entity.getUserCosts().stream().map(userCost -> {
+            return new UserCostResponseDto(
+                    userCost.getId(),
+                    userCost.getAmount(),
+                    new SimpleUserInfoDto(
+                            userCost.getUser().getId(),
+                            userCost.getUser().getName()
+                    ),
+                    userCost.getIsRequested()
+            );
+        }).collect(Collectors.toList());
+        this.payerId = entity.getPayerId();
     }
 }

@@ -70,28 +70,6 @@ public class CostService {
         Cost cost = costRepository.getCostById(costId)
                 .orElseThrow(() -> new RuntimeException("해당 지출을 찾을 수 없습니다."));
 
-        List<UserCostResponseDto> userCostResponseDtos = new ArrayList<>();
-        cost.getUserCosts().forEach(userCost -> {
-            userCostResponseDtos.add(new UserCostResponseDto(
-                    userCost.getId(),
-                    userCost.getAmount(),
-                    new SimpleUserInfoDto(
-                            userCost.getUser().getId(),
-                            userCost.getUser().getName()
-                    ),
-                    userCost.getIsRequested()
-            ));
-        });
-        CostResponseDto costResponseDto = new CostResponseDto(
-                cost.getId(),
-                cost.getTotalAmount(),
-                cost.getContent(),
-                cost.getTitle(),
-                cost.getIsEquallyDivided(),
-                userCostResponseDtos,
-                cost.getPayerId()
-        );
-
-        return costResponseDto;
+        return new CostResponseDto(cost);
     }
 }
