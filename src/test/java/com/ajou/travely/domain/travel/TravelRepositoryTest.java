@@ -65,7 +65,10 @@ public class TravelRepositoryTest {
 
         // when
         assertThatThrownBy(()-> travelRepository.save(travel))
-            .isInstanceOf(ConstraintViolationException.class);
+            .isInstanceOfAny(
+                    ConstraintViolationException.class,     // On DB Reject
+                    NullPointerException.class              // On Builder Reject
+            );
     }
 
 }

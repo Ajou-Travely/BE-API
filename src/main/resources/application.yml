@@ -24,7 +24,6 @@ spring:
   profiles:
     include:
       - "auth"
-    active: default
   jackson:
     serialization.WRITE_DATES_AS_TIMESTAMPS=false
 
