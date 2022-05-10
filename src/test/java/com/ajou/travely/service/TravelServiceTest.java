@@ -16,8 +16,10 @@ import org.springframework.test.context.ActiveProfiles;
 import java.time.LocalDate;
 import java.util.List;
 
-@ActiveProfiles("test")
-@SpringBootTest
+@SpringBootTest(properties = {
+        "auth.kakaoOauth2ClinetId=test",
+        "auth.frontendRedirectUrl=test",
+})
 class TravelServiceTest {
     @Autowired
     TravelRepository travelRepository;

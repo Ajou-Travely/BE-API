@@ -19,13 +19,10 @@ import org.springframework.web.client.RestTemplate;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-@ActiveProfiles("test")
-@SpringBootTest(
-        properties = {
-            "auth.kakaoOauth2ClinetId=test",
-                "auth.frontendRedirectUrl=test",
-        }
-)
+@SpringBootTest(properties = {
+        "auth.kakaoOauth2ClinetId=test",
+        "auth.frontendRedirectUrl=test",
+})
 class Oauth2ServiceTest {
     @Value("${auth.kakaoOauth2ClinetId}")
     public String kakaoOauth2ClientId;

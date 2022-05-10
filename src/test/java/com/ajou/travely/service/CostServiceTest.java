@@ -23,8 +23,10 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ActiveProfiles("test")
-@SpringBootTest
+@SpringBootTest(properties = {
+        "auth.kakaoOauth2ClinetId=test",
+        "auth.frontendRedirectUrl=test",
+})
 class CostServiceTest {
     @Autowired
     TravelRepository travelRepository;

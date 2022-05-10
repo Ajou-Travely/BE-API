@@ -19,8 +19,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 
-@ActiveProfiles("test")
-@SpringBootTest
+@SpringBootTest(properties = {
+        "auth.kakaoOauth2ClinetId=test",
+        "auth.frontendRedirectUrl=test",
+})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ScheduleServiceTest {
     @Autowired
