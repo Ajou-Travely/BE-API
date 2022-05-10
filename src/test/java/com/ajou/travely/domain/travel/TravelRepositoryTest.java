@@ -12,8 +12,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
-@SpringBootTest
+@SpringBootTest(properties = {
+        "auth.kakaoOauth2ClinetId=test",
+        "auth.frontendRedirectUrl=test",
+})
 public class TravelRepositoryTest {
 
     @Autowired
@@ -61,7 +65,10 @@ public class TravelRepositoryTest {
 
         // when
         assertThatThrownBy(()-> travelRepository.save(travel))
-            .isInstanceOf(ConstraintViolationException.class);
+            .isInstanceOfAny(
+                    ConstraintViolationException.class,     // On DB Reject
+                    NullPointerException.class              // On Builder Reject
+            );
     }
 
 }
