@@ -20,16 +20,23 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
+@Transactional
 public class PostServiceTest {
     @Autowired
     TravelRepository travelRepository;
@@ -45,6 +52,9 @@ public class PostServiceTest {
 
     @Autowired
     PlaceRepository placeRepository;
+
+    @Autowired
+    EntityManagerFactory emf;
 
     public Travel travel;
     public Place place;
@@ -84,6 +94,7 @@ public class PostServiceTest {
             .build());
     }
 
+    @Rollback
     @DisplayName("Post 생성")
     @Test
     void testCreatePost() {
@@ -105,6 +116,8 @@ public class PostServiceTest {
         assertThat(result.getPhotoInfos()).hasSize(2);
     }
 
+
+    @Rollback
     @DisplayName("Post 수정")
     @Test
     void testUpdatePost() {
@@ -115,6 +128,7 @@ public class PostServiceTest {
         PostCreateRequestDto requestDto = new PostCreateRequestDto(schedule.getId(), title, text, photoPaths);
         Long postId = postService.createPost(user.getId(), requestDto);
         Post post = postService.initializePostInfo(postId);
+        post.getPhotos().forEach(photo -> System.out.println(">>>>>>>>>>>>>>>>>>>>" + photo.getPath()));
 
         // when
         String updateTitle = "title2";
@@ -124,7 +138,15 @@ public class PostServiceTest {
         PostUpdateRequestDto updateRequestDto =
             new PostUpdateRequestDto(updateTitle, updateText, addedPhotoPaths, removedPhotoIds);
         postService.updatePost(postId, updateRequestDto);
+
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction transaction = em.getTransaction();
+        transaction.begin();
+        transaction.commit();
+        em.clear();
+
         Post result = postService.initializePostInfo(postId);
+        result.getPhotos().forEach(photo -> System.out.println(">>>>>>>>>>>>>>>>>>>>" + photo.getPath()));
 
         // then
         assertThat(result.getText()).isEqualTo(updateText);

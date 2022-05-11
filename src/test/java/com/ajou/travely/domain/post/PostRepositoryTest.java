@@ -13,15 +13,18 @@ import com.ajou.travely.repository.TravelRepository;
 import com.ajou.travely.repository.UserRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import javax.transaction.Transactional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
+@Transactional
 public class PostRepositoryTest {
 
     @Autowired
@@ -76,15 +79,8 @@ public class PostRepositoryTest {
             .build());
     }
 
-    @AfterEach
-    public void cleanUp() {
-        postRepository.deleteAll();
-        scheduleRepository.deleteAll();
-        placeRepository.deleteAll();
-        userRepository.deleteAll();
-        travelRepository.deleteAll();
-    }
 
+    @Rollback
     @Test
     void 포스트_생성_성공() {
         // given
@@ -103,6 +99,7 @@ public class PostRepositoryTest {
         assertThat(result.toString()).isEqualTo(post.toString());
     }
 
+    @Rollback
     @Test
     void 포스트_내용_수정() {
         // given
