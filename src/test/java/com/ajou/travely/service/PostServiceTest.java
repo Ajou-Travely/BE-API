@@ -1,6 +1,7 @@
 package com.ajou.travely.service;
 
 import com.ajou.travely.controller.post.dto.PostCreateRequestDto;
+import com.ajou.travely.controller.post.dto.PostResponseDto;
 import com.ajou.travely.controller.post.dto.PostUpdateRequestDto;
 import com.ajou.travely.domain.Photo;
 import com.ajou.travely.domain.Place;
@@ -93,15 +94,15 @@ public class PostServiceTest {
         PostCreateRequestDto requestDto = new PostCreateRequestDto(schedule.getId(), title, text, photoPaths);
 
         // when
-        Post result = postService.findPostById(postService.createPost(user.getId(), requestDto));
+        PostResponseDto result = postService.getPost(postService.createPost(user.getId(), requestDto));
 
         // then
-        assertThat(result.getId()).isNotNull();
-        assertThat(result.getUser().getId()).isEqualTo(user.getId());
-        assertThat(result.getSchedule().getId()).isEqualTo(schedule.getId());
+        assertThat(result.getPostId()).isNotNull();
+        assertThat(result.getUserInfo().getUserId()).isEqualTo(user.getId());
+        assertThat(result.getScheduleId()).isEqualTo(schedule.getId());
         assertThat(result.getText()).isEqualTo(text);
         assertThat(result.getTitle()).isEqualTo(title);
-        assertThat(result.getPhotos()).hasSize(2);
+        assertThat(result.getPhotoInfos()).hasSize(2);
     }
 
     @DisplayName("Post 수정")

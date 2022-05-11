@@ -70,7 +70,7 @@ public class PostService {
         postRepository.deleteById(postId);
     }
 
-    public Post findPostById(Long postId) {
+    private Post findPostById(Long postId) {
         return postRepository.findById(postId)
             .orElseThrow(() -> new RuntimeException("게시글 없음 ㅋㅋ"));
     }
@@ -82,12 +82,12 @@ public class PostService {
         return post;
     }
 
-    public User findUserById(Long userId) {
+    private User findUserById(Long userId) {
         return userRepository.findById(userId)
             .orElseThrow(() -> new RuntimeException("유저 없음 ㅋㅋ"));
     }
 
-    public Schedule findScheduleById(Long scheduleId) {
+    private Schedule findScheduleById(Long scheduleId) {
         return scheduleRepository.findById(scheduleId)
             .orElseThrow(() -> new RuntimeException("스케줄 없음 ㅋㅋ"));
     }
