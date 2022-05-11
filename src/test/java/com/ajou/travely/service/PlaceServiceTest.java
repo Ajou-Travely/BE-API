@@ -1,17 +1,24 @@
 package com.ajou.travely.service;
 
 import com.ajou.travely.domain.Place;
+import javax.transaction.Transactional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-@SpringBootTest
+@SpringBootTest(properties = {
+        "auth.kakaoOauth2ClinetId=test",
+        "auth.frontendRedirectUrl=test",
+})
+@Transactional
 class PlaceServiceTest {
     @Autowired
     PlaceService placeService;
@@ -49,6 +56,7 @@ class PlaceServiceTest {
 
     @Test
     @DisplayName("생성한 Place를 DB에 삽입할 수 있다.")
+    @Rollback
     public void insertTest() {
         List<Place> places = placeService.getAllPlaces();
 
@@ -57,6 +65,7 @@ class PlaceServiceTest {
 
     @Test
     @DisplayName("생성한 place를 id로 검색할 수 있다.")
+    @Rollback
     public void findByIDTest() {
         Place findAjou = placeService.findPlaceById(ajouUniv.getId());
         Place findInha = placeService.findPlaceById(inhaUniv.getId());
@@ -67,6 +76,7 @@ class PlaceServiceTest {
 
     @Test
     @DisplayName("생성한 place를 이름으로 검색할 수 있다.")
+    @Rollback
     public void findByNameTest() {
         Place ajoudon = Place.builder()
                 .x(2.6)

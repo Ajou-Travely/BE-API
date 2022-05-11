@@ -9,6 +9,7 @@ import com.ajou.travely.repository.CostRepository;
 import com.ajou.travely.repository.TravelRepository;
 import com.ajou.travely.repository.UserCostRepository;
 import com.ajou.travely.repository.UserRepository;
+import javax.transaction.Transactional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,12 +18,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 import java.util.*;
 
-@SpringBootTest
+
+@SpringBootTest(properties = {
+        "auth.kakaoOauth2ClinetId=test",
+        "auth.frontendRedirectUrl=test",
+})
 @Transactional
 class CostServiceTest {
     @Autowired
