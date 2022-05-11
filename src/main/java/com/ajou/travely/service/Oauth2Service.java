@@ -54,9 +54,8 @@ public class Oauth2Service {
             ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
             System.out.println("response.getBody() = " + response.getBody());
             System.out.println("response.getHeaders() = " + response.getHeaders());
-            AuthorizationKakao authorization = objectMapper.readValue(response.getBody(), AuthorizationKakao.class);
 
-            return authorization;
+            return objectMapper.readValue(response.getBody(), AuthorizationKakao.class);
         } catch (RestClientException | JsonProcessingException ex) {
             ex.printStackTrace();
             throw new RestClientException("error");
@@ -91,7 +90,7 @@ public class Oauth2Service {
     public JSONObject setSessionOrRedirectToSignUp(Long kakaoId) {
         Optional<User> user = userRepository.findByKakaoId(kakaoId);
         JSONObject result = new JSONObject();
-        if(!user.isPresent()) {
+        if(user.isEmpty()) {
             result.put("status", 301);
             result.put("kakaoId", kakaoId);
             return result;
@@ -106,8 +105,7 @@ public class Oauth2Service {
     public JSONObject stringToJson(String userInfo) throws ParseException {
         JSONParser jsonParser = new JSONParser();
         Object object = jsonParser.parse(userInfo);
-        JSONObject jsonObject = (JSONObject) object;
-        return jsonObject;
+        return (JSONObject) object;
     }
 
 }

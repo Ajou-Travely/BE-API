@@ -9,9 +9,12 @@ import com.ajou.travely.domain.user.Type;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.repository.TravelRepository;
 import com.ajou.travely.repository.UserTravelRepository;
+import javax.transaction.Transactional;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -22,8 +25,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 
-@SpringBootTest
+@SpringBootTest(properties = {
+        "auth.kakaoOauth2ClinetId=test",
+        "auth.frontendRedirectUrl=test",
+})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Transactional
 class ScheduleServiceTest {
     @Autowired
     ScheduleService scheduleService;
@@ -94,6 +101,7 @@ class ScheduleServiceTest {
 
     @Test
     @DisplayName("생성한 Schedule을 DB에 삽입할 수 있다.")
+    @Rollback
     public void testCreateSchedule() {
         ScheduleResponseDto schedule = scheduleService.createSchedule(
                 new ScheduleCreateRequestDto(travel.getId(),
@@ -110,6 +118,7 @@ class ScheduleServiceTest {
 
     @Test
     @DisplayName("여행의 schedule들을 불러올 수 있다.")
+    @Rollback
     public void testGetSchedulesByTravel() {
         Schedule schedule1 = scheduleService.insertSchedule(
                 Schedule.builder()
@@ -136,6 +145,7 @@ class ScheduleServiceTest {
 
     @Test
     @DisplayName("여행의 schedule들을 place와 함께 불러올 수 있다.")
+    @Rollback
     public void testGetSchedulesWithPlaceByTravel() {
         Schedule schedule1 = scheduleService.insertSchedule(
                 Schedule.builder()

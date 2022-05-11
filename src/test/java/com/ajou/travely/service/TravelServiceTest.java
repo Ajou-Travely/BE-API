@@ -11,7 +11,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -19,7 +21,11 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 //TODO TravelService 가 수정됨에 따라 대대적으로 수정 밑 테스트 케이스 추가 필요
-@SpringBootTest
+@SpringBootTest(properties = {
+        "auth.kakaoOauth2ClinetId=test",
+        "auth.frontendRedirectUrl=test",
+})
+@Transactional
 class TravelServiceTest {
     @Autowired
     TravelRepository travelRepository;
@@ -32,6 +38,7 @@ class TravelServiceTest {
 
     @Test
     @DisplayName("여행 객체를 만들 수 있다.")
+    @Rollback
     public void testCreateTravel() {
         User user = userRepository.save(
                 new User(
@@ -58,6 +65,7 @@ class TravelServiceTest {
 
     @Test
     @DisplayName("여행에 유저를 초대할 수 있다.")
+    @Rollback
     public void testAddUserToTravel() {
         User user = userRepository.save(
                 new User(
