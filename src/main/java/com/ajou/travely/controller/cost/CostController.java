@@ -1,13 +1,11 @@
 package com.ajou.travely.controller.cost;
 
 import com.ajou.travely.controller.cost.dto.CostCreateRequestDto;
+import com.ajou.travely.controller.cost.dto.CostCreateResponseDto;
 import com.ajou.travely.controller.cost.dto.CostResponseDto;
-import com.ajou.travely.domain.Cost;
 import com.ajou.travely.service.CostService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -17,8 +15,8 @@ public class CostController {
     private final CostService costService;
 
     @PostMapping("/api/v1/costs")
-    public CostResponseDto createCost(@Valid @RequestBody CostCreateRequestDto costCreateRequestDto) {
-        CostResponseDto costResponseDto = costService.createCost(
+    public CostCreateResponseDto createCost(@Valid @RequestBody CostCreateRequestDto costCreateRequestDto) {
+        CostCreateResponseDto costCreateResponseDto = costService.createCost(
                 costCreateRequestDto.getTotalAmount(),
                 costCreateRequestDto.getTravelId(),
                 costCreateRequestDto.getTitle(),
@@ -27,6 +25,11 @@ public class CostController {
                 costCreateRequestDto.getAmountsPerUser(),
                 costCreateRequestDto.getPayerId()
         );
-        return costResponseDto;
+        return costCreateResponseDto;
+    }
+
+    @GetMapping("/api/v1/costs/{costId}")
+    public CostResponseDto getCostById(@PathVariable Long costId) {
+        return this.costService.getCostById(costId);
     }
 }

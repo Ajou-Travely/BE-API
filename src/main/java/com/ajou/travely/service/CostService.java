@@ -1,6 +1,9 @@
 package com.ajou.travely.service;
 
+import com.ajou.travely.controller.cost.dto.CostCreateResponseDto;
 import com.ajou.travely.controller.cost.dto.CostResponseDto;
+import com.ajou.travely.controller.cost.dto.UserCostResponseDto;
+import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.domain.Cost;
 import com.ajou.travely.domain.Travel;
 import com.ajou.travely.domain.UserCost;
@@ -13,8 +16,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+
 
 @RequiredArgsConstructor
 @Service
@@ -28,7 +33,7 @@ public class CostService {
     private final TravelRepository travelRepository;
 
     @Transactional
-    public CostResponseDto createCost(Long totalAmount, Long travelId, String title, String content, Boolean isEquallyDivided, Map<Long, Long> amountsPerUser, Long payerId) {
+    public CostCreateResponseDto createCost(Long totalAmount, Long travelId, String title, String content, Boolean isEquallyDivided, Map<Long, Long> amountsPerUser, Long payerId) {
         // 여행 객체 생성
         Travel travel = travelRepository.findById(travelId)
                 .orElseThrow(() -> new RuntimeException("여행 없음 ㅋㅋ"));
@@ -57,6 +62,14 @@ public class CostService {
         }
         costRepository.save(cost);
 
-        return new CostResponseDto(cost, payer);
+        return new CostCreateResponseDto(cost, payer);
+    }
+
+    @Transactional(readOnly = true)
+    public CostResponseDto getCostById(Long costId) {
+        Cost cost = costRepository.getCostById(costId)
+                .orElseThrow(() -> new RuntimeException("해당 지출을 찾을 수 없습니다."));
+
+        return new CostResponseDto(cost);
     }
 }

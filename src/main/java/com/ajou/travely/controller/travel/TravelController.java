@@ -1,9 +1,8 @@
 package com.ajou.travely.controller.travel;
 
+import com.ajou.travely.controller.travel.dto.SimpleCostResponseDto;
 import com.ajou.travely.controller.travel.dto.SimpleTravelResponseDto;
 import com.ajou.travely.controller.travel.dto.TravelCreateRequestDto;
-import com.ajou.travely.controller.travel.dto.TravelResponseDto;
-import com.ajou.travely.domain.Travel;
 import com.ajou.travely.service.TravelService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -34,5 +33,10 @@ public class TravelController {
     public ResponseEntity addUserToTravel(@PathVariable Long travelId, @PathVariable Long userId) {
         travelService.addUserToTravel(travelId, userId);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/api/v1/travels/{travelId}/costs")
+    public List<SimpleCostResponseDto> getCostsByTravelId(@PathVariable Long travelId) {
+        return travelService.getCostsByTravelId(travelId);
     }
 }
