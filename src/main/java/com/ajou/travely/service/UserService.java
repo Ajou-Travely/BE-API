@@ -30,4 +30,8 @@ public class UserService {
         return userRepository.findById(userId).orElseThrow(() ->
             new RuntimeException("유저 없음 ㅋㅋ"));
     }
+
+    public void deleteAllUsers() {
+        userRepository.deleteAll();
+    }
 }

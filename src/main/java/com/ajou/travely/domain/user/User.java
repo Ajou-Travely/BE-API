@@ -9,10 +9,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import javax.persistence.Table;
 import lombok.*;
 
 @Getter
 @NoArgsConstructor
+@Table(name = "users")
 @Entity
 public class User {
     @Id
@@ -25,7 +27,7 @@ public class User {
     @NonNull
     private Type type;
 
-    @Column(length = 400)
+    @Column(length = 400, unique = true)
     @NonNull
     private String email;
 

@@ -4,6 +4,7 @@ import com.ajou.travely.domain.user.Type;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import javax.transaction.Transactional;
 import org.json.simple.JSONObject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,17 +14,18 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.RestTemplate;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(
-        properties = {
-            "auth.kakaoOauth2ClinetId=test",
-                "auth.frontendRedirectUrl=test",
-        }
-)
+@SpringBootTest(properties = {
+        "auth.kakaoOauth2ClinetId=test",
+        "auth.frontendRedirectUrl=test",
+})
+@Transactional
 class Oauth2ServiceTest {
     @Value("${auth.kakaoOauth2ClinetId}")
     public String kakaoOauth2ClientId;
@@ -36,6 +38,7 @@ class Oauth2ServiceTest {
 
     @Test
     @DisplayName("카카오 유저 아이디를 통해 유저를 찾고 회원가입 여부 반환")
+    @Rollback
     void testWhetherUserExists() {
         Long kakaoId = 123456789L;
         User user = User.builder()
@@ -49,11 +52,15 @@ class Oauth2ServiceTest {
         userRepository.save(user);
 
         JSONObject s1 = oauth2Service.setSessionOrRedirectToSignUp(kakaoId);
-        Long kakaoIdInAuthenticationDetail = (Long) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        User kakaoIdInAuthenticationDetail = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
         JSONObject s2 = oauth2Service.setSessionOrRedirectToSignUp(123L);
 
+        System.out.println("SecurityContextHolder.getContext().getAuthentication().getDetails() = " + SecurityContextHolder.getContext().getAuthentication().getDetails());
+        SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().forEach(grantedAuthority -> {
+            System.out.println("grantedAuthority.getAuthority().toString() = " + grantedAuthority.getAuthority().toString());
+        });
         assertThat(s1.get("status")).isEqualTo(200);
         assertThat(s2.get("status")).isEqualTo(301);
-        assertThat(kakaoIdInAuthenticationDetail).isEqualTo(kakaoId);
+        assertThat(kakaoIdInAuthenticationDetail.getKakaoId()).isEqualTo(kakaoId);
     }
 }

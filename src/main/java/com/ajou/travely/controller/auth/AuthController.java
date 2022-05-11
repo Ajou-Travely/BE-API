@@ -17,12 +17,12 @@ import java.util.Optional;
 public class AuthController {
     private final AuthService authService;
 
-    @GetMapping("/oauth2/authorization/kakao")
+    @GetMapping("/api/v1/oauth2/authorization/kakao")
     public JSONObject login(@RequestParam("code") String code) {
         return authService.kakaoAuthentication(code);
     }
 
-    @GetMapping("/isLogin")
+    @GetMapping("/api/v1/isLogin")
     public Boolean isLogin(@RequestHeader("Cookie") Optional<Object> header) {
         if (header.isPresent()) {
             return true;

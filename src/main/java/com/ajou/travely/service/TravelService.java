@@ -1,11 +1,12 @@
 package com.ajou.travely.service;
 
-import com.ajou.travely.controller.travel.dto.TravelCreateRequestDto;
-import com.ajou.travely.controller.travel.dto.TravelResponseDto;
+import com.ajou.travely.controller.travel.dto.SimpleCostResponseDto;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
+import com.ajou.travely.domain.Cost;
 import com.ajou.travely.domain.Travel;
 import com.ajou.travely.domain.UserTravel;
 import com.ajou.travely.domain.user.User;
+import com.ajou.travely.repository.CostRepository;
 import com.ajou.travely.repository.TravelRepository;
 import com.ajou.travely.repository.UserRepository;
 import com.ajou.travely.repository.UserTravelRepository;
@@ -13,8 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -25,6 +25,8 @@ public class TravelService {
     private final UserRepository userRepository;
 
     private final UserTravelRepository userTravelRepository;
+
+    private final CostRepository costRepository;
 
     @Transactional
     public Travel insertTravel(Travel travel) {
@@ -82,5 +84,19 @@ public class TravelService {
                 .map(UserTravel::getUser)
                 .map(SimpleUserInfoDto::new)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void deleteAllTravels() {
+        travelRepository.deleteAll();
+    }
+
+    @Transactional(readOnly = true)
+    public List<SimpleCostResponseDto> getCostsByTravelId(Long travelId) {
+        List<Cost> costs = costRepository.findCostsByTravelId(travelId);
+        List<User> usersByTravelId = userRepository.findUsersByTravelId(travelId);
+        List<SimpleCostResponseDto> costsResponseDtos = new ArrayList<>();
+
+        return costs.stream().map(SimpleCostResponseDto::new).collect(Collectors.toList());
     }
 }
