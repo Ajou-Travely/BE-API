@@ -44,7 +44,6 @@ public class PostService {
         requestDto.getPhotoPaths()
             .forEach(photoPath ->{
                     Photo photo = new Photo(post, photoPath);
-                    post.addPhoto(photoRepository.save(photo));
                 }
             );
 
@@ -63,8 +62,10 @@ public class PostService {
             .stream()
             .map(photoPath -> new Photo(post, photoPath))
             .collect(Collectors.toList());
+        post.getPhotos()
+            .removeAll(photoRepository.findPhotosByIdsInQuery(requestDto.getRemovedPhotoIds()));
         photoRepository.saveAll(addedPhotos);
-        photoRepository.deleteAllPhotosByIdInQuery(requestDto.getRemovedPhotoIds());
+//        photoRepository.deleteAllPhotosByIdInQuery(requestDto.getRemovedPhotoIds());
     }
 
     public void deletePost(Long postId){

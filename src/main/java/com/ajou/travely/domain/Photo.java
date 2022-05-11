@@ -26,5 +26,6 @@ public class Photo {
     public Photo(@NonNull Post post, @NonNull String path) {
         this.post = post;
         this.path = path;
+        post.getPhotos().add(this);
     }
 }

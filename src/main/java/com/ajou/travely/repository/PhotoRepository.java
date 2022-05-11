@@ -14,4 +14,9 @@ public interface PhotoRepository extends JpaRepository<Photo, Long> {
     @Query("delete from Photo p where p.id in :ids")
     void deleteAllPhotosByIdInQuery(@Param("ids") List<Long> ids);
 
+    @Transactional
+    @Modifying
+    @Query("select p from Photo p where p.id in :ids")
+    List<Photo> findPhotosByIdsInQuery(@Param("ids") List<Long> ids);
+
 }
