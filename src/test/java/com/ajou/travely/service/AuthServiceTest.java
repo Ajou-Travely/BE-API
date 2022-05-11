@@ -3,12 +3,14 @@ package com.ajou.travely.service;
 import com.ajou.travely.domain.user.Type;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.repository.UserRepository;
+import javax.transaction.Transactional;
 import org.json.simple.JSONObject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -17,6 +19,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
         "auth.kakaoOauth2ClinetId=test",
         "auth.frontendRedirectUrl=test",
 })
+@Transactional
 class AuthServiceTest {
     @Value("${auth.kakaoOauth2ClinetId}")
     public String kakaoOauth2ClientId;
@@ -31,6 +34,7 @@ class AuthServiceTest {
 
     @Test
     @DisplayName("Security Context에서 사용자 id 가져오기")
+    @Rollback
     void getUserId() {
         Long kakaoId = 123456789L;
         User user = User.builder()

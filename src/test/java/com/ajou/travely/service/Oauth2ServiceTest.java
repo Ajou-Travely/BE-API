@@ -4,6 +4,7 @@ import com.ajou.travely.domain.user.Type;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import javax.transaction.Transactional;
 import org.json.simple.JSONObject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.RestTemplate;
 
@@ -23,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "auth.kakaoOauth2ClinetId=test",
         "auth.frontendRedirectUrl=test",
 })
+@Transactional
 class Oauth2ServiceTest {
     @Value("${auth.kakaoOauth2ClinetId}")
     public String kakaoOauth2ClientId;
@@ -35,6 +38,7 @@ class Oauth2ServiceTest {
 
     @Test
     @DisplayName("카카오 유저 아이디를 통해 유저를 찾고 회원가입 여부 반환")
+    @Rollback
     void testWhetherUserExists() {
         Long kakaoId = 123456789L;
         User user = User.builder()

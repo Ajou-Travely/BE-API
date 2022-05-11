@@ -6,11 +6,13 @@ import com.ajou.travely.domain.user.Type;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.repository.TravelRepository;
 import com.ajou.travely.repository.UserRepository;
+import javax.transaction.Transactional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
@@ -20,6 +22,7 @@ import java.util.List;
         "auth.kakaoOauth2ClinetId=test",
         "auth.frontendRedirectUrl=test",
 })
+@Transactional
 class TravelServiceTest {
     @Autowired
     TravelRepository travelRepository;
@@ -32,6 +35,7 @@ class TravelServiceTest {
 
     @Test
     @DisplayName("여행 객체를 만들 수 있다.")
+    @Rollback
     public void testCreateTravel() {
         User user = userRepository.save(new User(Type.USER, "sophoca@ajou.ac.kr", "홍성빈", "112", 0L));
         Travel travel = travelService.insertTravel(Travel.builder().title("첫 여행").startDate(LocalDate.now()).endDate(LocalDate.now()).managerId(user.getId()).build());
@@ -41,6 +45,7 @@ class TravelServiceTest {
 
     @Test
     @DisplayName("여행에 유저를 초대할 수 있다.")
+    @Rollback
     public void testAddUserToTravel() {
         User user = userRepository.save(new User(Type.USER, "sophoca1@ajou.ac.kr", "홍성빈", "112", 0L));
         Travel travel = travelService.insertTravel(Travel.builder().title("첫 여행").startDate(LocalDate.now()).endDate(LocalDate.now()).managerId(user.getId()).build());
