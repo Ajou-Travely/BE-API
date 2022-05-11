@@ -4,6 +4,7 @@ import com.ajou.travely.domain.user.User;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -48,7 +49,7 @@ public class Post {
         this.title = title;
     }
 
-    public void update(String title, String text) {
+    public void update(@NotBlank String title,@NonNull String text) {
         this.title = title;
         this.text = text;
     }

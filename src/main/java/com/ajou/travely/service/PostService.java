@@ -13,10 +13,10 @@ import com.ajou.travely.repository.ScheduleRepository;
 import com.ajou.travely.repository.UserRepository;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Transactional
@@ -51,6 +51,7 @@ public class PostService {
         return postRepository.save(post).getId();
     }
 
+    @Transactional(readOnly = true)
     public PostResponseDto getPost(Long postId) {
         return new PostResponseDto(initializePostInfo(postId));
     }
@@ -75,6 +76,7 @@ public class PostService {
             .orElseThrow(() -> new RuntimeException("게시글 없음 ㅋㅋ"));
     }
 
+    @Transactional(readOnly = true)
     public Post initializePostInfo(Long postId) {
         Post post = findPostById(postId);
         Hibernate.initialize(post.getPhotos());
