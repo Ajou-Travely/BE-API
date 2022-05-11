@@ -23,7 +23,10 @@ import org.springframework.test.annotation.Rollback;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
+@SpringBootTest(properties = {
+    "auth.kakaoOauth2ClinetId=test",
+    "auth.frontendRedirectUrl=test",
+})
 @Transactional
 public class PostRepositoryTest {
 

@@ -35,7 +35,10 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@SpringBootTest
+@SpringBootTest(properties = {
+    "auth.kakaoOauth2ClinetId=test",
+    "auth.frontendRedirectUrl=test",
+})
 @Transactional
 public class PostServiceTest {
     @Autowired
