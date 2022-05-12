@@ -3,27 +3,23 @@ package com.ajou.travely.service;
 import com.ajou.travely.controller.scheduler.dto.ScheduleCreateRequestDto;
 import com.ajou.travely.controller.scheduler.dto.ScheduleResponseDto;
 import com.ajou.travely.domain.Place;
-import com.ajou.travely.domain.Schedule;
 import com.ajou.travely.domain.Travel;
 import com.ajou.travely.domain.user.Type;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.repository.TravelRepository;
 import com.ajou.travely.repository.UserTravelRepository;
-import javax.transaction.Transactional;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.ActiveProfiles;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(properties = {
         "auth.kakaoOauth2ClinetId=test",
@@ -46,6 +42,9 @@ class ScheduleServiceTest {
 
     @Autowired
     UserTravelRepository userTravelRepository;
+
+    @Autowired
+    TravelService travelService;
 
     Place ajouUniv;
     Place inhaUniv;
@@ -76,12 +75,12 @@ class ScheduleServiceTest {
         user = userService.insertUser(
                 User.builder()
                         .name("test")
-                        .phoneNumber("119")
+                        .phoneNumber("111")
                         .type(Type.USER)
                         .email("test@test")
-                        .kakaoId(1L)
+                        .kakaoId(0L)
                         .build());
-        travel = travelRepository.save(
+        travel = travelService.insertTravel(
                 Travel.builder()
                         .managerId(user.getId())
                         .startDate(LocalDate.now())
@@ -90,82 +89,81 @@ class ScheduleServiceTest {
                         .build());
     }
 
-    @AfterEach
-    public void cleanUp() {
-        scheduleService.deleteAllSchedules();
-        userTravelRepository.deleteAll();
-        travelRepository.deleteAll();
-        userService.deleteAllUsers();
-        placeService.deleteAllPlaces();
-    }
-
     @Test
-    @DisplayName("생성한 Schedule을 DB에 삽입할 수 있다.")
+    @DisplayName("Schedule을 생성할 수 있다.")
     @Rollback
     public void testCreateSchedule() {
+        User user1 = userService.insertUser(
+                User.builder()
+                        .type(Type.USER)
+                        .email("sophoca@ajou.ac.kr")
+                        .name("홍성빈")
+                        .phoneNumber("112")
+                        .kakaoId(1L)
+                        .build()
+        );
+        User user2 = userService.insertUser(
+                User.builder()
+                        .type(Type.USER)
+                        .email("errander@ajou.ac.kr")
+                        .name("이호용")
+                        .phoneNumber("119")
+                        .kakaoId(2L)
+                        .build()
+        );
+        // TODO 해당 부분 에러 발생. TravelService에서 수정 필요
+//        travelService.addUserToTravel(travel.getId(), user1.getId());
+//        travelService.addUserToTravel(travel.getId(), user2.getId());
         ScheduleResponseDto schedule = scheduleService.createSchedule(
                 new ScheduleCreateRequestDto(travel.getId(),
                         ajouUniv.getId(),
                         LocalDateTime.now(),
                         LocalDateTime.now().plusDays(1),
-                        new ArrayList<>())
-
+                        List.of(new Long[]{user.getId(), user1.getId(), user2.getId()})
+                )
         );
-
-        assertThat(schedule.getPlace().getId(), is(ajouUniv.getId()));
-        assertThat(schedule.getId(), is(schedule.getId()));
+        assertThat(schedule.getPlace().getPlaceId()).isEqualTo(ajouUniv.getId());
+        assertThat(schedule.getUsers()).hasSize(3);
     }
 
     @Test
-    @DisplayName("여행의 schedule들을 불러올 수 있다.")
+    @DisplayName("Schedule의 상세 정보를 뽑아올 수 있다.")
     @Rollback
-    public void testGetSchedulesByTravel() {
-        Schedule schedule1 = scheduleService.insertSchedule(
-                Schedule.builder()
-                        .travel(travel)
-                        .place(ajouUniv)
-                        .startTime(LocalDateTime.now())
-                        .endTime(LocalDateTime.now().plusDays(1))
-                        .build());
-        Schedule schedule2 = scheduleService.insertSchedule(
-                Schedule.builder()
-                        .travel(travel)
-                        .place(inhaUniv)
-                        .startTime(LocalDateTime.now().plusDays(1))
-                        .endTime(LocalDateTime.now().plusDays(2))
-                        .build());
-
-        List<Schedule> schedules = scheduleService.getSchedulesByTravelId(travel.getId());
-
-//        schedules.forEach(s -> System.out.println(s.getPlace().getPlaceName()));
-//        Lazy 에러 발생
-
-        assertThat(schedules, hasSize(2));
+    public void testFindSchedule() {
+        User user1 = userService.insertUser(
+                User.builder()
+                        .type(Type.USER)
+                        .email("sophoca@ajou.ac.kr")
+                        .name("홍성빈")
+                        .phoneNumber("112")
+                        .kakaoId(1L)
+                        .build()
+        );
+        User user2 = userService.insertUser(
+                User.builder()
+                        .type(Type.USER)
+                        .email("errander@ajou.ac.kr")
+                        .name("이호용")
+                        .phoneNumber("119")
+                        .kakaoId(2L)
+                        .build()
+        );
+        // TODO 해당 부분 에러 발생. TravelService에서 수정 필요
+//        travelService.addUserToTravel(travel.getId(), user1.getId());
+//        travelService.addUserToTravel(travel.getId(), user2.getId());
+        ScheduleResponseDto schedule = scheduleService.createSchedule(
+                new ScheduleCreateRequestDto(
+                        travel.getId(),
+                        ajouUniv.getId(),
+                        LocalDateTime.now(),
+                        LocalDateTime.now().plusDays(1),
+                        List.of(new Long[]{user.getId(), user1.getId(), user2.getId()})
+                )
+        );
+        ScheduleResponseDto foundSchedule = scheduleService.getScheduleById(schedule.getScheduleId());
+        assertThat(foundSchedule.getPlace().getPlaceId()).isEqualTo(ajouUniv.getId());
+        assertThat(foundSchedule.getUsers()).hasSize(3);
     }
 
-    @Test
-    @DisplayName("여행의 schedule들을 place와 함께 불러올 수 있다.")
-    @Rollback
-    public void testGetSchedulesWithPlaceByTravel() {
-        Schedule schedule1 = scheduleService.insertSchedule(
-                Schedule.builder()
-                        .travel(travel)
-                        .place(ajouUniv)
-                        .startTime(LocalDateTime.now())
-                        .endTime(LocalDateTime.now().plusDays(1))
-                        .build());
-        Schedule schedule2 = scheduleService.insertSchedule(
-                Schedule.builder()
-                        .travel(travel)
-                        .place(inhaUniv)
-                        .startTime(LocalDateTime.now().plusDays(1))
-                        .endTime(LocalDateTime.now().plusDays(2))
-                        .build());
 
-        List<Schedule> schedules = scheduleService.getSchedulesWithPlaceByTravelId(travel.getId());
-
-        schedules.forEach(s -> System.out.println(s.getPlace().getPlaceName()));
-
-        assertThat(schedules, hasSize(2));
-    }
 }

@@ -1,9 +1,9 @@
 package com.ajou.travely.controller.scheduler.dto;
 
+import com.ajou.travely.controller.place.dto.PlaceResponseDto;
+import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.domain.Branch;
-import com.ajou.travely.domain.Place;
 import com.ajou.travely.domain.Schedule;
-import com.ajou.travely.domain.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -14,17 +14,22 @@ import java.util.stream.Collectors;
 @Getter
 @AllArgsConstructor
 public class ScheduleResponseDto {
-    private Long id;
-    private Place place;
+    private Long scheduleId;
+    private PlaceResponseDto place;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
-    private List<User> users;
+    private List<SimpleUserInfoDto> users;
 
     public ScheduleResponseDto(Schedule entity) {
-        this.id = entity.getId();
-        this.place = entity.getPlace();
+        this.scheduleId = entity.getId();
+        this.place = new PlaceResponseDto(entity.getPlace());
         this.startTime = entity.getStartTime();
         this.endTime = entity.getEndTime();
-        this.users = entity.getBranches().stream().map(Branch::getUser).collect(Collectors.toList());
+        this.users = entity
+                .getBranches()
+                .stream()
+                .map(Branch::getUser)
+                .map(SimpleUserInfoDto::new)
+                .collect(Collectors.toList());
     }
 }

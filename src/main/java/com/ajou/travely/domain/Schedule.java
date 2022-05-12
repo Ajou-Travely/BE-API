@@ -41,7 +41,7 @@ public class Schedule {
     }
 
     public void addUser(Branch branch) {
-        this.branches.add(branch);
+        branch.setSchedule(this);
     }
 
     public void removeUser(Branch branch) {

@@ -36,11 +36,6 @@ public class ScheduleService {
     }
 
     @Transactional
-    public List<Schedule> getAllSchedules() {
-        return scheduleRepository.findAll();
-    }
-
-    @Transactional
     public Schedule insertSchedule(Schedule schedule) {
         return scheduleRepository.save(schedule);
     }
@@ -97,7 +92,7 @@ public class ScheduleService {
             User user = Optional.ofNullable(currentUsers.get(id)).orElseThrow(
                     () -> new RuntimeException("해당 user가 유효하지 않습니다.")
             );
-            schedule.addUser(branchRepository.save(new Branch(user,schedule)));
+            branchRepository.save(new Branch(user,schedule));
         });
         outUserIds.forEach(id -> {
             if (!currentUsers.containsKey(id)) {
@@ -112,35 +107,10 @@ public class ScheduleService {
     }
 
     @Transactional
-    public Schedule getScheduleById(Long scheduleId) {
-        return scheduleRepository.findById(scheduleId)
+    public ScheduleResponseDto getScheduleById(Long scheduleId) {
+        Schedule schedule = scheduleRepository.findScheduleWithUsersAndPlaceByScheduleId(scheduleId)
                 .orElseThrow(() -> new RuntimeException("해당 일정이 존재하지 않습니다."));
-    }
-
-    @Transactional
-    public Schedule getScheduleWithPlaceById(Long scheduleId) {
-        return scheduleRepository.findScheduleByIdWithPlace(scheduleId)
-                .orElseThrow(() -> new RuntimeException("해당 일정이 존재하지 않습니다."));
-    }
-
-    @Transactional
-    public List<Schedule> getSchedulesByPlaceId(Long placeId) {
-        return scheduleRepository.findSchedulesByPlaceId(placeId);
-    }
-
-    @Transactional
-    public List<Schedule> getSchedulesByPlaceName(String placeName) {
-        return scheduleRepository.findSchedulesByPlaceName(placeName);
-    }
-
-    @Transactional
-    public List<Schedule> getSchedulesByTravelId(Long travelId) {
-        return scheduleRepository.findSchedulesByTravelId(travelId);
-    }
-
-    @Transactional
-    public List<Schedule> getSchedulesWithPlaceByTravelId(Long travelId) {
-        return scheduleRepository.findSchedulesWithPlaceByTravelId(travelId);
+        return new ScheduleResponseDto(schedule);
     }
 
     @Transactional

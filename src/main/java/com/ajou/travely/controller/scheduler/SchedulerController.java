@@ -16,8 +16,8 @@ public class SchedulerController {
     }
 
     @GetMapping("/api/v1/schedules/{scheduleId}")
-    public ScheduleResponseDto getScheduleById(@PathVariable Long scheduleId) {
-        return new ScheduleResponseDto(scheduleService.getScheduleWithPlaceById(scheduleId));
+    public ResponseEntity<ScheduleResponseDto> getScheduleById(@PathVariable Long scheduleId) {
+        return ResponseEntity.ok(scheduleService.getScheduleById(scheduleId));
     }
 
     @PostMapping("/api/v1/schedules")

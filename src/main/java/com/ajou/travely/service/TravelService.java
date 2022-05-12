@@ -33,6 +33,11 @@ public class TravelService {
     private final CostRepository costRepository;
 
     @Transactional
+    public Travel insertTravel(Travel travel) {
+        return travelRepository.save(travel);
+    }
+
+    @Transactional
     public Long createTravel(Long userId, TravelCreateRequestDto travelCreateRequestDto) {
         User user = userRepository
                 .findById(userId)
