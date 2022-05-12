@@ -30,13 +30,13 @@ public class TravelController {
     }
 
     @PostMapping("/api/v1/travels/{travelId}/users/{userId}")
-    public ResponseEntity addUserToTravel(@PathVariable Long travelId, @PathVariable Long userId) {
+    public ResponseEntity<Void> addUserToTravel(@PathVariable Long travelId, @PathVariable Long userId) {
         travelService.addUserToTravel(travelId, userId);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/api/v1/travels/{travelId}/costs")
-    public List<SimpleCostResponseDto> getCostsByTravelId(@PathVariable Long travelId) {
-        return travelService.getCostsByTravelId(travelId);
+    public ResponseEntity<List<SimpleCostResponseDto>> getCostsByTravelId(@PathVariable Long travelId) {
+        return ResponseEntity.ok(travelService.getCostsByTravelId(travelId));
     }
 }

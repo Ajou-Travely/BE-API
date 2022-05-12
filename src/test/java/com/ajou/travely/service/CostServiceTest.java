@@ -105,15 +105,13 @@ class CostServiceTest {
     public void testGetCostById() {
         List<Long> numbers = new ArrayList<>(Arrays.asList(1L, 2L, 3L, 4L));
         List<User> users = new ArrayList<>();
-        numbers.forEach(number -> {
-            users.add(userRepository.save(new User(
-                    Type.USER,
-                    String.format("test%d@ajou.ac.kr", number),
-                    String.format("test%d", number),
-                    String.format("11%d", number),
-                    number
-            )));
-        });
+        numbers.forEach(number -> users.add(userRepository.save(new User(
+                Type.USER,
+                String.format("test%d@ajou.ac.kr", number),
+                String.format("test%d", number),
+                String.format("11%d", number),
+                number
+        ))));
         Long travelId = travelService.createTravel(users.get(0).getId(),
                 TravelCreateRequestDto.builder()
                         .title("첫 여행")
@@ -146,10 +144,6 @@ class CostServiceTest {
         Assertions.assertThat(costById.getContent()).isEqualTo(createdCost.getContent());
         Assertions.assertThat(costById.getPayerId()).isEqualTo(createdCost.getPayer().getId());
         Assertions.assertThat(costById.getUserCostResponseDtos().stream().map(UserCostResponseDto::getUserCostId).toArray()).isEqualTo(createdCost.getUserCosts().stream().map(UserCost::getId).toArray());
-        Assertions.assertThat(costById.getUserCostResponseDtos().stream().map(userCostResponseDto -> {
-            return Arrays.asList(userCostResponseDto.getSimpleUserInfoDto().getUserId(), userCostResponseDto.getSimpleUserInfoDto().getUserName());
-        }).toArray()).isEqualTo(createdCost.getUserCosts().stream().map(userCost -> {
-            return Arrays.asList(userCost.getUser().getId(), userCost.getUser().getName());
-        }).toArray());
+        Assertions.assertThat(costById.getUserCostResponseDtos().stream().map(userCostResponseDto -> Arrays.asList(userCostResponseDto.getSimpleUserInfoDto().getUserId(), userCostResponseDto.getSimpleUserInfoDto().getUserName())).toArray()).isEqualTo(createdCost.getUserCosts().stream().map(userCost -> Arrays.asList(userCost.getUser().getId(), userCost.getUser().getName())).toArray());
     }
 }

@@ -59,8 +59,8 @@ public class ScheduleService {
                         .endTime(scheduleCreateRequestDto.getEndTime())
                         .build()
         );
-        scheduleCreateRequestDto.getUserIds().forEach(i -> {
-            User user = userRepository.findById(i).orElseThrow(
+        scheduleCreateRequestDto.getUserIds().forEach(id -> {
+            User user = userRepository.findById(id).orElseThrow(
                     () -> new RuntimeException("해당 user가 존재하지 않습니다.")
             );
             schedule.addUser(branchRepository.save(new Branch(user, schedule)));
@@ -85,21 +85,25 @@ public class ScheduleService {
         if (schedule.getEndTime() != scheduleUpdateRequestDto.getEndTime()) {
             schedule.setEndTime(scheduleUpdateRequestDto.getEndTime());
         }
-        List<Long> outUserIds = schedule.getBranches().stream().map(b -> b.getUser().getId()).collect(Collectors.toList());
+        List<Long> outUserIds = schedule
+                .getBranches()
+                .stream()
+                .map(branch -> branch.getUser().getId())
+                .collect(Collectors.toList());
         List<Long> inUserIds = scheduleUpdateRequestDto.getUserIds();
         inUserIds.removeAll(outUserIds);
         outUserIds.removeAll(inUserIds);
-        inUserIds.forEach(i -> {
-            User user = Optional.ofNullable(currentUsers.get(i)).orElseThrow(
+        inUserIds.forEach(id -> {
+            User user = Optional.ofNullable(currentUsers.get(id)).orElseThrow(
                     () -> new RuntimeException("해당 user가 유효하지 않습니다.")
             );
             schedule.addUser(branchRepository.save(new Branch(user,schedule)));
         });
-        outUserIds.forEach(i -> {
-            if (!currentUsers.containsKey(i)) {
+        outUserIds.forEach(id -> {
+            if (!currentUsers.containsKey(id)) {
                 throw new RuntimeException("해당 user가 유효하지 않습니다.");
             }
-            Branch branch = branchRepository.findByScheduleIdAndUserId(schedule.getId(), i)
+            Branch branch = branchRepository.findByScheduleIdAndUserId(schedule.getId(), id)
                             .orElseThrow(() -> new RuntimeException("해당 branch가 존재하지 않습니다."));
             schedule.removeUser(branch);
             branchRepository.delete(branch);

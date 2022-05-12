@@ -22,9 +22,6 @@ public class SchedulerController {
 
     @PostMapping("/api/v1/schedules")
     public ResponseEntity<ScheduleResponseDto> createSchedule(@RequestBody ScheduleCreateRequestDto scheduleCreateRequestDto) {
-        return new ResponseEntity<>(
-                scheduleService.createSchedule(scheduleCreateRequestDto),
-                HttpStatus.OK
-        );
+        return ResponseEntity.ok(scheduleService.createSchedule(scheduleCreateRequestDto));
     }
 }

@@ -1,5 +1,6 @@
 package com.ajou.travely.controller.scheduler.dto;
 
+import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -13,6 +14,7 @@ public class ScheduleUpdateRequestDto {
     private final LocalDateTime endTime;
     private final List<Long> userIds;
 
+    @Builder
     public ScheduleUpdateRequestDto(Long scheduleId, Long placeId, LocalDateTime startTime, LocalDateTime endTime, List<Long> userIds) {
         this.scheduleId = scheduleId;
         this.placeId = placeId;

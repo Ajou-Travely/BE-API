@@ -25,7 +25,7 @@ public class SimpleScheduleResponseDto {
         this.users = entity
                 .getBranches()
                 .stream()
-                .map(b -> new SimpleUserInfoDto(b.getUser()))
+                .map(branch -> new SimpleUserInfoDto(branch.getUser()))
                 .collect(Collectors.toList());
     }
 }

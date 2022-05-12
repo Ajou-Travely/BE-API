@@ -49,13 +49,13 @@ class TravelServiceTest {
     @Rollback
     public void testCreateTravel() {
         User user = userRepository.save(
-                new User(
-                        Type.USER
-                        , "sophoca@ajou.ac.kr"
-                        , "홍성빈"
-                        , "112"
-                        , 0L
-                )
+                User.builder()
+                        .type(Type.USER)
+                        .email("sophoca@ajou.ac.kr")
+                        .name("홍성빈")
+                        .phoneNumber("112")
+                        .kakaoId(0L)
+                        .build()
         );
         TravelCreateRequestDto request = TravelCreateRequestDto
                 .builder()
@@ -76,13 +76,13 @@ class TravelServiceTest {
     @Rollback
     public void testAddUserToTravel() {
         User user = userRepository.save(
-                new User(
-                        Type.USER
-                        , "sophoca1@ajou.ac.kr"
-                        , "홍성빈"
-                        , "112"
-                        , 0L
-                )
+                User.builder()
+                        .type(Type.USER)
+                        .email("sophoca@ajou.ac.kr")
+                        .name("홍성빈")
+                        .phoneNumber("112")
+                        .kakaoId(0L)
+                        .build()
         );
         TravelCreateRequestDto request = TravelCreateRequestDto
                 .builder()
@@ -92,21 +92,22 @@ class TravelServiceTest {
                 .endDate(LocalDate.now().plusDays(1))
                 .build();
         Long travelId = travelService.createTravel(user.getId(), request);
-        Optional<Travel> foundTravel = travelRepository.findById(travelId);
+        Travel foundTravel = travelRepository.findById(travelId)
+                .orElseThrow(() -> new RuntimeException("해당 id의 여행이 존재하지 않습니다."));
         User newUser = userRepository.save(
-                new User(
-                        Type.USER
-                        , "errander@ajou.ac.kr"
-                        , "이호용"
-                        , "119"
-                        , 0L
-                )
+                User.builder()
+                        .type(Type.USER)
+                        .email("sophoca@ajou.ac.kr")
+                        .name("홍성빈")
+                        .phoneNumber("112")
+                        .kakaoId(0L)
+                        .build()
         );
         travelService.addUserToTravel(
-                foundTravel.get().getId()
+                foundTravel.getId()
                 , newUser.getId()
         );
-        List<SimpleUserInfoDto> users = travelService.getSimpleUsersOfTravel(foundTravel.get().getId());
+        List<SimpleUserInfoDto> users = travelService.getSimpleUsersOfTravel(foundTravel.getId());
         assertThat(users).hasSize(2);
         users.forEach(u -> System.out.println(u.toString()));
     }
@@ -116,15 +117,15 @@ class TravelServiceTest {
     public void testGetCostsByTravelId() {
         List<Long> numbers = new ArrayList<>(Arrays.asList(1L, 2L, 3L, 4L));
         List<User> users = new ArrayList<>();
-        numbers.forEach(number -> {
-            users.add(userRepository.save(new User(
-                    Type.USER,
-                    String.format("test%d@ajou.ac.kr", number),
-                    String.format("test%d", number),
-                    String.format("11%d", number),
-                    number
-            )));
-        });
+        numbers.forEach(number -> users.add(userRepository.save(
+                User.builder()
+                        .type(Type.USER)
+                        .email(String.format("test%d@ajou.ac.kr", number))
+                        .name(String.format("test%d", number))
+                        .phoneNumber(String.format("11%d", number))
+                        .kakaoId(number)
+                        .build()
+        )));
         TravelCreateRequestDto request = TravelCreateRequestDto
                 .builder()
                 .title("첫 여행")
