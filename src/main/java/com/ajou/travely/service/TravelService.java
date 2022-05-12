@@ -1,7 +1,12 @@
 package com.ajou.travely.service;
 
+import com.ajou.travely.controller.schedule.dto.SimpleScheduleResponseDto;
 import com.ajou.travely.controller.travel.dto.SimpleCostResponseDto;
+import com.ajou.travely.controller.travel.dto.SimpleTravelResponseDto;
+import com.ajou.travely.controller.travel.dto.TravelCreateRequestDto;
+import com.ajou.travely.controller.travel.dto.TravelResponseDto;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
+import com.ajou.travely.domain.Schedule;
 import com.ajou.travely.domain.Cost;
 import com.ajou.travely.domain.Travel;
 import com.ajou.travely.domain.UserTravel;
@@ -30,46 +35,63 @@ public class TravelService {
 
     @Transactional
     public Travel insertTravel(Travel travel) {
-        Optional<User> user = userRepository.findById(travel.getManagerId());
-        if (user.isEmpty()) {
-            throw new RuntimeException("유저 없음 ㅋㅋ");
-        }
-        travelRepository.save(travel);
-        UserTravel userTravel = UserTravel.builder().user(user.get()).travel(travel).build();
-        userTravelRepository.save(userTravel);
-        travel.addUserTravel(userTravel);
-        travelRepository.save(travel);
-        return travel;
+        return travelRepository.save(travel);
     }
 
     @Transactional
-    public List<Travel> getAllTravels() {
-        return travelRepository
-                .findAll();
+    public Long createTravel(Long userId, TravelCreateRequestDto travelCreateRequestDto) {
+        User user = userRepository
+                .findById(userId)
+                .orElseThrow(() -> new RuntimeException("해당 id의 유저가 존재하지 않습니다."));
+        Travel travel = travelRepository.save(
+                Travel.builder()
+                        .title(travelCreateRequestDto.getTitle())
+                        .startDate(travelCreateRequestDto.getStartDate())
+                        .endDate(travelCreateRequestDto.getEndDate())
+                        .managerId(travelCreateRequestDto.getUserId())
+                        .build());
+        UserTravel userTravel = UserTravel.builder().user(user).travel(travel).build();
+        userTravelRepository.save(userTravel);
+        travel.addUserTravel(userTravel);
+        travelRepository.save(travel);
+        return travel.getId();
+    }
+
+    @Transactional
+    public List<SimpleTravelResponseDto> getAllTravels() {
+        return travelRepository.
+                findAll().
+                stream().
+                map(SimpleTravelResponseDto::new).
+                collect(Collectors.toList());
     }
 
     @Transactional
     public void addUserToTravel(Long travelId, Long userId) {
-        Travel travel = getTravelById(travelId);
-        Optional<User> user = userRepository.findById(userId);
-        UserTravel userTravel = UserTravel.builder().user(user.get()).travel(travel).build();
+        Travel travel = travelRepository
+                .findById(travelId)
+                .orElseThrow(() -> new RuntimeException("해당 id의 여행이 존재하지 않습니다."));
+        User user = userRepository
+                .findById(userId)
+                .orElseThrow(() -> new RuntimeException("해당 id의 유저가 존재하지 않습니다."));
+        UserTravel userTravel = UserTravel.builder().user(user).travel(travel).build();
         userTravelRepository.save(userTravel);
-        travel.addUserTravel(userTravel);
-        travelRepository.save(travel);
     }
 
     @Transactional
-    public Travel getTravelById(Long travelId) {
-        Optional<Travel> travel = travelRepository.findById(travelId);
-        if (travel.isEmpty()) {
-            throw new RuntimeException("그런 여행 없슴 ㅋㅋ;");
-        }
-        return travel.get();
+    public TravelResponseDto getTravelById(Long travelId) {
+        Travel travel = travelRepository
+                .findById(travelId)
+                .orElseThrow(() -> new RuntimeException("해당 id의 여행이 존재하지 않습니다."));
+        List<Schedule> schedules = travelRepository.findSchedulesWithPlaceByTravelId(travel.getId());
+        return new TravelResponseDto(travel, schedules);
     }
 
     @Transactional
     public List<User> getUsersOfTravel(Long travelId) {
-        return getTravelById(travelId)
+        return travelRepository
+                .findById(travelId)
+                .orElseThrow(() -> new RuntimeException("해당 id의 여행이 존재하지 않습니다."))
                 .getUserTravels()
                 .stream()
                 .map(UserTravel::getUser)
@@ -78,7 +100,9 @@ public class TravelService {
 
     @Transactional
     public List<SimpleUserInfoDto> getSimpleUsersOfTravel(Long travelId) {
-        return getTravelById(travelId)
+        return travelRepository
+                .findById(travelId)
+                .orElseThrow(() -> new RuntimeException("해당 id의 여행이 존재하지 않습니다."))
                 .getUserTravels()
                 .stream()
                 .map(UserTravel::getUser)
@@ -98,5 +122,14 @@ public class TravelService {
         List<SimpleCostResponseDto> costsResponseDtos = new ArrayList<>();
 
         return costs.stream().map(SimpleCostResponseDto::new).collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<SimpleScheduleResponseDto> getSchedulesByTravelId(Long travelId) {
+        return travelRepository
+                .findSchedulesWithPlaceByTravelId(travelId)
+                .stream()
+                .map(SimpleScheduleResponseDto::new)
+                .collect(Collectors.toList());
     }
 }

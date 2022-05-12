@@ -4,6 +4,8 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -22,6 +24,9 @@ public class Schedule {
     @JoinColumn(name = "place_id")
     private Place place;
 
+    @OneToMany(mappedBy = "schedule")
+    private List<Branch> branches;
+
     private LocalDateTime startTime;
 
     private LocalDateTime endTime;
@@ -31,6 +36,27 @@ public class Schedule {
         this.travel = travel;
         this.place = place;
         this.startTime = startTime;
+        this.endTime = endTime;
+        this.branches = new ArrayList<>();
+    }
+
+    public void addUser(Branch branch) {
+        branch.setSchedule(this);
+    }
+
+    public void removeUser(Branch branch) {
+        this.branches.remove(branch);
+    }
+
+    public void setPlace(Place place) {
+        this.place = place;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
     }
 }

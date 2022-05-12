@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotNull;
@@ -22,12 +23,16 @@ public class TravelCreateRequestDto {
     @NotNull(message = "유저 아이디가 필요합니다.")
     private Long userId;
 
-    public Travel toEntity() {
-        return Travel.builder()
-            .title(title)
-            .startDate(startDate)
-            .endDate(endDate)
-                .managerId(userId)
-            .build();
+    @Builder
+    public TravelCreateRequestDto(
+            @NonNull String title
+            , @NonNull LocalDate startDate
+            , @NonNull LocalDate endDate
+            , @NonNull Long userId
+    ) {
+        this.title = title;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.userId = userId;
     }
 }
