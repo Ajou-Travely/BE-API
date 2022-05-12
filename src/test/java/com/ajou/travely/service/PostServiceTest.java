@@ -142,12 +142,6 @@ public class PostServiceTest {
             new PostUpdateRequestDto(updateTitle, updateText, addedPhotoPaths, removedPhotoIds);
         postService.updatePost(postId, updateRequestDto);
 
-        EntityManager em = emf.createEntityManager();
-        EntityTransaction transaction = em.getTransaction();
-        transaction.begin();
-        transaction.commit();
-        em.clear();
-
         Post result = postService.initializePostInfo(postId);
         result.getPhotos().forEach(photo -> System.out.println(">>>>>>>>>>>>>>>>>>>>" + photo.getPath()));
 
