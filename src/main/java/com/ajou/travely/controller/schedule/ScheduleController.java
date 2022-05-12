@@ -7,10 +7,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-public class SchedulerController {
+public class ScheduleController {
     private final ScheduleService scheduleService;
 
-    public SchedulerController(ScheduleService scheduleService) {
+    public ScheduleController(ScheduleService scheduleService) {
         this.scheduleService = scheduleService;
     }
 

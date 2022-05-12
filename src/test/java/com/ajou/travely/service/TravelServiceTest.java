@@ -297,6 +297,5 @@ class TravelServiceTest {
 //                .endTime(LocalDateTime.now().plusDays(3))
 //                .place(ajouUniv)
 //                .build();
-//
 //    }
 }
