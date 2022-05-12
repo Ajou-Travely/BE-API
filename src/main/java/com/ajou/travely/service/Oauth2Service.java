@@ -75,11 +75,7 @@ public class Oauth2Service {
             ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
             SecurityContext context = SecurityContextHolder.getContext();
             JSONObject userInfo = stringToJson(response.getBody());
-//            System.out.println("userInfo.get(\"id\") = " + userInfo.get("id"));
-//            JSONObject properties = (JSONObject) userInfo.get("properties");
-//            System.out.println("properties.get(\"nickname\") = " + properties.get("nickname"));
-//            Long kakaoId = (Long) userInfo.get("id");
-//            context.setAuthentication(new CustomAuthentication(kakaoId));
+
             return userInfo;
         }catch (RestClientException | ParseException ex) {
             ex.printStackTrace();
@@ -87,19 +83,26 @@ public class Oauth2Service {
         }
     }
 
-    public JSONObject setSessionOrRedirectToSignUp(Long kakaoId) {
+    public JSONObject setSessionOrRedirectToSignUp(JSONObject userInfoFromKakao) {
+        Long kakaoId = (Long) userInfoFromKakao.get("id");
+        JSONObject kakao_account = (JSONObject) userInfoFromKakao.get("kakao_account");
         Optional<User> user = userRepository.findByKakaoId(kakaoId);
         JSONObject result = new JSONObject();
-        if(user.isEmpty()) {
-            result.put("status", 301);
-            result.put("kakaoId", kakaoId);
-            return result;
+        if(kakao_account.get("email") != null) {
+            if(user.isEmpty()) {
+                result.put("status", 301);
+                result.put("kakaoId", kakaoId);
+                return result;
+            } else {
+                SecurityContext context = SecurityContextHolder.getContext();
+                User exUser = user.get();
+                context.setAuthentication(new CustomAuthentication(exUser));
+                result.put("status", 200);
+            }
         } else {
-            SecurityContext context = SecurityContextHolder.getContext();
-            User exUser = user.get();
-            context.setAuthentication(new CustomAuthentication(exUser));
-            result.put("status", 200);
+            result.put("status", 401);
         }
+
         return result;
     }
     public JSONObject stringToJson(String userInfo) throws ParseException {

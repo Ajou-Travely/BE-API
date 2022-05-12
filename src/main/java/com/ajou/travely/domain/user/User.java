@@ -49,6 +49,8 @@ public class User {
 
     private LocalDate birthday;
 
+//    private List<Post> posts;
+
     @Builder
     public User(@NonNull Type type, @NonNull String email, @NonNull String name, @NonNull String phoneNumber, @NonNull Long kakaoId) {
         this.type = type;
