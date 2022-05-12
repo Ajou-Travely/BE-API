@@ -4,6 +4,7 @@ import java.util.List;
 import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.web.multipart.MultipartFile;
 
 @AllArgsConstructor
 @Getter
@@ -17,6 +18,6 @@ public class PostCreateRequestDto {
 
     private String text;
 
-    private List<String> photoPaths;
+    private List<MultipartFile> files;
 
 }

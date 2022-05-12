@@ -3,7 +3,6 @@ package com.ajou.travely.controller;
 import com.ajou.travely.service.AwsS3Service;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,8 +16,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/s3")
-public class AmazonS3Controller {
+@RequestMapping("api/v1/s3")
+public class AwsS3Controller {
 
     private final AwsS3Service awsS3Service;
 

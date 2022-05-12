@@ -31,6 +31,8 @@ public class PostService {
 
     private final PhotoRepository photoRepository;
 
+    private final AwsS3Service s3Service;
+
     public Long createPost(Long userId, PostCreateRequestDto requestDto) {
         User user = findUserById(userId);
         Schedule schedule = findScheduleById(requestDto.getScheduleId());
@@ -41,11 +43,12 @@ public class PostService {
             .title(requestDto.getTitle())
             .build();
 
-        requestDto.getPhotoPaths()
-            .forEach(photoPath ->{
-                    Photo photo = new Photo(post, photoPath);
-                }
-            );
+        photoRepository.saveAll(
+            s3Service.uploadFile(requestDto.getFiles())
+                .stream()
+                .map(photoName -> new Photo(post, photoName))
+                .collect(Collectors.toList())
+        );
 
         return postRepository.save(post).getId();
     }
@@ -60,7 +63,7 @@ public class PostService {
         post.update(requestDto.getTitle(), requestDto.getText());
         List<Photo> addedPhotos = requestDto.getAddedPhotoPaths()
             .stream()
-            .map(photoPath -> new Photo(post, photoPath))
+            .map(photoName -> new Photo(post, photoName))
             .collect(Collectors.toList());
         post.getPhotos()
             .removeAll(photoRepository.findPhotosByIdsInQuery(requestDto.getRemovedPhotoIds()));
