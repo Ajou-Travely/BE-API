@@ -1,16 +1,12 @@
 package com.ajou.travely.service;
 
-<<<<<<< HEAD
+import com.ajou.travely.controller.travel.dto.SimpleCostResponseDto;
 import com.ajou.travely.controller.travel.dto.SimpleTravelResponseDto;
 import com.ajou.travely.controller.travel.dto.TravelCreateRequestDto;
 import com.ajou.travely.controller.travel.dto.TravelResponseDto;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.domain.Schedule;
-=======
-import com.ajou.travely.controller.travel.dto.SimpleCostResponseDto;
-import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.domain.Cost;
->>>>>>> 4ed85b18156e3397df5ccd838077af6bd2a92683
 import com.ajou.travely.domain.Travel;
 import com.ajou.travely.domain.UserTravel;
 import com.ajou.travely.domain.user.User;
@@ -22,11 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-<<<<<<< HEAD
-import java.util.List;
-=======
 import java.util.*;
->>>>>>> 4ed85b18156e3397df5ccd838077af6bd2a92683
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor

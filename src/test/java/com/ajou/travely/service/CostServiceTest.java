@@ -2,24 +2,24 @@ package com.ajou.travely.service;
 
 import com.ajou.travely.controller.cost.dto.CostCreateResponseDto;
 import com.ajou.travely.controller.cost.dto.CostResponseDto;
+import com.ajou.travely.controller.cost.dto.UserCostResponseDto;
+import com.ajou.travely.controller.travel.dto.TravelCreateRequestDto;
 import com.ajou.travely.domain.Travel;
+import com.ajou.travely.domain.UserCost;
 import com.ajou.travely.domain.user.Type;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.repository.CostRepository;
 import com.ajou.travely.repository.TravelRepository;
 import com.ajou.travely.repository.UserCostRepository;
 import com.ajou.travely.repository.UserRepository;
-import javax.transaction.Transactional;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.ActiveProfiles;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -40,6 +40,8 @@ class CostServiceTest {
     UserCostRepository userCostRepository;
     @Autowired
     CostService costService;
+    @Autowired
+    TravelService travelService;
 
     @Test
     @DisplayName("지출 객체를 생성할 수 있다.")
@@ -112,16 +114,16 @@ class CostServiceTest {
                     number
             )));
         });
-        Travel travel = travelService.insertTravel(
-                Travel.builder()
+        Long travelId = travelService.createTravel(users.get(0).getId(),
+                TravelCreateRequestDto.builder()
                         .title("첫 여행")
                         .startDate(LocalDate.now())
                         .endDate(LocalDate.now())
-                        .managerId(users.get(0).getId())
+                        .userId(users.get(0).getId())
                         .build()
         );
         for (User user : users) {
-            travelService.addUserToTravel(travel.getId(), user.getId());
+            travelService.addUserToTravel(travelId, user.getId());
         }
 
         Map<Long, Long> amountPerUser = new HashMap<>();
@@ -131,7 +133,7 @@ class CostServiceTest {
 
         CostCreateResponseDto createdCost = costService.createCost(
                 111000L,
-                travel.getId(),
+                travelId,
                 "TestTitle",
                 "안녕난이거야",
                 false,
@@ -143,11 +145,7 @@ class CostServiceTest {
         Assertions.assertThat(costById.getCostId()).isEqualTo(createdCost.getId());
         Assertions.assertThat(costById.getContent()).isEqualTo(createdCost.getContent());
         Assertions.assertThat(costById.getPayerId()).isEqualTo(createdCost.getPayer().getId());
-        Assertions.assertThat(costById.getUserCostResponseDtos().stream().map(userCostResponseDto -> {
-            return userCostResponseDto.getUserCostId();
-        }).toArray()).isEqualTo(createdCost.getUserCosts().stream().map(userCost -> {
-            return userCost.getId();
-        }).toArray());
+        Assertions.assertThat(costById.getUserCostResponseDtos().stream().map(UserCostResponseDto::getUserCostId).toArray()).isEqualTo(createdCost.getUserCosts().stream().map(UserCost::getId).toArray());
         Assertions.assertThat(costById.getUserCostResponseDtos().stream().map(userCostResponseDto -> {
             return Arrays.asList(userCostResponseDto.getSimpleUserInfoDto().getUserId(), userCostResponseDto.getSimpleUserInfoDto().getUserName());
         }).toArray()).isEqualTo(createdCost.getUserCosts().stream().map(userCost -> {
