@@ -49,8 +49,17 @@ public class ScheduleService {
     public ScheduleResponseDto createSchedule(ScheduleCreateRequestDto scheduleCreateRequestDto) {
         Travel travel = travelRepository.findById(scheduleCreateRequestDto.getTravelId())
                 .orElseThrow(() -> new RuntimeException("해당 travel이 존재하지 않습니다."));
-        Place place = placeRepository.findById(scheduleCreateRequestDto.getPlaceId())
-                .orElseThrow(() -> new RuntimeException("해당 place가 존재하지 않습니다."));
+        Place place = placeRepository.findByKakaoMapId(scheduleCreateRequestDto.getPlace().getKakaoMapId())
+                .orElse(placeRepository.save(Place
+                        .builder()
+                        .kakaoMapId(scheduleCreateRequestDto.getPlace().getKakaoMapId())
+                        .placeUrl(scheduleCreateRequestDto.getPlace().getPlaceUrl())
+                        .placeName(scheduleCreateRequestDto.getPlace().getPlaceName())
+                        .addressRoadName(scheduleCreateRequestDto.getPlace().getAddressRoadName())
+                        .addressName(scheduleCreateRequestDto.getPlace().getAddressName())
+                        .x(scheduleCreateRequestDto.getPlace().getX())
+                        .y(scheduleCreateRequestDto.getPlace().getY())
+                        .build()));
         Schedule schedule = scheduleRepository.save(
                 Schedule.builder()
                         .travel(travel)
@@ -73,7 +82,10 @@ public class ScheduleService {
         Schedule schedule = scheduleRepository.findById(scheduleUpdateRequestDto.getScheduleId())
                 .orElseThrow(() -> new RuntimeException("해당 schedule이 존재하지 않습니다."));
         Map<Long, User> currentUsers = new HashMap<>();
-        schedule.getTravel().getUserTravels().forEach(ut -> currentUsers.put(ut.getUser().getId(), ut.getUser()));
+        schedule
+                .getTravel()
+                .getUserTravels()
+                .forEach(ut -> currentUsers.put(ut.getUser().getId(), ut.getUser()));
         if (!Objects.equals(schedule.getPlace().getId(), scheduleUpdateRequestDto.getPlaceId())) {
             Place place = placeRepository.findById(scheduleUpdateRequestDto.getPlaceId())
                     .orElseThrow(() -> new RuntimeException("해당 place가 존재하지 않습니다."));

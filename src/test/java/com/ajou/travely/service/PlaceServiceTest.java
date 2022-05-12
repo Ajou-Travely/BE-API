@@ -36,6 +36,7 @@ class PlaceServiceTest {
                         .placeName("아주대학교")
                         .addressName("원천동")
                         .addressRoadName("원천로")
+                        .kakaoMapId(1L)
                         .build());
         inhaUniv = placeService.insertPlace(
                 Place.builder()
@@ -46,6 +47,7 @@ class PlaceServiceTest {
                         .addressName("인천")
                         .addressRoadName("인천로")
                         .phoneNumber("119")
+                        .kakaoMapId(2L)
                         .build());
     }
 
@@ -85,6 +87,7 @@ class PlaceServiceTest {
                 .placeName("원천아주돈")
                 .addressName("인계동")
                 .addressRoadName("인계로")
+                .kakaoMapId(3L)
                 .build();
         placeService.insertPlace(ajoudon);
 
