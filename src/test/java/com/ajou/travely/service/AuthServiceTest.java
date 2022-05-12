@@ -36,7 +36,12 @@ class AuthServiceTest {
     @DisplayName("Security Context에서 사용자 id 가져오기")
     @Rollback
     void getUserId() {
-        Long kakaoId = 123456789L;
+        JSONObject userInfoFromKakao = new JSONObject();
+        JSONObject kakao_account = new JSONObject();
+        kakao_account.put("email", "test@test.com");
+        userInfoFromKakao.put("id", 123456789L);
+        userInfoFromKakao.put("kakao_account", kakao_account);
+        Long kakaoId = (Long) userInfoFromKakao.get("id");
         User user = User.builder()
                 .type(Type.USER)
                 .email("test@email.com")
@@ -46,7 +51,7 @@ class AuthServiceTest {
                 .build();
 
         userRepository.save(user);
-        JSONObject result = oauth2Service.setSessionOrRedirectToSignUp(kakaoId);
+        JSONObject result = oauth2Service.setSessionOrRedirectToSignUp(userInfoFromKakao);
         Long userId = authService.getUserId();
 
         assertThat(result.get("status")).isEqualTo(200);

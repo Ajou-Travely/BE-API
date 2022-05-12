@@ -16,8 +16,7 @@ public class AuthService {
     public JSONObject kakaoAuthentication(String code) {
         AuthorizationKakao authorizationKakao = oauth2Service.callTokenApi(code);
         JSONObject userInfoFromKakao = oauth2Service.callGetUserByAccessToken(authorizationKakao.getAccess_token());
-        Long kakaoId = (Long) userInfoFromKakao.get("id");
-        JSONObject result = oauth2Service.setSessionOrRedirectToSignUp(kakaoId);
+        JSONObject result = oauth2Service.setSessionOrRedirectToSignUp(userInfoFromKakao);
         return result;
     }
 
