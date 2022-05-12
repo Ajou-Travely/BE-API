@@ -35,6 +35,9 @@ dependencies {
 	implementation 'io.springfox:springfox-boot-starter:3.0.0'
 	implementation 'mysql:mysql-connector-java'
 
+	// aws setting
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
 	compileOnly 'org.projectlombok:lombok'
 	testImplementation 'com.h2database:h2:2.1.212'
 	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
