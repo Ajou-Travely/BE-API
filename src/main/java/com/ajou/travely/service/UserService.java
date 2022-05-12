@@ -4,6 +4,7 @@ import com.ajou.travely.controller.user.dto.UserCreateRequestDto;
 import com.ajou.travely.controller.user.dto.UserResponseInfoDto;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.repository.UserRepository;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,8 +23,12 @@ public class UserService {
     }
 
     public List<User> getAllUsers() {
-        return userRepository
-                .findAll();
+        return userRepository.findAll();
+    }
+
+    public User findUserById(Long userId) {
+        return userRepository.findById(userId).orElseThrow(() ->
+            new RuntimeException("유저 없음 ㅋㅋ"));
     }
 
     public void deleteAllUsers() {

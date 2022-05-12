@@ -86,15 +86,6 @@ class ScheduleServiceTest {
                         .build());
     }
 
-    @AfterEach
-    public void cleanUp() {
-        scheduleService.deleteAllSchedules();
-        userTravelRepository.deleteAll();
-        travelService.deleteAllTravels();
-        userService.deleteAllUsers();
-        placeService.deleteAllPlaces();
-    }
-
     @Test
     @DisplayName("생성한 Schedule을 DB에 삽입할 수 있다.")
     @Rollback
