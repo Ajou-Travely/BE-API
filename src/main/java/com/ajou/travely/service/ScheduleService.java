@@ -1,8 +1,8 @@
 package com.ajou.travely.service;
 
-import com.ajou.travely.controller.scheduler.dto.ScheduleCreateRequestDto;
-import com.ajou.travely.controller.scheduler.dto.ScheduleResponseDto;
-import com.ajou.travely.controller.scheduler.dto.ScheduleUpdateRequestDto;
+import com.ajou.travely.controller.schedule.dto.ScheduleCreateRequestDto;
+import com.ajou.travely.controller.schedule.dto.ScheduleResponseDto;
+import com.ajou.travely.controller.schedule.dto.ScheduleUpdateRequestDto;
 import com.ajou.travely.domain.Branch;
 import com.ajou.travely.domain.Place;
 import com.ajou.travely.domain.Schedule;
@@ -38,6 +38,11 @@ public class ScheduleService {
     @Transactional
     public Schedule insertSchedule(Schedule schedule) {
         return scheduleRepository.save(schedule);
+    }
+
+    @Transactional
+    public List<Schedule> getAllSchedules() {
+        return scheduleRepository.findAll();
     }
 
     @Transactional
@@ -108,7 +113,7 @@ public class ScheduleService {
 
     @Transactional
     public ScheduleResponseDto getScheduleById(Long scheduleId) {
-        Schedule schedule = scheduleRepository.findScheduleWithUsersAndPlaceByScheduleId(scheduleId)
+        Schedule schedule = scheduleRepository.findScheduleWithPlaceByScheduleId(scheduleId)
                 .orElseThrow(() -> new RuntimeException("해당 일정이 존재하지 않습니다."));
         return new ScheduleResponseDto(schedule);
     }

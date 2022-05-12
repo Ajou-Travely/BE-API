@@ -1,4 +1,4 @@
-package com.ajou.travely.controller.scheduler.dto;
+package com.ajou.travely.controller.schedule.dto;
 
 import lombok.Builder;
 import lombok.Getter;

@@ -1,9 +1,8 @@
-package com.ajou.travely.controller.scheduler;
+package com.ajou.travely.controller.schedule;
 
-import com.ajou.travely.controller.scheduler.dto.ScheduleCreateRequestDto;
-import com.ajou.travely.controller.scheduler.dto.ScheduleResponseDto;
+import com.ajou.travely.controller.schedule.dto.ScheduleCreateRequestDto;
+import com.ajou.travely.controller.schedule.dto.ScheduleResponseDto;
 import com.ajou.travely.service.ScheduleService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

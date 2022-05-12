@@ -10,6 +10,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
-    @Query("select s from Schedule s join fetch s.branches b join fetch b.user join fetch s.place where s.id = :scheduleId")
-    Optional<Schedule> findScheduleWithUsersAndPlaceByScheduleId(@Param("scheduleId") Long scheduleId);
+    @Query("select s from Schedule s join fetch s.place where s.id = :scheduleId")
+    Optional<Schedule> findScheduleWithPlaceByScheduleId(@Param("scheduleId") Long scheduleId);
 }

@@ -1,15 +1,15 @@
 package com.ajou.travely.service;
 
-import com.ajou.travely.controller.scheduler.dto.ScheduleCreateRequestDto;
-import com.ajou.travely.controller.scheduler.dto.ScheduleResponseDto;
+import com.ajou.travely.controller.schedule.dto.ScheduleCreateRequestDto;
+import com.ajou.travely.controller.schedule.dto.ScheduleResponseDto;
 import com.ajou.travely.domain.Place;
 import com.ajou.travely.domain.Travel;
 import com.ajou.travely.domain.user.Type;
 import com.ajou.travely.domain.user.User;
-import com.ajou.travely.repository.TravelRepository;
-import com.ajou.travely.repository.UserTravelRepository;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
@@ -32,16 +32,10 @@ class ScheduleServiceTest {
     ScheduleService scheduleService;
 
     @Autowired
-    TravelRepository travelRepository;
-
-    @Autowired
     PlaceService placeService;
 
     @Autowired
     UserService userService;
-
-    @Autowired
-    UserTravelRepository userTravelRepository;
 
     @Autowired
     TravelService travelService;
@@ -111,9 +105,8 @@ class ScheduleServiceTest {
                         .kakaoId(2L)
                         .build()
         );
-        // TODO 해당 부분 에러 발생. TravelService에서 수정 필요
-//        travelService.addUserToTravel(travel.getId(), user1.getId());
-//        travelService.addUserToTravel(travel.getId(), user2.getId());
+        travelService.addUserToTravel(travel.getId(), user1.getId());
+        travelService.addUserToTravel(travel.getId(), user2.getId());
         ScheduleResponseDto schedule = scheduleService.createSchedule(
                 new ScheduleCreateRequestDto(travel.getId(),
                         ajouUniv.getId(),
@@ -148,9 +141,8 @@ class ScheduleServiceTest {
                         .kakaoId(2L)
                         .build()
         );
-        // TODO 해당 부분 에러 발생. TravelService에서 수정 필요
-//        travelService.addUserToTravel(travel.getId(), user1.getId());
-//        travelService.addUserToTravel(travel.getId(), user2.getId());
+        travelService.addUserToTravel(travel.getId(), user1.getId());
+        travelService.addUserToTravel(travel.getId(), user2.getId());
         ScheduleResponseDto schedule = scheduleService.createSchedule(
                 new ScheduleCreateRequestDto(
                         travel.getId(),
@@ -164,6 +156,4 @@ class ScheduleServiceTest {
         assertThat(foundSchedule.getPlace().getPlaceId()).isEqualTo(ajouUniv.getId());
         assertThat(foundSchedule.getUsers()).hasSize(3);
     }
-
-
 }

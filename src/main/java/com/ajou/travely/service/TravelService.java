@@ -1,5 +1,6 @@
 package com.ajou.travely.service;
 
+import com.ajou.travely.controller.schedule.dto.SimpleScheduleResponseDto;
 import com.ajou.travely.controller.travel.dto.SimpleCostResponseDto;
 import com.ajou.travely.controller.travel.dto.SimpleTravelResponseDto;
 import com.ajou.travely.controller.travel.dto.TravelCreateRequestDto;
@@ -59,7 +60,7 @@ public class TravelService {
     @Transactional
     public List<SimpleTravelResponseDto> getAllTravels() {
         return travelRepository.
-                findAllTravelsWithUser().
+                findAll().
                 stream().
                 map(SimpleTravelResponseDto::new).
                 collect(Collectors.toList());
@@ -68,23 +69,21 @@ public class TravelService {
     @Transactional
     public void addUserToTravel(Long travelId, Long userId) {
         Travel travel = travelRepository
-                .findTravelWithUsersById(travelId)
+                .findById(travelId)
                 .orElseThrow(() -> new RuntimeException("해당 id의 여행이 존재하지 않습니다."));
         User user = userRepository
                 .findById(userId)
                 .orElseThrow(() -> new RuntimeException("해당 id의 유저가 존재하지 않습니다."));
         UserTravel userTravel = UserTravel.builder().user(user).travel(travel).build();
         userTravelRepository.save(userTravel);
-        travel.addUserTravel(userTravel);
-        travelRepository.save(travel);
     }
 
     @Transactional
     public TravelResponseDto getTravelById(Long travelId) {
         Travel travel = travelRepository
-                .findTravelWithUsersById(travelId)
+                .findById(travelId)
                 .orElseThrow(() -> new RuntimeException("해당 id의 여행이 존재하지 않습니다."));
-        List<Schedule> schedules = travelRepository.findSchedulesByTravelId(travel.getId());
+        List<Schedule> schedules = travelRepository.findSchedulesWithPlaceByTravelId(travel.getId());
         return new TravelResponseDto(travel, schedules);
     }
 
@@ -123,5 +122,14 @@ public class TravelService {
         List<SimpleCostResponseDto> costsResponseDtos = new ArrayList<>();
 
         return costs.stream().map(SimpleCostResponseDto::new).collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<SimpleScheduleResponseDto> getSchedulesByTravelId(Long travelId) {
+        return travelRepository
+                .findSchedulesWithPlaceByTravelId(travelId)
+                .stream()
+                .map(SimpleScheduleResponseDto::new)
+                .collect(Collectors.toList());
     }
 }

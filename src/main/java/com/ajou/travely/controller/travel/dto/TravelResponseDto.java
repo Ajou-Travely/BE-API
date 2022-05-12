@@ -1,18 +1,15 @@
 package com.ajou.travely.controller.travel.dto;
 
-import com.ajou.travely.controller.scheduler.dto.SimpleScheduleResponseDto;
+import com.ajou.travely.controller.schedule.dto.SimpleScheduleResponseDto;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
-import com.ajou.travely.domain.Cost;
 import com.ajou.travely.domain.Schedule;
 import com.ajou.travely.domain.Travel;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.ajou.travely.domain.UserTravel;
 import lombok.Getter;
-import org.springframework.scheduling.annotation.Schedules;
 
 @Getter
 public class TravelResponseDto {

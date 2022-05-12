@@ -1,10 +1,8 @@
-package com.ajou.travely.controller.scheduler.dto;
+package com.ajou.travely.controller.schedule.dto;
 
-import com.ajou.travely.controller.place.dto.PlaceResponseDto;
+import com.ajou.travely.controller.place.dto.SimplePlaceResponseDto;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
-import com.ajou.travely.domain.Branch;
 import com.ajou.travely.domain.Schedule;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -12,24 +10,22 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
-@AllArgsConstructor
-public class ScheduleResponseDto {
+public class SimpleScheduleResponseDto {
     private Long scheduleId;
-    private PlaceResponseDto place;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
+    private SimplePlaceResponseDto place;
     private List<SimpleUserInfoDto> users;
 
-    public ScheduleResponseDto(Schedule entity) {
+    public SimpleScheduleResponseDto(Schedule entity) {
         this.scheduleId = entity.getId();
-        this.place = new PlaceResponseDto(entity.getPlace());
         this.startTime = entity.getStartTime();
         this.endTime = entity.getEndTime();
+        this.place = new SimplePlaceResponseDto(entity.getPlace());
         this.users = entity
                 .getBranches()
                 .stream()
-                .map(Branch::getUser)
-                .map(SimpleUserInfoDto::new)
+                .map(branch -> new SimpleUserInfoDto(branch.getUser()))
                 .collect(Collectors.toList());
     }
 }
