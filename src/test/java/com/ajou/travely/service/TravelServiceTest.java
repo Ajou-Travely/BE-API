@@ -1,6 +1,7 @@
 package com.ajou.travely.service;
 
 import com.ajou.travely.controller.cost.dto.CostCreateResponseDto;
+import com.ajou.travely.controller.place.dto.PlaceCreateRequestDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleCreateRequestDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleResponseDto;
 import com.ajou.travely.controller.schedule.dto.SimpleScheduleResponseDto;
@@ -183,25 +184,25 @@ class TravelServiceTest {
     @DisplayName("여행의 schedule들을 불러올 수 있다.")
     @Rollback
     public void testGetSchedulesByTravel() {
-        Place ajouUniv = placeService.insertPlace(
-                Place.builder()
-                        .x(4.5)
-                        .y(5.4)
-                        .placeUrl("ajou.ac.kr")
-                        .placeName("아주대학교")
-                        .addressName("원천동")
-                        .addressRoadName("원천로")
-                        .build());
-        Place inhaUniv = placeService.insertPlace(
-                Place.builder()
-                        .x(3.7)
-                        .y(7.3)
-                        .placeUrl("inha.ac.kr")
-                        .placeName("인하대학교")
-                        .addressName("인천")
-                        .addressRoadName("인천로")
-                        .phoneNumber("119")
-                        .build());
+        PlaceCreateRequestDto ajouUniv = PlaceCreateRequestDto.builder()
+                .x(4.5)
+                .y(5.4)
+                .placeUrl("ajou.ac.kr")
+                .placeName("아주대학교")
+                .addressName("원천동")
+                .addressRoadName("원천로")
+                .kakaoMapId(1L)
+                .build();
+        PlaceCreateRequestDto inhaUniv = PlaceCreateRequestDto.builder()
+                .x(3.7)
+                .y(7.3)
+                .placeUrl("inha.ac.kr")
+                .placeName("인하대학교")
+                .addressName("인천")
+                .addressRoadName("인천로")
+                .phoneNumber("119")
+                .kakaoMapId(2L)
+                .build();
         User user = userService.insertUser(
                 User.builder()
                         .type(Type.USER)
@@ -223,14 +224,14 @@ class TravelServiceTest {
         Long schedule1Id = scheduleService.createSchedule(
                 ScheduleCreateRequestDto.builder()
                         .travelId(travelId)
-                        .placeId(ajouUniv.getId())
+                        .place(ajouUniv)
                         .startTime(LocalDateTime.now())
                         .endTime(LocalDateTime.now().plusDays(1))
                         .build());
         Long schedule2Id = scheduleService.createSchedule(
                 ScheduleCreateRequestDto.builder()
                         .travelId(travelId)
-                        .placeId(inhaUniv.getId())
+                        .place(inhaUniv)
                         .startTime(LocalDateTime.now().plusDays(1))
                         .endTime(LocalDateTime.now().plusDays(2))
                         .build());

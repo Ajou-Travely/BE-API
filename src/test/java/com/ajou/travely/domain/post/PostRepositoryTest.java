@@ -66,6 +66,7 @@ public class PostRepositoryTest {
             .addressName("주소1")
             .addressRoadName("주소2")
             .placeUrl("urlurl")
+                .kakaoMapId(1L)
             .build());
         user = userRepository.save(User.builder()
             .type(Type.USER)

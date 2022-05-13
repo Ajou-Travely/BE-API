@@ -4,11 +4,11 @@ import com.ajou.travely.controller.place.dto.PlaceCreateRequestDto;
 import com.ajou.travely.controller.place.dto.PlaceResponseDto;
 import com.ajou.travely.service.PlaceService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequestMapping("api/v1/places")
 @RestController
@@ -18,12 +18,12 @@ public class PlaceController {
     private final PlaceService placeService;
 
     @GetMapping("")
-    public List<PlaceResponseDto> getAllPlaces() {
-        return placeService.getAllPlaces().stream().map(PlaceResponseDto::new).collect(Collectors.toList());
+    public ResponseEntity<List<PlaceResponseDto>> getAllPlaces() {
+        return ResponseEntity.ok(placeService.getAllPlaces());
     }
 
     @PostMapping("")
-    public PlaceResponseDto createPlace(@RequestBody @Valid PlaceCreateRequestDto placeCreateRequestDto) {
-        return new PlaceResponseDto(placeService.insertPlace(placeCreateRequestDto.toEntity()));
+    public ResponseEntity<PlaceResponseDto> createPlace(@RequestBody @Valid PlaceCreateRequestDto placeCreateRequestDto) {
+        return ResponseEntity.ok(placeService.createPlace(placeCreateRequestDto));
     }
 }
