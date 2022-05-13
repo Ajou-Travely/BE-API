@@ -17,9 +17,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .csrf()
                 .disable()
             .authorizeRequests()
-//                .antMatchers("/api/v1/oauth2/authorization/kakao", "/api/v1/isLogin", "/api/v1/signup").permitAll()
-//                .antMatchers("/api/v1/**").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')");
+                .antMatchers("/api/v1/oauth2/authorization/kakao", "/api/v1/isLogin", "/api/v1/signup").permitAll()
+                .antMatchers("/api/v1/**").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')");
 //                .antMatchers("/api/v2/**").access("hasRole('ROLE_ADMIN')")
-                .antMatchers("/**").permitAll();
+//                .antMatchers("/**").permitAll();
     }
 }
