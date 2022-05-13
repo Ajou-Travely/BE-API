@@ -54,14 +54,4 @@ public class Post {
         this.text = text;
     }
 
-    public void addPhoto(Photo photo) {
-        this.photos.add(photo);
-    }
-
-    @Override
-    public String toString() {
-        return "id: " + this.id.toString() +
-                "title: " + this.title +
-                "text: " + this.text;
-    }
 }

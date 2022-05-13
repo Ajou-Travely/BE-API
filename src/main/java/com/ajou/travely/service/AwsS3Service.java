@@ -28,11 +28,11 @@ public class AwsS3Service {
 
     private final AmazonS3 amazonS3;
 
-    public List<String> uploadFile(List<MultipartFile> multipartFile) {
+    public List<String> uploadFile(List<MultipartFile> files) {
         List<String> fileNameList = new ArrayList<>();
 
         // forEach 구문을 통해 multipartFile로 넘어온 파일들 하나씩 fileNameList에 추가
-        multipartFile.forEach(file -> {
+        files.forEach(file -> {
             if(!Objects.requireNonNull(file.getContentType()).startsWith("image")){
                 return;
             }

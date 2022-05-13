@@ -3,16 +3,12 @@ package com.ajou.travely.service;
 import com.ajou.travely.controller.post.dto.PostCreateRequestDto;
 import com.ajou.travely.controller.post.dto.PostResponseDto;
 import com.ajou.travely.controller.post.dto.PostUpdateRequestDto;
-import com.ajou.travely.domain.Photo;
 import com.ajou.travely.domain.Post;
 import com.ajou.travely.domain.Schedule;
 import com.ajou.travely.domain.user.User;
-import com.ajou.travely.repository.PhotoRepository;
 import com.ajou.travely.repository.PostRepository;
 import com.ajou.travely.repository.ScheduleRepository;
 import com.ajou.travely.repository.UserRepository;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
@@ -29,9 +25,7 @@ public class PostService {
 
     private final ScheduleRepository scheduleRepository;
 
-    private final PhotoRepository photoRepository;
-
-    private final AwsS3Service s3Service;
+    private final PhotoService photoService;
 
     public Long createPost(Long userId, PostCreateRequestDto requestDto) {
         User user = findUserById(userId);
@@ -43,12 +37,9 @@ public class PostService {
             .title(requestDto.getTitle())
             .build();
 
-        photoRepository.saveAll(
-            s3Service.uploadFile(requestDto.getFiles())
-                .stream()
-                .map(photoName -> new Photo(post, photoName))
-                .collect(Collectors.toList())
-        );
+        if (requestDto.getPhotos() != null) {
+            photoService.createPhotos(post, requestDto.getPhotos());
+        }
 
         return postRepository.save(post).getId();
     }
@@ -59,15 +50,16 @@ public class PostService {
     }
 
     public void updatePost(Long postId, PostUpdateRequestDto requestDto) {
-        Post post = initializePostInfo(postId);
+        Post post = findPostById(postId);
         post.update(requestDto.getTitle(), requestDto.getText());
-        List<Photo> addedPhotos = requestDto.getAddedPhotoPaths()
-            .stream()
-            .map(photoName -> new Photo(post, photoName))
-            .collect(Collectors.toList());
-        post.getPhotos()
-            .removeAll(photoRepository.findPhotosByIdsInQuery(requestDto.getRemovedPhotoIds()));
-        photoRepository.saveAll(addedPhotos);
+        photoService.updatePhotos(post, requestDto.getAddPhotos(), requestDto.getRemovePhotoIds());
+//        List<Photo> addedPhotos = requestDto.getAddedPhotoPaths()
+//            .stream()
+//            .map(photoName -> new Photo(post, photoName))
+//            .collect(Collectors.toList());
+//        post.getPhotos()
+//            .removeAll(photoRepository.findPhotosByIdsInQuery(requestDto.getRemovedPhotoIds()));
+//        photoRepository.saveAll(addedPhotos);
 //        photoRepository.deleteAllPhotosByIdInQuery(requestDto.getRemovedPhotoIds());
     }
 
