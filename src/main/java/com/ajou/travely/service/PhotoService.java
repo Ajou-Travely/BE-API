@@ -38,14 +38,19 @@ public class PhotoService {
     }
 
     public void removePhotos(List<Long> photoIds) {
-        List<String> photoNames = photoRepository.findPhotoNamesByIdsInQuery(photoIds);
-        photoRepository.deleteAllById(photoIds);
+        List<Photo> validPhotos = photoRepository.findAllById(photoIds);
+        if (photoIds.size() != validPhotos.size()) {
+            throw new RuntimeException("Invalid photo ids");
+        }
+        List<String> photoNames = validPhotos
+            .stream()
+            .map(Photo::getName)
+            .collect(Collectors.toList());
+        photoRepository.deleteAllById(validPhotos
+            .stream()
+            .map(Photo::getId)
+            .collect(Collectors.toList()));
         photoNames.forEach(s3Service::deleteFile);
-    }
-
-    public void updatePhotos(Post post, List<MultipartFile> addPhotos, List<Long> deletePhotoIds) {
-        createPhotos(post, addPhotos);
-        removePhotos(deletePhotoIds);
     }
 
 }

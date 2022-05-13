@@ -37,7 +37,7 @@ public class PostService {
             .title(requestDto.getTitle())
             .build();
 
-        if (requestDto.getPhotos() != null) {
+        if (!requestDto.getPhotos().isEmpty()) {
             photoService.createPhotos(post, requestDto.getPhotos());
         }
 
@@ -52,15 +52,13 @@ public class PostService {
     public void updatePost(Long postId, PostUpdateRequestDto requestDto) {
         Post post = findPostById(postId);
         post.update(requestDto.getTitle(), requestDto.getText());
-        photoService.updatePhotos(post, requestDto.getAddPhotos(), requestDto.getRemovePhotoIds());
-//        List<Photo> addedPhotos = requestDto.getAddedPhotoPaths()
-//            .stream()
-//            .map(photoName -> new Photo(post, photoName))
-//            .collect(Collectors.toList());
-//        post.getPhotos()
-//            .removeAll(photoRepository.findPhotosByIdsInQuery(requestDto.getRemovedPhotoIds()));
-//        photoRepository.saveAll(addedPhotos);
-//        photoRepository.deleteAllPhotosByIdInQuery(requestDto.getRemovedPhotoIds());
+
+        if (requestDto.getAddPhotos() != null) {
+            photoService.createPhotos(post, requestDto.getAddPhotos());
+        }
+        if (requestDto.getRemovePhotoIds() != null) {
+            photoService.removePhotos(requestDto.getRemovePhotoIds());
+        }
     }
 
     public void deletePost(Long postId){
