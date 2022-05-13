@@ -220,14 +220,14 @@ class TravelServiceTest {
                 .build();
         Long travelId = travelService.createTravel(user.getId(), request);
         TravelResponseDto travel = travelService.getTravelById(travelId);
-        ScheduleResponseDto schedule1 = scheduleService.createSchedule(
+        Long schedule1Id = scheduleService.createSchedule(
                 ScheduleCreateRequestDto.builder()
                         .travelId(travelId)
                         .placeId(ajouUniv.getId())
                         .startTime(LocalDateTime.now())
                         .endTime(LocalDateTime.now().plusDays(1))
                         .build());
-        ScheduleResponseDto schedule2 = scheduleService.createSchedule(
+        Long schedule2Id = scheduleService.createSchedule(
                 ScheduleCreateRequestDto.builder()
                         .travelId(travelId)
                         .placeId(inhaUniv.getId())

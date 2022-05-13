@@ -46,7 +46,7 @@ public class ScheduleService {
     }
 
     @Transactional
-    public ScheduleResponseDto createSchedule(ScheduleCreateRequestDto scheduleCreateRequestDto) {
+    public Long createSchedule(ScheduleCreateRequestDto scheduleCreateRequestDto) {
         Travel travel = travelRepository.findById(scheduleCreateRequestDto.getTravelId())
                 .orElseThrow(() -> new RuntimeException("해당 travel이 존재하지 않습니다."));
         Place place = placeRepository.findById(scheduleCreateRequestDto.getPlaceId())
@@ -65,7 +65,7 @@ public class ScheduleService {
             );
             schedule.addUser(branchRepository.save(new Branch(user, schedule)));
         });
-        return new ScheduleResponseDto(schedule);
+        return schedule.getId();
     }
 
     @Transactional
