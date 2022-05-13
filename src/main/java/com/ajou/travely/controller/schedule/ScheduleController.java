@@ -20,7 +20,7 @@ public class ScheduleController {
     }
 
     @PostMapping("")
-    public ResponseEntity<ScheduleResponseDto> createSchedule(@RequestBody ScheduleCreateRequestDto scheduleCreateRequestDto) {
+    public ResponseEntity<Long> createSchedule(@RequestBody ScheduleCreateRequestDto scheduleCreateRequestDto) {
         return ResponseEntity.ok(scheduleService.createSchedule(scheduleCreateRequestDto));
     }
 }

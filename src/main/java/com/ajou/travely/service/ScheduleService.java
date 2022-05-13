@@ -1,5 +1,6 @@
 package com.ajou.travely.service;
 
+import com.ajou.travely.controller.place.dto.PlaceCreateRequestDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleCreateRequestDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleResponseDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleUpdateRequestDto;
@@ -46,7 +47,7 @@ public class ScheduleService {
     }
 
     @Transactional
-    public ScheduleResponseDto createSchedule(ScheduleCreateRequestDto scheduleCreateRequestDto) {
+    public Long createSchedule(ScheduleCreateRequestDto scheduleCreateRequestDto) {
         Travel travel = travelRepository.findById(scheduleCreateRequestDto.getTravelId())
                 .orElseThrow(() -> new RuntimeException("해당 travel이 존재하지 않습니다."));
         Place place = placeRepository.findByKakaoMapId(scheduleCreateRequestDto.getPlace().getKakaoMapId())
@@ -74,7 +75,7 @@ public class ScheduleService {
             );
             schedule.addUser(branchRepository.save(new Branch(user, schedule)));
         });
-        return new ScheduleResponseDto(schedule);
+        return schedule.getId();
     }
 
     @Transactional
@@ -86,9 +87,19 @@ public class ScheduleService {
                 .getTravel()
                 .getUserTravels()
                 .forEach(ut -> currentUsers.put(ut.getUser().getId(), ut.getUser()));
-        if (!Objects.equals(schedule.getPlace().getId(), scheduleUpdateRequestDto.getPlaceId())) {
-            Place place = placeRepository.findById(scheduleUpdateRequestDto.getPlaceId())
-                    .orElseThrow(() -> new RuntimeException("해당 place가 존재하지 않습니다."));
+        if (!Objects.equals(schedule.getPlace().getKakaoMapId(), scheduleUpdateRequestDto.getPlace().getKakaoMapId())) {
+            PlaceCreateRequestDto placeDto = scheduleUpdateRequestDto.getPlace();
+            Place place = placeRepository.findByKakaoMapId(placeDto.getKakaoMapId())
+                    .orElse(placeRepository.save(Place
+                            .builder()
+                            .kakaoMapId(placeDto.getKakaoMapId())
+                            .placeUrl(placeDto.getPlaceUrl())
+                            .placeName(placeDto.getPlaceName())
+                            .addressRoadName(placeDto.getAddressRoadName())
+                            .addressName(placeDto.getAddressName())
+                            .x(placeDto.getX())
+                            .y(placeDto.getY())
+                            .build()));
             schedule.setPlace(place);
         }
         if (schedule.getStartTime() != scheduleUpdateRequestDto.getStartTime()) {
