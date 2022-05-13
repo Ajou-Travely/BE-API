@@ -7,7 +7,9 @@ import com.ajou.travely.domain.Branch;
 import com.ajou.travely.domain.Place;
 import com.ajou.travely.domain.Schedule;
 import com.ajou.travely.domain.Travel;
+import com.ajou.travely.exception.ErrorCode;
 import com.ajou.travely.domain.user.User;
+import com.ajou.travely.exception.custom.RecordNotFoundException;
 import com.ajou.travely.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,9 +50,15 @@ public class ScheduleService {
     @Transactional
     public ScheduleResponseDto createSchedule(ScheduleCreateRequestDto scheduleCreateRequestDto) {
         Travel travel = travelRepository.findById(scheduleCreateRequestDto.getTravelId())
-                .orElseThrow(() -> new RuntimeException("해당 travel이 존재하지 않습니다."));
+                .orElseThrow(() -> new RecordNotFoundException(
+                        "해당 ID의 Travel이 존재하지 않습니다."
+                        , ErrorCode.TRAVEL_NOT_FOUND
+                ));
         Place place = placeRepository.findById(scheduleCreateRequestDto.getPlaceId())
-                .orElseThrow(() -> new RuntimeException("해당 place가 존재하지 않습니다."));
+                .orElseThrow(() -> new RecordNotFoundException(
+                        "해당 ID의 Travel이 존재하지 않습니다."
+                        , ErrorCode.TRAVEL_NOT_FOUND
+                ));
         Schedule schedule = scheduleRepository.save(
                 Schedule.builder()
                         .travel(travel)
@@ -61,7 +69,10 @@ public class ScheduleService {
         );
         scheduleCreateRequestDto.getUserIds().forEach(id -> {
             User user = userRepository.findById(id).orElseThrow(
-                    () -> new RuntimeException("해당 user가 존재하지 않습니다.")
+                    () -> new RecordNotFoundException(
+                            "해당 ID의 User가 존재하지 않습니다."
+                            , ErrorCode.USER_NOT_FOUND
+                    )
             );
             schedule.addUser(branchRepository.save(new Branch(user, schedule)));
         });
@@ -71,12 +82,18 @@ public class ScheduleService {
     @Transactional
     public ScheduleResponseDto updateSchedule(ScheduleUpdateRequestDto scheduleUpdateRequestDto) {
         Schedule schedule = scheduleRepository.findById(scheduleUpdateRequestDto.getScheduleId())
-                .orElseThrow(() -> new RuntimeException("해당 schedule이 존재하지 않습니다."));
+                .orElseThrow(() -> new RecordNotFoundException(
+                        "해당 ID의 Schedule이 존재하지 않습니다."
+                        , ErrorCode.SCHEDULE_NOT_FOUND
+                ));
         Map<Long, User> currentUsers = new HashMap<>();
         schedule.getTravel().getUserTravels().forEach(ut -> currentUsers.put(ut.getUser().getId(), ut.getUser()));
         if (!Objects.equals(schedule.getPlace().getId(), scheduleUpdateRequestDto.getPlaceId())) {
             Place place = placeRepository.findById(scheduleUpdateRequestDto.getPlaceId())
-                    .orElseThrow(() -> new RuntimeException("해당 place가 존재하지 않습니다."));
+                    .orElseThrow(() -> new RecordNotFoundException(
+                            "해당 ID의 Place가 존재하지 않습니다."
+                            , ErrorCode.PLACE_NOT_FOUND
+                    ));
             schedule.setPlace(place);
         }
         if (schedule.getStartTime() != scheduleUpdateRequestDto.getStartTime()) {
@@ -95,16 +112,25 @@ public class ScheduleService {
         outUserIds.removeAll(inUserIds);
         inUserIds.forEach(id -> {
             User user = Optional.ofNullable(currentUsers.get(id)).orElseThrow(
-                    () -> new RuntimeException("해당 user가 유효하지 않습니다.")
+                    () -> new RecordNotFoundException(
+                            "해당 ID의 User가 존재하지 않습니다."
+                            , ErrorCode.USER_NOT_FOUND
+                    )
             );
             branchRepository.save(new Branch(user,schedule));
         });
         outUserIds.forEach(id -> {
             if (!currentUsers.containsKey(id)) {
-                throw new RuntimeException("해당 user가 유효하지 않습니다.");
+                throw new RecordNotFoundException(
+                        "해당 ID의 User가 존재하지 않습니다."
+                        , ErrorCode.USER_NOT_FOUND
+                );
             }
             Branch branch = branchRepository.findByScheduleIdAndUserId(schedule.getId(), id)
-                            .orElseThrow(() -> new RuntimeException("해당 branch가 존재하지 않습니다."));
+                            .orElseThrow(() -> new RecordNotFoundException(
+                                    "해당 ID의 Branch가 존재하지 않습니다."
+                                    , ErrorCode.BRANCH_NOT_FOUND
+                            ));
             schedule.removeUser(branch);
             branchRepository.delete(branch);
         });
@@ -114,7 +140,10 @@ public class ScheduleService {
     @Transactional
     public ScheduleResponseDto getScheduleById(Long scheduleId) {
         Schedule schedule = scheduleRepository.findScheduleWithPlaceByScheduleId(scheduleId)
-                .orElseThrow(() -> new RuntimeException("해당 일정이 존재하지 않습니다."));
+                .orElseThrow(() -> new RecordNotFoundException(
+                        "해당 ID의 Schedule이 존재하지 않습니다."
+                        , ErrorCode.SCHEDULE_NOT_FOUND
+                ));
         return new ScheduleResponseDto(schedule);
     }
 

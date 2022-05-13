@@ -1,4 +1,4 @@
-package com.ajou.travely.domain.error;
+package com.ajou.travely.exception;
 
 public class ErrorResponse {
     private final int status;

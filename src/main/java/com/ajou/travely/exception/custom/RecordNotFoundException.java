@@ -1,6 +1,6 @@
-package com.ajou.travely.exception;
+package com.ajou.travely.exception.custom;
 
-import com.ajou.travely.domain.error.ErrorCode;
+import com.ajou.travely.exception.ErrorCode;
 import lombok.Getter;
 
 @Getter
