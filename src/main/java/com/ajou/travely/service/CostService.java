@@ -2,6 +2,7 @@ package com.ajou.travely.service;
 
 import com.ajou.travely.controller.cost.dto.CostCreateResponseDto;
 import com.ajou.travely.controller.cost.dto.CostResponseDto;
+import com.ajou.travely.controller.cost.dto.*;
 import com.ajou.travely.domain.Cost;
 import com.ajou.travely.domain.Travel;
 import com.ajou.travely.domain.UserCost;
@@ -15,8 +16,8 @@ import com.ajou.travely.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Map;
+import java.util.*;
 
 
 @RequiredArgsConstructor
@@ -64,7 +65,6 @@ public class CostService {
                             )))
                     .amount(amountsPerUser.get(userId))
                     .build();
-            userCostRepository.save(userCost);
             cost.addUserCost(userCost);
         }
         costRepository.save(cost);
@@ -81,5 +81,57 @@ public class CostService {
                 ));
 
         return new CostResponseDto(cost);
+    }
+
+    @Transactional
+    public void updateCostById(Long costId, CostUpdateDto costUpdateDto) {
+        Cost cost = costRepository.findById(costId)
+                .orElseThrow(() -> new RuntimeException("해당 지출이 존재하지 않습니다."));
+        cost.updateCost(costUpdateDto);
+        List<UserCost> userCosts = cost.getUserCosts();
+        if (!costUpdateDto.getAmountsPerUser().keySet().isEmpty()) {
+            Map<Long, UserCost> exAmountsPerUser = new HashMap<>();
+            userCosts.forEach(userCost -> {
+                exAmountsPerUser.put(
+                        userCost.getUser().getId(),
+                        userCost
+                );
+            });
+            Set<Long> userToDelete = new HashSet<>(exAmountsPerUser.keySet());
+            Set<Long> userToAdd = new HashSet<>(costUpdateDto.getAmountsPerUser().keySet());
+            Set<Long> userToStay = new HashSet<>(userToAdd);
+            userToStay.retainAll(userToDelete);
+            userToDelete.removeAll(userToAdd);
+            userToAdd.removeAll(userToStay);
+
+
+            userToDelete.forEach(userId -> {
+                userCostRepository.deleteUserCostByCostIdAndUserId(costId, userId);
+            });
+
+
+            userToAdd.forEach(userId -> {
+                userCostRepository.save(new UserCost(
+                        cost,
+                        userRepository.findById(userId)
+                                .orElseThrow(() -> new RuntimeException("유저가 존재하지 않습니다.")),
+                        costUpdateDto.getAmountsPerUser().get(userId).getAmount(),
+                        costUpdateDto.getAmountsPerUser().get(userId).getIsRequested()
+                ));
+            });
+
+            userToStay.forEach(userId -> {
+                userCostRepository.updateUserCostByUserCostId(
+                        costUpdateDto.getAmountsPerUser().get(userId).getAmount(),
+                        costUpdateDto.getAmountsPerUser().get(userId).getIsRequested(),
+                        exAmountsPerUser.get(userId).getId()
+                );
+            });
+        }
+    }
+
+    @Transactional
+    public void deleteCostById(Long costId) {
+        costRepository.deleteById(costId);
     }
 }
