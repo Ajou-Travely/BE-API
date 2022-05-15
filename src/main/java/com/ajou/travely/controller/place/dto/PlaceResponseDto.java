@@ -13,6 +13,7 @@ public class PlaceResponseDto {
     private String addressName;
     private String addressRoadName;
     private String placeUrl;
+    private Long kakaoMapId;
 
     public PlaceResponseDto(Place entity) {
         this.placeId = entity.getId();
@@ -23,5 +24,6 @@ public class PlaceResponseDto {
         this.addressName = entity.getAddressName();
         this.addressRoadName = entity.getAddressRoadName();
         this.placeUrl = entity.getPlaceUrl();
+        this.kakaoMapId = entity.getKakaoMapId();
     }
 }

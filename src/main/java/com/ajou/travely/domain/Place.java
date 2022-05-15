@@ -30,9 +30,11 @@ public class Place {
     private String addressRoadName;
 
     private String placeUrl;
+    @Column(unique = true)
+    private Long kakaoMapId;
 
     @Builder
-    public Place(@NonNull Double x, @NonNull Double y, @NonNull String placeName, String phoneNumber, @NonNull String addressName, @NonNull String addressRoadName, @NonNull String placeUrl) {
+    public Place(@NonNull Double x, @NonNull Double y, @NonNull String placeName, String phoneNumber, @NonNull String addressName, @NonNull String addressRoadName, @NonNull String placeUrl, @NonNull Long kakaoMapId) {
         this.x = x;
         this.y = y;
         this.placeName = placeName;
@@ -40,5 +42,6 @@ public class Place {
         this.addressName = addressName;
         this.addressRoadName = addressRoadName;
         this.placeUrl = placeUrl;
+        this.kakaoMapId = kakaoMapId;
     }
 }
