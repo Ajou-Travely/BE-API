@@ -47,8 +47,8 @@ public class ScheduleService {
     }
 
     @Transactional
-    public Long createSchedule(ScheduleCreateRequestDto scheduleCreateRequestDto) {
-        Travel travel = travelRepository.findById(scheduleCreateRequestDto.getTravelId())
+    public Long createSchedule(Long travelId, ScheduleCreateRequestDto scheduleCreateRequestDto) {
+        Travel travel = travelRepository.findById(travelId)
                 .orElseThrow(() -> new RuntimeException("해당 travel이 존재하지 않습니다."));
         Place place = placeRepository.findByKakaoMapId(scheduleCreateRequestDto.getPlace().getKakaoMapId())
                 .orElse(placeRepository.save(Place
@@ -79,14 +79,14 @@ public class ScheduleService {
     }
 
     @Transactional
-    public ScheduleResponseDto updateSchedule(ScheduleUpdateRequestDto scheduleUpdateRequestDto) {
-        Schedule schedule = scheduleRepository.findById(scheduleUpdateRequestDto.getScheduleId())
+    public void updateSchedule(Long scheduleId, ScheduleUpdateRequestDto scheduleUpdateRequestDto) {
+        Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new RuntimeException("해당 schedule이 존재하지 않습니다."));
         Map<Long, User> currentUsers = new HashMap<>();
         schedule
                 .getTravel()
                 .getUserTravels()
-                .forEach(ut -> currentUsers.put(ut.getUser().getId(), ut.getUser()));
+                .forEach(userTravel -> currentUsers.put(userTravel.getUser().getId(), userTravel.getUser()));
         if (!Objects.equals(schedule.getPlace().getKakaoMapId(), scheduleUpdateRequestDto.getPlace().getKakaoMapId())) {
             PlaceCreateRequestDto placeDto = scheduleUpdateRequestDto.getPlace();
             Place place = placeRepository.findByKakaoMapId(placeDto.getKakaoMapId())
@@ -131,7 +131,6 @@ public class ScheduleService {
             schedule.removeUser(branch);
             branchRepository.delete(branch);
         });
-        return new ScheduleResponseDto(schedule);
     }
 
     @Transactional

@@ -10,7 +10,6 @@ import java.util.List;
 
 @Getter
 public class ScheduleUpdateRequestDto {
-    private final Long scheduleId;
     private final PlaceCreateRequestDto place;
     private final LocalDateTime startTime;
     private final LocalDateTime endTime;
@@ -18,7 +17,6 @@ public class ScheduleUpdateRequestDto {
 
     @Builder
     public ScheduleUpdateRequestDto(Long scheduleId, PlaceCreateRequestDto place, LocalDateTime startTime, LocalDateTime endTime, List<Long> userIds) {
-        this.scheduleId = scheduleId;
         this.place = place;
         this.startTime = startTime;
         this.endTime = endTime;

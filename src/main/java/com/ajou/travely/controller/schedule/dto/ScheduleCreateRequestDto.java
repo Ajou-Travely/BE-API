@@ -14,8 +14,6 @@ import java.util.List;
 @Getter
 public class ScheduleCreateRequestDto {
     @NotNull
-    private Long travelId;
-    @NotNull
     private PlaceCreateRequestDto place;
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime startTime;
@@ -25,8 +23,7 @@ public class ScheduleCreateRequestDto {
     private List<Long> userIds;
 
     @Builder
-    public ScheduleCreateRequestDto(@NonNull Long travelId, @NonNull PlaceCreateRequestDto place, @NonNull LocalDateTime startTime, @NonNull LocalDateTime endTime, List<Long> userIds) {
-        this.travelId = travelId;
+    public ScheduleCreateRequestDto(@NonNull PlaceCreateRequestDto place, @NonNull LocalDateTime startTime, @NonNull LocalDateTime endTime, List<Long> userIds) {
         this.place = place;
         this.startTime = startTime;
         this.endTime = endTime;

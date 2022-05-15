@@ -110,12 +110,14 @@ class ScheduleServiceTest {
         travelService.addUserToTravel(travel.getId(), user1.getId());
         travelService.addUserToTravel(travel.getId(), user2.getId());
         Long scheduleId = scheduleService.createSchedule(
-                new ScheduleCreateRequestDto(travel.getId(),
-                        ajouUniv,
-                        LocalDateTime.now(),
-                        LocalDateTime.now().plusDays(1),
-                        new ArrayList<>(List.of(user.getId(), user1.getId(), user2.getId()))
-                )
+                travel.getId(),
+                ScheduleCreateRequestDto
+                        .builder()
+                        .place(ajouUniv)
+                        .startTime(LocalDateTime.now())
+                        .endTime(LocalDateTime.now().plusDays(1))
+                        .userIds(new ArrayList<>(List.of(user.getId(), user1.getId(), user2.getId())))
+                        .build()
         );
         ScheduleResponseDto schedule = scheduleService.getScheduleById(scheduleId);
         assertThat(schedule.getPlace().getPlaceName()).isEqualTo(ajouUniv.getPlaceName());
@@ -150,22 +152,23 @@ class ScheduleServiceTest {
         travelService.addUserToTravel(travel.getId(), user1.getId());
         travelService.addUserToTravel(travel.getId(), user2.getId());
         Long scheduleId = scheduleService.createSchedule(
-                new ScheduleCreateRequestDto(travel.getId(),
-                        ajouUniv,
-                        startTime,
-                        endTime,
-                        new ArrayList<>(List.of(user1.getId()))
-                )
+                travel.getId(),
+                ScheduleCreateRequestDto
+                        .builder()
+                        .place(ajouUniv)
+                        .startTime(LocalDateTime.now())
+                        .endTime(LocalDateTime.now().plusDays(1))
+                        .userIds(new ArrayList<>(List.of(user1.getId())))
+                        .build()
         );
         ScheduleUpdateRequestDto scheduleUpdateRequestDto = ScheduleUpdateRequestDto
                 .builder()
-                .scheduleId(scheduleId)
                 .startTime(startTime)
                 .endTime(endTime)
                 .place(inhaUniv)
                 .userIds(new ArrayList<>(List.of(user.getId(), user2.getId())))
                 .build();
-        scheduleService.updateSchedule(scheduleUpdateRequestDto);
+        scheduleService.updateSchedule(scheduleId, scheduleUpdateRequestDto);
         ScheduleResponseDto schedule = scheduleService.getScheduleById(scheduleId);
         assertThat(schedule.getPlace().getPlaceName()).isEqualTo(inhaUniv.getPlaceName());
         assertThat(schedule.getUsers()).hasSize(2);
@@ -196,13 +199,14 @@ class ScheduleServiceTest {
         travelService.addUserToTravel(travel.getId(), user1.getId());
         travelService.addUserToTravel(travel.getId(), user2.getId());
         Long scheduleId = scheduleService.createSchedule(
-                new ScheduleCreateRequestDto(
-                        travel.getId(),
-                        ajouUniv,
-                        LocalDateTime.now(),
-                        LocalDateTime.now().plusDays(1),
-                        new ArrayList<>(List.of(user.getId(), user1.getId(), user2.getId()))
-                )
+                travel.getId(),
+                ScheduleCreateRequestDto
+                        .builder()
+                        .place(ajouUniv)
+                        .startTime(LocalDateTime.now())
+                        .endTime(LocalDateTime.now().plusDays(1))
+                        .userIds(new ArrayList<>(List.of(user.getId(), user1.getId(), user2.getId())))
+                        .build()
         );
         ScheduleResponseDto schedule = scheduleService.getScheduleById(scheduleId);
         assertThat(schedule.getPlace().getPlaceName()).isEqualTo(ajouUniv.getPlaceName());
