@@ -1,5 +1,6 @@
 package com.ajou.travely.service;
 
+import com.ajou.travely.controller.travel.dto.SimpleTravelResponseDto;
 import com.ajou.travely.controller.user.dto.UserCreateRequestDto;
 import com.ajou.travely.controller.user.dto.UserResponseInfoDto;
 import com.ajou.travely.domain.user.User;
@@ -33,5 +34,14 @@ public class UserService {
 
     public void deleteAllUsers() {
         userRepository.deleteAll();
+    }
+
+    @Transactional(readOnly = true)
+    public List<SimpleTravelResponseDto> getTravelsByUser(Long userId) {
+        return userRepository
+                .findTravelsByUserId(userId)
+                .stream()
+                .map(SimpleTravelResponseDto::new)
+                .collect(Collectors.toList());
     }
 }
