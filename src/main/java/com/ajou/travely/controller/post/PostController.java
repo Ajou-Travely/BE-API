@@ -6,6 +6,7 @@ import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -39,6 +40,13 @@ public class PostController {
     public ResponseEntity<Void> updatePost(@PathVariable Long postId,
         @Valid @ModelAttribute PostUpdateRequestDto requestDto) {
         postService.updatePost(postId, requestDto);
+        return ResponseEntity.ok()
+            .build();
+    }
+
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<Void> deletePost(@PathVariable Long postId) {
+        postService.deletePost(postId);
         return ResponseEntity.ok()
             .build();
     }

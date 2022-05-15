@@ -57,17 +57,18 @@ public class PostService {
             photoService.createPhotos(post, requestDto.getAddPhotos());
         }
         if (requestDto.getRemovePhotoIds() != null) {
-            photoService.removePhotos(requestDto.getRemovePhotoIds());
+            photoService.removePhotoIds(requestDto.getRemovePhotoIds());
         }
     }
 
     public void deletePost(Long postId){
+        photoService.removePhotos(findPostById(postId).getPhotos());
         postRepository.deleteById(postId);
     }
 
     private Post findPostById(Long postId) {
         return postRepository.findById(postId)
-            .orElseThrow(() -> new RuntimeException("게시글 없음 ㅋㅋ"));
+            .orElseThrow(() -> new IllegalArgumentException("Invalid Post ID: id=" + postId));
     }
 
     @Transactional(readOnly = true)
@@ -80,12 +81,12 @@ public class PostService {
 
     private User findUserById(Long userId) {
         return userRepository.findById(userId)
-            .orElseThrow(() -> new RuntimeException("유저 없음 ㅋㅋ"));
+            .orElseThrow(() -> new IllegalArgumentException("Invalid User ID: id=" + userId));
     }
 
     private Schedule findScheduleById(Long scheduleId) {
         return scheduleRepository.findById(scheduleId)
-            .orElseThrow(() -> new RuntimeException("스케줄 없음 ㅋㅋ"));
+            .orElseThrow(() -> new RuntimeException("Invalid Schedule ID: id=" + scheduleId));
     }
 
 }
