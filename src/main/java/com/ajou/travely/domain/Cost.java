@@ -1,5 +1,8 @@
 package com.ajou.travely.domain;
 
+
+import com.ajou.travely.controller.cost.dto.CostUpdateDto;
+import com.ajou.travely.domain.user.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,7 +34,7 @@ public class Cost {
 
     private Boolean isEquallyDivided;
 
-    @OneToMany(mappedBy = "cost")
+    @OneToMany(mappedBy = "cost", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserCost> userCosts = new ArrayList<>();
 
     private Long payerId;
@@ -49,4 +52,27 @@ public class Cost {
     public void addUserCost(UserCost userCost) {
         this.userCosts.add(userCost);
     }
+
+    public void removeUserCost(UserCost userCost) {
+        this.userCosts.remove(userCost);
+    }
+
+    public void updateCost(CostUpdateDto costUpdateDto) {
+        if (costUpdateDto.getTotalAmount() != null) {
+            this.totalAmount = costUpdateDto.getTotalAmount();
+        }
+        if (costUpdateDto.getContent() != null) {
+            this.content = costUpdateDto.getContent();
+        }
+        if (costUpdateDto.getTitle() != null) {
+            this.title = costUpdateDto.getTitle();
+        }
+        if (costUpdateDto.getIsEquallyDivided() != null) {
+            this.isEquallyDivided = costUpdateDto.getIsEquallyDivided();
+        }
+        if (costUpdateDto.getPayerId() != null) {
+            this.payerId = costUpdateDto.getPayerId();
+        }
+    }
+
 }

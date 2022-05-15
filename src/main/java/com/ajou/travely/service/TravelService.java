@@ -10,7 +10,9 @@ import com.ajou.travely.domain.Schedule;
 import com.ajou.travely.domain.Cost;
 import com.ajou.travely.domain.Travel;
 import com.ajou.travely.domain.UserTravel;
+import com.ajou.travely.exception.ErrorCode;
 import com.ajou.travely.domain.user.User;
+import com.ajou.travely.exception.custom.RecordNotFoundException;
 import com.ajou.travely.repository.CostRepository;
 import com.ajou.travely.repository.TravelRepository;
 import com.ajou.travely.repository.UserRepository;
@@ -42,7 +44,10 @@ public class TravelService {
     public Long createTravel(Long userId, TravelCreateRequestDto travelCreateRequestDto) {
         User user = userRepository
                 .findById(userId)
-                .orElseThrow(() -> new RuntimeException("해당 id의 유저가 존재하지 않습니다."));
+                .orElseThrow(() -> new RecordNotFoundException(
+                        "해당 ID의 User가 존재하지 않습니다."
+                        , ErrorCode.USER_NOT_FOUND
+                ));
         Travel travel = travelRepository.save(
                 Travel.builder()
                         .title(travelCreateRequestDto.getTitle())
@@ -70,10 +75,16 @@ public class TravelService {
     public void addUserToTravel(Long travelId, Long userId) {
         Travel travel = travelRepository
                 .findById(travelId)
-                .orElseThrow(() -> new RuntimeException("해당 id의 여행이 존재하지 않습니다."));
+                .orElseThrow(() -> new RecordNotFoundException(
+                        "해당 ID의 Travel이 존재하지 않습니다."
+                        , ErrorCode.TRAVEL_NOT_FOUND
+                ));
         User user = userRepository
                 .findById(userId)
-                .orElseThrow(() -> new RuntimeException("해당 id의 유저가 존재하지 않습니다."));
+                .orElseThrow(() -> new RecordNotFoundException(
+                        "해당 ID의 User 존재하지 않습니다."
+                        , ErrorCode.USER_NOT_FOUND
+                ));
         UserTravel userTravel = UserTravel.builder().user(user).travel(travel).build();
         userTravelRepository.save(userTravel);
     }
@@ -82,7 +93,10 @@ public class TravelService {
     public TravelResponseDto getTravelById(Long travelId) {
         Travel travel = travelRepository
                 .findById(travelId)
-                .orElseThrow(() -> new RuntimeException("해당 id의 여행이 존재하지 않습니다."));
+                .orElseThrow(() -> new RecordNotFoundException(
+                        "해당 ID의 Travel이 존재하지 않습니다."
+                        , ErrorCode.TRAVEL_NOT_FOUND
+                ));
         List<Schedule> schedules = travelRepository.findSchedulesWithPlaceByTravelId(travel.getId());
         return new TravelResponseDto(travel, schedules);
     }
@@ -91,7 +105,10 @@ public class TravelService {
     public List<User> getUsersOfTravel(Long travelId) {
         return travelRepository
                 .findById(travelId)
-                .orElseThrow(() -> new RuntimeException("해당 id의 여행이 존재하지 않습니다."))
+                .orElseThrow(() -> new RecordNotFoundException(
+                        "해당 ID의 Travel이 존재하지 않습니다."
+                        , ErrorCode.TRAVEL_NOT_FOUND
+                ))
                 .getUserTravels()
                 .stream()
                 .map(UserTravel::getUser)
@@ -102,7 +119,10 @@ public class TravelService {
     public List<SimpleUserInfoDto> getSimpleUsersOfTravel(Long travelId) {
         return travelRepository
                 .findById(travelId)
-                .orElseThrow(() -> new RuntimeException("해당 id의 여행이 존재하지 않습니다."))
+                .orElseThrow(() -> new RecordNotFoundException(
+                        "해당 ID의 Travel이 존재하지 않습니다."
+                        , ErrorCode.TRAVEL_NOT_FOUND
+                ))
                 .getUserTravels()
                 .stream()
                 .map(UserTravel::getUser)

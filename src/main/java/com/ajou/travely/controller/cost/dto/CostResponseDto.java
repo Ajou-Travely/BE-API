@@ -15,7 +15,7 @@ public class CostResponseDto {
     private String content;
     private String title;
     private Boolean isEquallyDivided;
-    private List<UserCostResponseDto> userCostResponseDtos;
+    private List<UserCostResponseDto> userCosts;
     private Long payerId;
 
     public CostResponseDto(Cost entity) {
@@ -24,7 +24,7 @@ public class CostResponseDto {
         this.content = entity.getContent();
         this.title = entity.getTitle();
         this.isEquallyDivided = entity.getIsEquallyDivided();
-        this.userCostResponseDtos = entity.getUserCosts().stream().map(userCost -> {
+        this.userCosts = entity.getUserCosts().stream().map(userCost -> {
             return new UserCostResponseDto(
                     userCost.getId(),
                     userCost.getAmount(),

@@ -53,12 +53,6 @@ class PlaceServiceTest {
                         .kakaoMapId(2L)
                         .build());
     }
-
-    @AfterEach
-    public void cleanUp() {
-        placeService.deleteAllPlaces();
-    }
-
     @Test
     @DisplayName("생성한 Place를 DB에 삽입할 수 있다.")
     @Rollback

@@ -38,4 +38,16 @@ public class UserCost {
         this.amount = amount;
         this.isRequested = false;
     }
+
+    public UserCost(Cost cost, User user, Long amount, Boolean isRequested) {
+        this.cost = cost;
+        this.user = user;
+        this.amount = amount;
+        this.isRequested = isRequested;
+    }
+
+    public void update(Long amount, Boolean isRequested) {
+        this.amount = amount;
+        this.isRequested = isRequested;
+    }
 }
