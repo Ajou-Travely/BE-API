@@ -1,5 +1,6 @@
 package com.ajou.travely.service;
 
+import com.ajou.travely.controller.travel.dto.SimpleTravelResponseDto;
 import com.ajou.travely.exception.ErrorCode;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.exception.custom.RecordNotFoundException;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -35,5 +37,14 @@ public class UserService {
 
     public void deleteAllUsers() {
         userRepository.deleteAll();
+    }
+
+    @Transactional(readOnly = true)
+    public List<SimpleTravelResponseDto> getTravelsByUser(Long userId) {
+        return userRepository
+                .findTravelsByUserId(userId)
+                .stream()
+                .map(SimpleTravelResponseDto::new)
+                .collect(Collectors.toList());
     }
 }

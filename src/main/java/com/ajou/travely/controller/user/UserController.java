@@ -1,5 +1,7 @@
 package com.ajou.travely.controller.user;
 
+import com.ajou.travely.controller.travel.dto.SimpleTravelResponseDto;
+import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.controller.user.dto.UserCreateRequestDto;
 import com.ajou.travely.controller.user.dto.UserResponseInfoDto;
 import com.ajou.travely.domain.user.User;
@@ -27,5 +29,10 @@ public class UserController {
     public UserResponseInfoDto createUser(@Valid @RequestBody UserCreateRequestDto userCreateRequestDto) {
         User user = userService.insertUser(userCreateRequestDto.toEntity());
         return new UserResponseInfoDto(user);
+    }
+
+    @GetMapping("/{userId}/travels")
+    public List<SimpleTravelResponseDto> showTravelsByUser(@RequestParam Long userId) {
+        return userService.getTravelsByUser(userId);
     }
 }
