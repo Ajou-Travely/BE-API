@@ -24,6 +24,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(properties = {
         "auth.kakaoOauth2ClinetId=test",
         "auth.frontendRedirectUrl=test",
+        "cloud.aws.credentials.accessKey=test",
+        "cloud.aws.credentials.secretKey=test",
+        "cloud.aws.s3.bucket=test"
 })
 @Transactional
 class Oauth2ServiceTest {

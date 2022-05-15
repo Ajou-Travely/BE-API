@@ -25,6 +25,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(properties = {
     "auth.kakaoOauth2ClinetId=test",
     "auth.frontendRedirectUrl=test",
+    "cloud.aws.credentials.accessKey=test",
+    "cloud.aws.credentials.secretKey=test",
+    "cloud.aws.s3.bucket=test"
 })
 @Transactional
 public class PostRepositoryTest {

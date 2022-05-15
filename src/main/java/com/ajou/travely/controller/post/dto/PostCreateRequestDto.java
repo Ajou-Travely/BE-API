@@ -18,8 +18,10 @@ public class PostCreateRequestDto {
     @NotBlank(message = "제목이 필요합니다.")
     private String title;
 
+    @NotBlank
     private String text;
 
+    @NotNull
     private List<MultipartFile> photos;
 
 }
