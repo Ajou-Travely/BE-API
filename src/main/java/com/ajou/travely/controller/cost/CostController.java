@@ -11,12 +11,14 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-@RequiredArgsConstructor
+@RequestMapping("/api/v1/costs")
 @RestController
+@RequiredArgsConstructor
 public class CostController {
+
     private final CostService costService;
 
-    @PostMapping("/api/v1/costs")
+    @PostMapping("")
     public CostCreateResponseDto createCost(@Valid @RequestBody CostCreateRequestDto costCreateRequestDto) {
         CostCreateResponseDto costCreateResponseDto = costService.createCost(
                 costCreateRequestDto.getTotalAmount(),
@@ -30,7 +32,7 @@ public class CostController {
         return costCreateResponseDto;
     }
 
-    @GetMapping("/api/v1/costs/{costId}")
+    @GetMapping("/{costId}")
     public CostResponseDto getCostById(@PathVariable Long costId) {
         return this.costService.getCostById(costId);
     }

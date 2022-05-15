@@ -1,5 +1,6 @@
 package com.ajou.travely.domain;
 
+
 import com.ajou.travely.controller.cost.dto.CostUpdateDto;
 import com.ajou.travely.domain.user.User;
 import lombok.Builder;
