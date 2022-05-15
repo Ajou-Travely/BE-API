@@ -5,6 +5,8 @@ import com.ajou.travely.controller.cost.dto.CostResponseDto;
 import com.ajou.travely.controller.cost.dto.CostUpdateDto;
 import com.ajou.travely.controller.cost.dto.CostUpdateInfoDto;
 import com.ajou.travely.domain.Cost;
+import com.ajou.travely.controller.cost.dto.UserCostResponseDto;
+import com.ajou.travely.controller.travel.dto.TravelCreateRequestDto;
 import com.ajou.travely.domain.Travel;
 import com.ajou.travely.domain.UserCost;
 import com.ajou.travely.domain.user.Type;
@@ -28,6 +30,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -49,11 +53,11 @@ class CostServiceTest {
     @Autowired
     UserCostRepository userCostRepository;
     @Autowired
-    TravelService travelService;
-    @Autowired
     CostService costService;
     @PersistenceContext
     EntityManager em;
+    @Autowired
+    TravelService travelService;
 
     @Test
     @DisplayName("지출 객체를 생성할 수 있다.")
@@ -83,7 +87,7 @@ class CostServiceTest {
                         "114",
                         2L
                 ));
-        Travel travel = travelService.insertTravel(
+        Travel travel = travelRepository.save(
                 Travel.builder()
                         .title("첫 여행")
                         .startDate(LocalDate.now())
@@ -117,25 +121,23 @@ class CostServiceTest {
     public void testGetCostById() {
         List<Long> numbers = new ArrayList<>(Arrays.asList(1L, 2L, 3L, 4L));
         List<User> users = new ArrayList<>();
-        numbers.forEach(number -> {
-            users.add(userRepository.save(new User(
-                    Type.USER,
-                    String.format("test%d@ajou.ac.kr", number),
-                    String.format("test%d", number),
-                    String.format("11%d", number),
-                    number
-            )));
-        });
-        Travel travel = travelService.insertTravel(
-                Travel.builder()
+        numbers.forEach(number -> users.add(userRepository.save(new User(
+                Type.USER,
+                String.format("test%d@ajou.ac.kr", number),
+                String.format("test%d", number),
+                String.format("11%d", number),
+                number
+        ))));
+        Long travelId = travelService.createTravel(users.get(0).getId(),
+                TravelCreateRequestDto.builder()
                         .title("첫 여행")
                         .startDate(LocalDate.now())
                         .endDate(LocalDate.now())
-                        .managerId(users.get(0).getId())
+                        .userId(users.get(0).getId())
                         .build()
         );
         for (User user : users) {
-            travelService.addUserToTravel(travel.getId(), user.getId());
+            travelService.addUserToTravel(travelId, user.getId());
         }
 
         Map<Long, Long> amountPerUser = new HashMap<>();
@@ -145,7 +147,7 @@ class CostServiceTest {
 
         CostCreateResponseDto createdCost = costService.createCost(
                 111000L,
-                travel.getId(),
+                travelId,
                 "TestTitle",
                 "안녕난이거야",
                 false,
@@ -167,6 +169,8 @@ class CostServiceTest {
         }).toArray()).isEqualTo(createdCost.getUserCosts().stream().map(userCost -> {
             return Arrays.asList(userCost.getUser().getId(), userCost.getUser().getName());
         }).toArray());
+        Assertions.assertThat(costById.getUserCostResponseDtos().stream().map(UserCostResponseDto::getUserCostId).toArray()).isEqualTo(createdCost.getUserCosts().stream().map(UserCost::getId).toArray());
+        Assertions.assertThat(costById.getUserCostResponseDtos().stream().map(userCostResponseDto -> Arrays.asList(userCostResponseDto.getSimpleUserInfoDto().getUserId(), userCostResponseDto.getSimpleUserInfoDto().getUserName())).toArray()).isEqualTo(createdCost.getUserCosts().stream().map(userCost -> Arrays.asList(userCost.getUser().getId(), userCost.getUser().getName())).toArray());
     }
 
     @Test

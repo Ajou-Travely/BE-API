@@ -15,7 +15,7 @@ public interface CostRepository extends JpaRepository<Cost, Long> {
             "join c.travel t " +
             "join fetch c.userCosts " +
             "where t.id = :travelId")
-    public List<Cost> findCostsByTravelId(@Param("travelId") Long travelId);
+    List<Cost> findCostsByTravelId(@Param("travelId") Long travelId);
 
     @Query("select " +
             "distinct c " +
@@ -23,5 +23,5 @@ public interface CostRepository extends JpaRepository<Cost, Long> {
             "join fetch c.userCosts ucs " +
             "join fetch ucs.user " +
             "where c.id = :costId")
-    public Optional<Cost> getCostById(@Param("costId") Long costId);
+    Optional<Cost> getCostById(@Param("costId") Long costId);
 }

@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @NoArgsConstructor
@@ -28,6 +29,14 @@ public class UserTravel {
     @Builder
     public UserTravel(@NonNull User user, @NonNull Travel travel) {
         this.user = user;
+        setTravel(travel);
+    }
+
+    public void setTravel(Travel travel) {
+        if (Objects.nonNull(this.travel)) {
+            this.travel.getUserTravels().remove(this);
+        }
         this.travel = travel;
+        travel.getUserTravels().add(this);
     }
 }
