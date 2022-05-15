@@ -32,7 +32,7 @@ public class UserController {
     }
 
     @GetMapping("/{userId}/travels")
-    public List<SimpleTravelResponseDto> showTravelsByUser(@RequestParam Long userId) {
+    public List<SimpleTravelResponseDto> showTravelsByUser(@PathVariable Long userId) {
         return userService.getTravelsByUser(userId);
     }
 }
