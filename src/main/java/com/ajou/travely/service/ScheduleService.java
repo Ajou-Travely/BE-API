@@ -1,5 +1,6 @@
 package com.ajou.travely.service;
 
+import com.ajou.travely.controller.place.dto.PlaceCreateRequestDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleCreateRequestDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleResponseDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleUpdateRequestDto;
@@ -46,11 +47,10 @@ public class ScheduleService {
     }
 
     @Transactional
-    public ScheduleResponseDto createSchedule(ScheduleCreateRequestDto scheduleCreateRequestDto) {
-        Travel travel = travelRepository.findById(scheduleCreateRequestDto.getTravelId())
+    public Long createSchedule(Long travelId, ScheduleCreateRequestDto scheduleCreateRequestDto) {
+        Travel travel = travelRepository.findById(travelId)
                 .orElseThrow(() -> new RuntimeException("해당 travel이 존재하지 않습니다."));
-        Place place = placeRepository.findById(scheduleCreateRequestDto.getPlaceId())
-                .orElseThrow(() -> new RuntimeException("해당 place가 존재하지 않습니다."));
+        Place place = createOrFindPlace(scheduleCreateRequestDto.getPlace());
         Schedule schedule = scheduleRepository.save(
                 Schedule.builder()
                         .travel(travel)
@@ -65,18 +65,20 @@ public class ScheduleService {
             );
             schedule.addUser(branchRepository.save(new Branch(user, schedule)));
         });
-        return new ScheduleResponseDto(schedule);
+        return schedule.getId();
     }
 
     @Transactional
-    public ScheduleResponseDto updateSchedule(ScheduleUpdateRequestDto scheduleUpdateRequestDto) {
-        Schedule schedule = scheduleRepository.findById(scheduleUpdateRequestDto.getScheduleId())
+    public void updateSchedule(Long scheduleId, ScheduleUpdateRequestDto scheduleUpdateRequestDto) {
+        Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new RuntimeException("해당 schedule이 존재하지 않습니다."));
         Map<Long, User> currentUsers = new HashMap<>();
-        schedule.getTravel().getUserTravels().forEach(ut -> currentUsers.put(ut.getUser().getId(), ut.getUser()));
-        if (!Objects.equals(schedule.getPlace().getId(), scheduleUpdateRequestDto.getPlaceId())) {
-            Place place = placeRepository.findById(scheduleUpdateRequestDto.getPlaceId())
-                    .orElseThrow(() -> new RuntimeException("해당 place가 존재하지 않습니다."));
+        schedule
+                .getTravel()
+                .getUserTravels()
+                .forEach(userTravel -> currentUsers.put(userTravel.getUser().getId(), userTravel.getUser()));
+        if (!Objects.equals(schedule.getPlace().getKakaoMapId(), scheduleUpdateRequestDto.getPlace().getKakaoMapId())) {
+            Place place = createOrFindPlace(scheduleUpdateRequestDto.getPlace());
             schedule.setPlace(place);
         }
         if (schedule.getStartTime() != scheduleUpdateRequestDto.getStartTime()) {
@@ -108,7 +110,6 @@ public class ScheduleService {
             schedule.removeUser(branch);
             branchRepository.delete(branch);
         });
-        return new ScheduleResponseDto(schedule);
     }
 
     @Transactional
@@ -121,5 +122,19 @@ public class ScheduleService {
     @Transactional
     public void deleteAllSchedules() {
         scheduleRepository.deleteAll();
+    }
+
+    private Place createOrFindPlace(PlaceCreateRequestDto request) {
+        return placeRepository.findByKakaoMapId(request.getKakaoMapId())
+                .orElse(placeRepository.save(Place
+                        .builder()
+                        .kakaoMapId(request.getKakaoMapId())
+                        .placeUrl(request.getPlaceUrl())
+                        .placeName(request.getPlaceName())
+                        .addressRoadName(request.getAddressRoadName())
+                        .addressName(request.getAddressName())
+                        .x(request.getX())
+                        .y(request.getY())
+                        .build()));
     }
 }
