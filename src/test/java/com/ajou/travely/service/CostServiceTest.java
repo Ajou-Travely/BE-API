@@ -30,6 +30,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 @SpringBootTest(properties = {
@@ -155,12 +157,12 @@ class CostServiceTest {
         Assertions.assertThat(costById.getCostId()).isEqualTo(createdCost.getId());
         Assertions.assertThat(costById.getContent()).isEqualTo(createdCost.getContent());
         Assertions.assertThat(costById.getPayerId()).isEqualTo(createdCost.getPayer().getId());
-        Assertions.assertThat(costById.getUserCostResponseDtos().stream().map(userCostResponseDto -> {
+        Assertions.assertThat(costById.getUserCosts().stream().map(userCostResponseDto -> {
             return userCostResponseDto.getUserCostId();
         }).toArray()).isEqualTo(createdCost.getUserCosts().stream().map(userCost -> {
             return userCost.getId();
         }).toArray());
-        Assertions.assertThat(costById.getUserCostResponseDtos().stream().map(userCostResponseDto -> {
+        Assertions.assertThat(costById.getUserCosts().stream().map(userCostResponseDto -> {
             return Arrays.asList(userCostResponseDto.getSimpleUserInfoDto().getUserId(), userCostResponseDto.getSimpleUserInfoDto().getUserName());
         }).toArray()).isEqualTo(createdCost.getUserCosts().stream().map(userCost -> {
             return Arrays.asList(userCost.getUser().getId(), userCost.getUser().getName());
@@ -238,5 +240,64 @@ class CostServiceTest {
         Assertions.assertThat(updatedCost.getUserCosts().stream().map(userCost -> userCost.getUser().getId()).toArray()).isEqualTo(amountsPerUser.keySet().stream().toArray());
         Assertions.assertThat(updatedCost.getUserCosts().stream().map(userCost -> userCost.getAmount()).toArray()).isEqualTo(amountsPerUser.keySet().stream().map(userId -> amountsPerUser.get(userId).getAmount()).toArray());
         Assertions.assertThat(updatedCost.getUserCosts().stream().map(userCost -> userCost.getIsRequested()).toArray()).isEqualTo(amountsPerUser.keySet().stream().map(userId -> amountsPerUser.get(userId).getIsRequested()).toArray());
+    }
+
+    @Test
+    @DisplayName("지출 객체를 삭제할 수 있다.")
+    @Rollback
+    void testDeleteCostById() {
+        User user1 = userRepository.save(
+                new User(
+                        Type.USER,
+                        "test1@ajou.ac.kr",
+                        "테스트1",
+                        "112",
+                        0L
+                ));
+        User user2 = userRepository.save(
+                new User(
+                        Type.USER,
+                        "test2@ajou.ac.kr",
+                        "테스트2",
+                        "113",
+                        1L
+                ));
+        User user3 = userRepository.save(
+                new User(
+                        Type.USER,
+                        "test3@ajou.ac.kr",
+                        "테스트3",
+                        "114",
+                        2L
+                ));
+        Travel travel = travelService.insertTravel(
+                Travel.builder()
+                        .title("첫 여행")
+                        .startDate(LocalDate.now())
+                        .endDate(LocalDate.now())
+                        .managerId(user1.getId())
+                        .build()
+        );
+        Map<Long, Long> amountPerUser = new HashMap<>();
+        amountPerUser.put(user1.getId(), 10000L);
+        amountPerUser.put(user2.getId(), 10000L);
+        amountPerUser.put(user3.getId(), 10000L);
+        CostCreateResponseDto costCreateResponseDto = costService.createCost(
+                30000L,
+                travel.getId(),
+                "TestTitle",
+                "안녕난이거야",
+                false,
+                amountPerUser,
+                user1.getId()
+        );
+        CostResponseDto foundCost = costService.getCostById(costCreateResponseDto.getId());
+        Stream<Long> userCostIds = foundCost.getUserCosts().stream().map(userCost -> userCost.getUserCostId());
+        costService.deleteCostById(costCreateResponseDto.getId());
+
+        Assertions.assertThat(userCostIds.map(userCostId ->
+                userCostRepository.findById(userCostId).isEmpty())
+                .collect(Collectors.toList()))
+                .isEqualTo(Arrays.asList(true, true, true));
     }
 }
