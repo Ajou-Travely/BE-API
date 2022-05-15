@@ -117,4 +117,11 @@ public class CostService {
             });
         }
     }
+
+    @Transactional
+    public void deleteCostById(Long costId) {
+        Cost cost = costRepository.findById(costId)
+                .orElseThrow(() -> new RuntimeException("해당 지출을 찾을 수 없습니다."));
+        costRepository.delete(cost);
+    }
 }

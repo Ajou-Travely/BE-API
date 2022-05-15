@@ -40,4 +40,10 @@ public class CostController {
         this.costService.updateCostById(costId, costUpdateDto);
         return ResponseEntity.ok().build();
     }
+
+    @DeleteMapping("/api/v1/costs/{costId}")
+    public ResponseEntity<Void> deleteCostById(@PathVariable Long costId) {
+        this.costService.deleteCostById(costId);
+        return ResponseEntity.ok().build();
+    }
 }
