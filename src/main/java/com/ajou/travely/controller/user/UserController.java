@@ -30,4 +30,9 @@ public class UserController {
         User user = userService.insertUser(userCreateRequestDto.toEntity());
         return new UserResponseInfoDto(user);
     }
+
+    @GetMapping("/{userId}/travels")
+    public List<SimpleTravelResponseDto> showTravelsByUser(@RequestParam Long userId) {
+        return userService.getTravelsByUser(userId);
+    }
 }
