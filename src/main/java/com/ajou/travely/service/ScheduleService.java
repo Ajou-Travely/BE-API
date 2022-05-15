@@ -50,17 +50,7 @@ public class ScheduleService {
     public Long createSchedule(Long travelId, ScheduleCreateRequestDto scheduleCreateRequestDto) {
         Travel travel = travelRepository.findById(travelId)
                 .orElseThrow(() -> new RuntimeException("해당 travel이 존재하지 않습니다."));
-        Place place = placeRepository.findByKakaoMapId(scheduleCreateRequestDto.getPlace().getKakaoMapId())
-                .orElse(placeRepository.save(Place
-                        .builder()
-                        .kakaoMapId(scheduleCreateRequestDto.getPlace().getKakaoMapId())
-                        .placeUrl(scheduleCreateRequestDto.getPlace().getPlaceUrl())
-                        .placeName(scheduleCreateRequestDto.getPlace().getPlaceName())
-                        .addressRoadName(scheduleCreateRequestDto.getPlace().getAddressRoadName())
-                        .addressName(scheduleCreateRequestDto.getPlace().getAddressName())
-                        .x(scheduleCreateRequestDto.getPlace().getX())
-                        .y(scheduleCreateRequestDto.getPlace().getY())
-                        .build()));
+        Place place = createOrFindPlace(scheduleCreateRequestDto.getPlace());
         Schedule schedule = scheduleRepository.save(
                 Schedule.builder()
                         .travel(travel)
@@ -88,18 +78,7 @@ public class ScheduleService {
                 .getUserTravels()
                 .forEach(userTravel -> currentUsers.put(userTravel.getUser().getId(), userTravel.getUser()));
         if (!Objects.equals(schedule.getPlace().getKakaoMapId(), scheduleUpdateRequestDto.getPlace().getKakaoMapId())) {
-            PlaceCreateRequestDto placeDto = scheduleUpdateRequestDto.getPlace();
-            Place place = placeRepository.findByKakaoMapId(placeDto.getKakaoMapId())
-                    .orElse(placeRepository.save(Place
-                            .builder()
-                            .kakaoMapId(placeDto.getKakaoMapId())
-                            .placeUrl(placeDto.getPlaceUrl())
-                            .placeName(placeDto.getPlaceName())
-                            .addressRoadName(placeDto.getAddressRoadName())
-                            .addressName(placeDto.getAddressName())
-                            .x(placeDto.getX())
-                            .y(placeDto.getY())
-                            .build()));
+            Place place = createOrFindPlace(scheduleUpdateRequestDto.getPlace());
             schedule.setPlace(place);
         }
         if (schedule.getStartTime() != scheduleUpdateRequestDto.getStartTime()) {
@@ -143,5 +122,19 @@ public class ScheduleService {
     @Transactional
     public void deleteAllSchedules() {
         scheduleRepository.deleteAll();
+    }
+
+    private Place createOrFindPlace(PlaceCreateRequestDto request) {
+        return placeRepository.findByKakaoMapId(request.getKakaoMapId())
+                .orElse(placeRepository.save(Place
+                        .builder()
+                        .kakaoMapId(request.getKakaoMapId())
+                        .placeUrl(request.getPlaceUrl())
+                        .placeName(request.getPlaceName())
+                        .addressRoadName(request.getAddressRoadName())
+                        .addressName(request.getAddressName())
+                        .x(request.getX())
+                        .y(request.getY())
+                        .build()));
     }
 }
