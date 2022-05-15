@@ -3,6 +3,8 @@ package com.ajou.travely.service;
 import com.ajou.travely.controller.place.dto.PlaceCreateRequestDto;
 import com.ajou.travely.controller.place.dto.PlaceResponseDto;
 import com.ajou.travely.domain.Place;
+import com.ajou.travely.exception.ErrorCode;
+import com.ajou.travely.exception.custom.RecordNotFoundException;
 import com.ajou.travely.repository.PlaceRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,7 +54,7 @@ public class PlaceService {
     public PlaceResponseDto findPlaceById(Long placeId) {
         return new PlaceResponseDto(
                 placeRepository.findById(placeId)
-                        .orElseThrow(() -> new RuntimeException("해당 id의 장소가 없습니다."))
+                        .orElseThrow(() -> new RecordNotFoundException("해당 id의 장소가 존재하지 않습니다.", ErrorCode.PLACE_NOT_FOUND))
         );
     }
 

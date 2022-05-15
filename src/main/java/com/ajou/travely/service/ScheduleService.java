@@ -8,7 +8,9 @@ import com.ajou.travely.domain.Branch;
 import com.ajou.travely.domain.Place;
 import com.ajou.travely.domain.Schedule;
 import com.ajou.travely.domain.Travel;
+import com.ajou.travely.exception.ErrorCode;
 import com.ajou.travely.domain.user.User;
+import com.ajou.travely.exception.custom.RecordNotFoundException;
 import com.ajou.travely.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,7 +51,10 @@ public class ScheduleService {
     @Transactional
     public Long createSchedule(Long travelId, ScheduleCreateRequestDto scheduleCreateRequestDto) {
         Travel travel = travelRepository.findById(travelId)
-                .orElseThrow(() -> new RuntimeException("해당 travel이 존재하지 않습니다."));
+                .orElseThrow(() -> new RecordNotFoundException(
+                        "해당 ID의 Travel이 존재하지 않습니다."
+                        , ErrorCode.TRAVEL_NOT_FOUND
+                ));
         Place place = createOrFindPlace(scheduleCreateRequestDto.getPlace());
         Schedule schedule = scheduleRepository.save(
                 Schedule.builder()
@@ -61,7 +66,10 @@ public class ScheduleService {
         );
         scheduleCreateRequestDto.getUserIds().forEach(id -> {
             User user = userRepository.findById(id).orElseThrow(
-                    () -> new RuntimeException("해당 user가 존재하지 않습니다.")
+                    () -> new RecordNotFoundException(
+                            "해당 ID의 User가 존재하지 않습니다."
+                            , ErrorCode.USER_NOT_FOUND
+                    )
             );
             schedule.addUser(branchRepository.save(new Branch(user, schedule)));
         });
@@ -71,7 +79,10 @@ public class ScheduleService {
     @Transactional
     public void updateSchedule(Long scheduleId, ScheduleUpdateRequestDto scheduleUpdateRequestDto) {
         Schedule schedule = scheduleRepository.findById(scheduleId)
-                .orElseThrow(() -> new RuntimeException("해당 schedule이 존재하지 않습니다."));
+                .orElseThrow(() -> new RecordNotFoundException(
+                        "해당 ID의 Schedule이 존재하지 않습니다."
+                        , ErrorCode.SCHEDULE_NOT_FOUND
+                ));
         Map<Long, User> currentUsers = new HashMap<>();
         schedule
                 .getTravel()
@@ -97,16 +108,25 @@ public class ScheduleService {
         outUserIds.removeAll(inUserIds);
         inUserIds.forEach(id -> {
             User user = Optional.ofNullable(currentUsers.get(id)).orElseThrow(
-                    () -> new RuntimeException("해당 user가 유효하지 않습니다.")
+                    () -> new RecordNotFoundException(
+                            "해당 ID의 User가 존재하지 않습니다."
+                            , ErrorCode.USER_NOT_FOUND
+                    )
             );
-            branchRepository.save(new Branch(user,schedule));
+            branchRepository.save(new Branch(user, schedule));
         });
         outUserIds.forEach(id -> {
             if (!currentUsers.containsKey(id)) {
-                throw new RuntimeException("해당 user가 유효하지 않습니다.");
+                throw new RecordNotFoundException(
+                        "해당 ID의 User가 존재하지 않습니다."
+                        , ErrorCode.USER_NOT_FOUND
+                );
             }
             Branch branch = branchRepository.findByScheduleIdAndUserId(schedule.getId(), id)
-                            .orElseThrow(() -> new RuntimeException("해당 branch가 존재하지 않습니다."));
+                    .orElseThrow(() -> new RecordNotFoundException(
+                            "해당 ID의 Branch가 존재하지 않습니다."
+                            , ErrorCode.BRANCH_NOT_FOUND
+                    ));
             schedule.removeUser(branch);
             branchRepository.delete(branch);
         });
@@ -115,7 +135,10 @@ public class ScheduleService {
     @Transactional
     public ScheduleResponseDto getScheduleById(Long scheduleId) {
         Schedule schedule = scheduleRepository.findScheduleWithPlaceByScheduleId(scheduleId)
-                .orElseThrow(() -> new RuntimeException("해당 일정이 존재하지 않습니다."));
+                .orElseThrow(() -> new RecordNotFoundException(
+                        "해당 ID의 Schedule이 존재하지 않습니다."
+                        , ErrorCode.SCHEDULE_NOT_FOUND
+                ));
         return new ScheduleResponseDto(schedule);
     }
 

@@ -280,7 +280,10 @@ class TravelServiceTest {
 //                .build();
 //        Long travelId = travelService.createTravel(user.getId(), request);
 //        Travel travel = travelRepository.findTravelWithUsersById(travelId)
-//                .orElseThrow(() -> new RuntimeException("해당 id의 여행이 존재하지 않습니다."));
+//                .orElseThrow(() -> new RecordNotFoundException(
+//                        "해당 ID의 Travel이 존재하지 않습니다."
+//                        , ErrorCode.TRAVEL_NOT_FOUND
+//                ));
 //        travelService.addUserToTravel(travelId, user1.getId());
 //        travelService.addUserToTravel(travelId, user2.getId());
 //        Place ajouUniv = placeService.insertPlace(

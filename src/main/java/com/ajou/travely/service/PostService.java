@@ -6,7 +6,9 @@ import com.ajou.travely.controller.post.dto.PostUpdateRequestDto;
 import com.ajou.travely.domain.Photo;
 import com.ajou.travely.domain.Post;
 import com.ajou.travely.domain.Schedule;
+import com.ajou.travely.exception.ErrorCode;
 import com.ajou.travely.domain.user.User;
+import com.ajou.travely.exception.custom.RecordNotFoundException;
 import com.ajou.travely.repository.PhotoRepository;
 import com.ajou.travely.repository.PostRepository;
 import com.ajou.travely.repository.ScheduleRepository;
@@ -74,7 +76,10 @@ public class PostService {
 
     private Post findPostById(Long postId) {
         return postRepository.findById(postId)
-            .orElseThrow(() -> new RuntimeException("게시글 없음 ㅋㅋ"));
+            .orElseThrow(() -> new RecordNotFoundException(
+                    "해당 ID의 Post가 존재하지 않습니다."
+                    , ErrorCode.POST_NOT_FOUND
+            ));
     }
 
     @Transactional(readOnly = true)
@@ -87,12 +92,18 @@ public class PostService {
 
     private User findUserById(Long userId) {
         return userRepository.findById(userId)
-            .orElseThrow(() -> new RuntimeException("유저 없음 ㅋㅋ"));
+            .orElseThrow(() -> new RecordNotFoundException(
+                    "해당 ID의 User가 존재하지 않습니다."
+                    , ErrorCode.USER_NOT_FOUND
+            ));
     }
 
     private Schedule findScheduleById(Long scheduleId) {
         return scheduleRepository.findById(scheduleId)
-            .orElseThrow(() -> new RuntimeException("스케줄 없음 ㅋㅋ"));
+            .orElseThrow(() -> new RecordNotFoundException(
+                    "해당 ID의 User가 존재하지 않습니다."
+                    , ErrorCode.USER_NOT_FOUND
+            ));
     }
 
 }
