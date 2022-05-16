@@ -1,3 +1,7 @@
+auth:
+  kakaoOauth2ClinetId: b99373f3227615f7d08e2832df8847d7
+  frontendRedirectUrl: http://localhost:3000/
+
 spring:
   datasource:
     url: jdbc:mariadb://${DATABASE_HOST:localhost}:${DATABASE_PORT:3306}/${DATABASE_NAME:travely}
