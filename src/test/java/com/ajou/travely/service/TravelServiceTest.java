@@ -65,7 +65,6 @@ class TravelServiceTest {
         );
         TravelCreateRequestDto request = TravelCreateRequestDto
                 .builder()
-                .userId(user.getId())
                 .title("test")
                 .startDate(LocalDate.now())
                 .endDate(LocalDate.now().plusDays(1))
@@ -93,7 +92,6 @@ class TravelServiceTest {
         );
         TravelCreateRequestDto request = TravelCreateRequestDto
                 .builder()
-                .userId(user.getId())
                 .title("test")
                 .startDate(LocalDate.now())
                 .endDate(LocalDate.now().plusDays(1))
@@ -139,7 +137,6 @@ class TravelServiceTest {
                 .title("첫 여행")
                 .startDate(LocalDate.now())
                 .endDate(LocalDate.now())
-                .userId(users.get(0).getId())
                 .userEmails(new ArrayList<>())
                 .build();
         Travel travel = travelService.createTravel(users.get(0).getId(), request);
@@ -222,7 +219,6 @@ class TravelServiceTest {
         );
         TravelCreateRequestDto request = TravelCreateRequestDto
                 .builder()
-                .userId(user.getId())
                 .title("test")
                 .startDate(LocalDate.now())
                 .endDate(LocalDate.now().plusDays(1))

@@ -132,7 +132,6 @@ class CostServiceTest {
                         .title("첫 여행")
                         .startDate(LocalDate.now())
                         .endDate(LocalDate.now())
-                        .userId(users.get(0).getId())
                         .userEmails(new ArrayList<>())
                         .build()
         );
