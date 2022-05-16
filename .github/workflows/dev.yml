@@ -84,5 +84,5 @@ jobs:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: travely-dev-spring-service
           cluster: travely-dev-spring-boot-cluster
-          wait-for-service-stability: false
+          wait-for-service-stability: true
   #         force-new-deployment: true
