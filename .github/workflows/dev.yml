@@ -53,6 +53,7 @@ jobs:
 
 
       - name: Build, tag, and push image to Amazon ECR
+        id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: travely-dev-spring-boot-server
@@ -60,3 +61,28 @@ jobs:
         run: |
           docker build --build-arg JAR_FILE=build/libs/\*.jar -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+          aws ecs describe-task-definition \
+            --task-definition arn:aws:ecs:ap-northeast-2:640836968423:task-definition/spring-boot-server \
+            | jq '.taskDefinition.containerDefinitions[].image = "{{ image }}"' \
+            | jq '.taskDefinition' \
+            > task-definition.json
+            
+            
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: spring-boot
+          image: ${{ steps.build-image.outputs.image }}
+
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: travely-dev-spring-service
+          cluster: travely-dev-spring-boot-cluster
+          wait-for-service-stability: false
+  #         force-new-deployment: true
