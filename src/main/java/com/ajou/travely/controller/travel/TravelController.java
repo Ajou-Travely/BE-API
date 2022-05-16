@@ -45,9 +45,12 @@ public class TravelController {
     }
 
     @PostMapping("/{travelId}/users/{code}")
-    public ResponseEntity<Void> addUserToTravel(@LoginUser SessionUser sessionUser, @PathVariable Long travelId, @PathVariable UUID code) {
-        travelService.addUserToTravelWithValidation(travelId, sessionUser.getUserId(), code);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Long> addUserToTravel(@LoginUser SessionUser sessionUser, @PathVariable Long travelId, @PathVariable UUID code) {
+        return ResponseEntity
+                .ok(
+                        travelService
+                                .addUserToTravelWithValidation(sessionUser.getUserId()
+                                        , code));
     }
 
     @GetMapping("/{travelId}/costs")
