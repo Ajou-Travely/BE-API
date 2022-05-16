@@ -13,7 +13,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RequestMapping("/api/v1/users")
+@RequestMapping("/v1/users")
 @RestController
 @RequiredArgsConstructor
 public class UserController {

@@ -15,9 +15,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
         http.authorizeRequests()
-                .antMatchers("/api/v1/oauth2/authorization/kakao", "/api/v1/isLogin", "/api/v1/signup").permitAll()
+                .antMatchers("/v1/oauth2/authorization/kakao", "/v1/isLogin", "/v1/signup").permitAll()
                 .antMatchers("/swagger*/**", "/v3/api-docs/**").permitAll()
-                .antMatchers("/api/v1/**").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')");
+                .antMatchers("/v1/**").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')");
 //                .access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')");
 //                .antMatchers("/api/v2/**").access("hasRole('ROLE_ADMIN')")
     }

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-@RequestMapping("/api/v1/costs")
+@RequestMapping("/v1/costs")
 @RestController
 @RequiredArgsConstructor
 public class CostController {
@@ -20,7 +20,7 @@ public class CostController {
 
     @PostMapping("")
     public CostCreateResponseDto createCost(@Valid @RequestBody CostCreateRequestDto costCreateRequestDto) {
-        CostCreateResponseDto costCreateResponseDto = costService.createCost(
+        return costService.createCost(
                 costCreateRequestDto.getTotalAmount(),
                 costCreateRequestDto.getTravelId(),
                 costCreateRequestDto.getTitle(),
@@ -29,7 +29,6 @@ public class CostController {
                 costCreateRequestDto.getAmountsPerUser(),
                 costCreateRequestDto.getPayerId()
         );
-        return costCreateResponseDto;
     }
 
     @GetMapping("/{costId}")
@@ -37,13 +36,13 @@ public class CostController {
         return this.costService.getCostById(costId);
     }
 
-    @PatchMapping("/api/v1/costs/{costId}")
+    @PatchMapping("/v1/costs/{costId}")
     public ResponseEntity<Void> updateCostById(@PathVariable Long costId, CostUpdateDto costUpdateDto) {
         this.costService.updateCostById(costId, costUpdateDto);
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/api/v1/costs/{costId}")
+    @DeleteMapping("/v1/costs/{costId}")
     public ResponseEntity<Void> deleteCostById(@PathVariable Long costId) {
         this.costService.deleteCostById(costId);
         return ResponseEntity.ok().build();

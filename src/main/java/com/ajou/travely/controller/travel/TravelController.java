@@ -19,7 +19,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 
-@RequestMapping("/api/v1/travels")
+@RequestMapping("/v1/travels")
 @RequiredArgsConstructor
 @RestController
 public class TravelController {

@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RequestMapping("/api/v1/schedules")
+@RequestMapping("/v1/schedules")
 @RestController
 @RequiredArgsConstructor
 public class ScheduleController {
