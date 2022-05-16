@@ -26,6 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(properties = {
         "auth.kakaoOauth2ClinetId=test",
         "auth.frontendRedirectUrl=test",
+        "spring.mail.password=temptemptemptemp"
 })
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Transactional

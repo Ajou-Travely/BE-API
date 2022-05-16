@@ -14,6 +14,7 @@ import com.ajou.travely.repository.PlaceRepository;
 import com.ajou.travely.repository.ScheduleRepository;
 import com.ajou.travely.repository.TravelRepository;
 import com.ajou.travely.repository.UserRepository;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -36,8 +38,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest(properties = {
-    "auth.kakaoOauth2ClinetId=test",
-    "auth.frontendRedirectUrl=test",
+        "auth.kakaoOauth2ClinetId=test",
+        "auth.frontendRedirectUrl=test",
+        "spring.mail.password=temptemptemptemp"
 })
 @Transactional
 public class PostServiceTest {
@@ -68,34 +71,34 @@ public class PostServiceTest {
     @BeforeEach
     public void setUp() {
         travel = travelRepository.save(Travel.builder()
-            .title("place title")
-            .managerId(1L)
-            .memo("")
-            .startDate(LocalDate.now())
-            .endDate(LocalDate.now())
-            .build());
+                .title("place title")
+                .managerId(1L)
+                .memo("")
+                .startDate(LocalDate.now())
+                .endDate(LocalDate.now())
+                .build());
         place = placeRepository.save(Place.builder()
-            .x(123.123)
-            .y(345.1354)
-            .placeName("place name")
-            .addressName("주소1")
-            .addressRoadName("주소2")
-            .placeUrl("urlurl")
+                .x(123.123)
+                .y(345.1354)
+                .placeName("place name")
+                .addressName("주소1")
+                .addressRoadName("주소2")
+                .placeUrl("urlurl")
                 .kakaoMapId(1L)
-            .build());
+                .build());
         user = userRepository.save(User.builder()
-            .type(Type.USER)
-            .email("test@email.com")
-            .name("user name")
-            .phoneNumber("010-1111-1111")
-            .kakaoId(12345152L)
-            .build());
+                .type(Type.USER)
+                .email("test@email.com")
+                .name("user name")
+                .phoneNumber("010-1111-1111")
+                .kakaoId(12345152L)
+                .build());
         schedule = scheduleRepository.save(Schedule.builder()
-            .travel(travel)
-            .place(place)
-            .startTime(LocalDateTime.now())
-            .endTime(LocalDateTime.now())
-            .build());
+                .travel(travel)
+                .place(place)
+                .startTime(LocalDateTime.now())
+                .endTime(LocalDateTime.now())
+                .build());
     }
 
     @Rollback
@@ -140,7 +143,7 @@ public class PostServiceTest {
         List<String> addedPhotoPaths = new ArrayList<>(Arrays.asList("link3", "link4", "link5"));
         List<Long> removedPhotoIds = new ArrayList<>(Arrays.asList(1L, 2L));
         PostUpdateRequestDto updateRequestDto =
-            new PostUpdateRequestDto(updateTitle, updateText, addedPhotoPaths, removedPhotoIds);
+                new PostUpdateRequestDto(updateTitle, updateText, addedPhotoPaths, removedPhotoIds);
         postService.updatePost(postId, updateRequestDto);
 
         Post result = postService.initializePostInfo(postId);

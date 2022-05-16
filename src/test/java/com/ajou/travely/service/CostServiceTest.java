@@ -39,6 +39,7 @@ import java.util.stream.Stream;
 @SpringBootTest(properties = {
         "auth.kakaoOauth2ClinetId=test",
         "auth.frontendRedirectUrl=test",
+        "spring.mail.password=temptemptemptemp"
 })
 @Transactional
 class CostServiceTest {

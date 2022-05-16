@@ -1,23 +1,15 @@
 package com.ajou.travely.service;
 
 import com.ajou.travely.controller.schedule.dto.SimpleScheduleResponseDto;
-import com.ajou.travely.controller.travel.dto.SimpleCostResponseDto;
-import com.ajou.travely.controller.travel.dto.SimpleTravelResponseDto;
-import com.ajou.travely.controller.travel.dto.TravelCreateRequestDto;
-import com.ajou.travely.controller.travel.dto.TravelResponseDto;
+import com.ajou.travely.controller.travel.dto.*;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
-import com.ajou.travely.domain.Schedule;
-import com.ajou.travely.domain.Cost;
-import com.ajou.travely.domain.Travel;
-import com.ajou.travely.domain.UserTravel;
+import com.ajou.travely.domain.*;
 import com.ajou.travely.exception.ErrorCode;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.exception.custom.RecordNotFoundException;
-import com.ajou.travely.repository.CostRepository;
-import com.ajou.travely.repository.TravelRepository;
-import com.ajou.travely.repository.UserRepository;
-import com.ajou.travely.repository.UserTravelRepository;
+import com.ajou.travely.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +26,13 @@ public class TravelService {
     private final UserTravelRepository userTravelRepository;
 
     private final CostRepository costRepository;
+
+    private final InvitationRepository invitationRepository;
+
+    private final CustomMailSender customMailSender;
+
+    @Value("${domains.front-domain}")
+    private String frontDomain;
 
     @Transactional
     public Travel insertTravel(Travel travel) {
@@ -69,6 +68,32 @@ public class TravelService {
                 stream().
                 map(SimpleTravelResponseDto::new).
                 collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void inviteUserToTravel(Long travelId, TravelInviteRequestDto travelInviteRequestDto) {
+        Travel travel = travelRepository
+                .findById(travelId)
+                .orElseThrow(() -> new RecordNotFoundException(
+                        "해당 ID의 Travel이 존재하지 않습니다."
+                        , ErrorCode.TRAVEL_NOT_FOUND
+                ));
+        // TODO email 검증
+        UUID code = UUID.randomUUID();
+        String text = frontDomain + "invite/accept/" + code;
+        customMailSender.sendInvitationEmail(
+                travelInviteRequestDto.getEmail(),
+                text
+        );
+        invitationRepository
+                .save(
+                        new Invitation(
+                                travelInviteRequestDto
+                                        .getEmail()
+                                , travel
+                                , code
+                        )
+                );
     }
 
     @Transactional
