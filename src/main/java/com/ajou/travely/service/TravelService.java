@@ -116,6 +116,31 @@ public class TravelService {
     }
 
     @Transactional
+    public void addUserToTravelWithValidation(Long travelId, Long userId, UUID code) {
+        Travel travel = travelRepository
+                .findById(travelId)
+                .orElseThrow(() -> new RecordNotFoundException(
+                        "해당 ID의 Travel이 존재하지 않습니다."
+                        , ErrorCode.TRAVEL_NOT_FOUND
+                ));
+        User user = userRepository
+                .findById(userId)
+                .orElseThrow(() -> new RecordNotFoundException(
+                        "해당 ID의 User 존재하지 않습니다."
+                        , ErrorCode.USER_NOT_FOUND
+                ));
+        Invitation invitation = invitationRepository
+                .findByCodeAndEmail(code, user.getEmail())
+                .orElseThrow(() -> new RecordNotFoundException(
+                        "잘못된 초대 링크입니다."
+                        ,ErrorCode.INVALID_INVITATION
+                ));
+        invitationRepository.deleteById(invitation.getId());
+        UserTravel userTravel = UserTravel.builder().user(user).travel(travel).build();
+        userTravelRepository.save(userTravel);
+    }
+
+    @Transactional
     public void addUserToTravel(Long travelId, Long userId) {
         Travel travel = travelRepository
                 .findById(travelId)
