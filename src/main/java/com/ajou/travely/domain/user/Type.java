@@ -13,7 +13,6 @@ public enum Type {
     LOCAL_GOVERNMENT("ROLE_LOCAL_GOVERNMENT", "local government")
     ;
 
-
     private final String key;
     private final String title;
 }

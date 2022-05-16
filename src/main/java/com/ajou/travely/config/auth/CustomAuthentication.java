@@ -22,7 +22,7 @@ public class CustomAuthentication implements Authentication {
         grantedAuthorityCollection.add(new GrantedAuthority() {
             @Override
             public String getAuthority() {
-                return user.getType().name();
+                return user.getType().getKey();
             }
         });
         return grantedAuthorityCollection;
