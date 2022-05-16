@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(properties = {
         "auth.kakaoOauth2ClinetId=test",
         "auth.frontendRedirectUrl=test",
+        "spring.mail.password=temptemptemptemp"
 })
 @Transactional
 class Oauth2ServiceTest {

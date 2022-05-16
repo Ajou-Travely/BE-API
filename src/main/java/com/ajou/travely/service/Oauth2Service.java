@@ -1,6 +1,7 @@
 package com.ajou.travely.service;
 
-import com.ajou.travely.config.CustomAuthentication;
+import com.ajou.travely.config.auth.CustomAuthentication;
+import com.ajou.travely.config.auth.SessionUser;
 import com.ajou.travely.domain.AuthorizationKakao;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.repository.UserRepository;
@@ -53,7 +54,6 @@ public class Oauth2Service {
         try {
             ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
             System.out.println("response.getBody() = " + response.getBody());
-            System.out.println("response.getHeaders() = " + response.getHeaders());
 
             return objectMapper.readValue(response.getBody(), AuthorizationKakao.class);
         } catch (RestClientException | JsonProcessingException ex) {
@@ -74,6 +74,7 @@ public class Oauth2Service {
         try {
             ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
             SecurityContext context = SecurityContextHolder.getContext();
+            System.out.println("response = " + response.getBody());
             JSONObject userInfo = stringToJson(response.getBody());
 
             return userInfo;
@@ -98,6 +99,7 @@ public class Oauth2Service {
                 User exUser = user.get();
                 context.setAuthentication(new CustomAuthentication(exUser));
                 result.put("status", 200);
+                result.put("sessionUser", new SessionUser(exUser.getId(), exUser.getName()));
             }
         } else {
             result.put("status", 401);

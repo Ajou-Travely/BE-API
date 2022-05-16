@@ -1,5 +1,7 @@
 package com.ajou.travely.controller.auth;
 
+import com.ajou.travely.config.auth.LoginUser;
+import com.ajou.travely.config.auth.SessionUser;
 import com.ajou.travely.service.AuthService;
 
 import lombok.RequiredArgsConstructor;

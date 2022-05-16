@@ -11,9 +11,11 @@ import com.ajou.travely.repository.PostRepository;
 import com.ajou.travely.repository.ScheduleRepository;
 import com.ajou.travely.repository.TravelRepository;
 import com.ajou.travely.repository.UserRepository;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import javax.transaction.Transactional;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,14 +26,15 @@ import org.springframework.test.annotation.Rollback;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(properties = {
-    "auth.kakaoOauth2ClinetId=test",
-    "auth.frontendRedirectUrl=test",
+        "auth.kakaoOauth2ClinetId=test",
+        "auth.frontendRedirectUrl=test",
+        "spring.mail.password=temptemptemptemp"
 })
 @Transactional
 public class PostRepositoryTest {
 
     @Autowired
-    private  TravelRepository travelRepository;
+    private TravelRepository travelRepository;
 
     @Autowired
     private PostRepository postRepository;
@@ -53,34 +56,34 @@ public class PostRepositoryTest {
     @BeforeEach
     public void setUp() {
         travel = travelRepository.save(Travel.builder()
-            .title("place title")
-            .managerId(1L)
-            .memo("")
-            .startDate(LocalDate.now())
-            .endDate(LocalDate.now())
-            .build());
+                .title("place title")
+                .managerId(1L)
+                .memo("")
+                .startDate(LocalDate.now())
+                .endDate(LocalDate.now())
+                .build());
         place = placeRepository.save(Place.builder()
-            .x(123.123)
-            .y(345.1354)
-            .placeName("place name")
-            .addressName("주소1")
-            .addressRoadName("주소2")
-            .placeUrl("urlurl")
+                .x(123.123)
+                .y(345.1354)
+                .placeName("place name")
+                .addressName("주소1")
+                .addressRoadName("주소2")
+                .placeUrl("urlurl")
                 .kakaoMapId(1L)
-            .build());
+                .build());
         user = userRepository.save(User.builder()
-            .type(Type.USER)
-            .email("test@email.com")
-            .name("user name")
-            .phoneNumber("010-1111-1111")
-            .kakaoId(12345152L)
-            .build());
+                .type(Type.USER)
+                .email("test@email.com")
+                .name("user name")
+                .phoneNumber("010-1111-1111")
+                .kakaoId(12345152L)
+                .build());
         schedule = scheduleRepository.save(Schedule.builder()
-            .travel(travel)
-            .place(place)
-            .startTime(LocalDateTime.now())
-            .endTime(LocalDateTime.now())
-            .build());
+                .travel(travel)
+                .place(place)
+                .startTime(LocalDateTime.now())
+                .endTime(LocalDateTime.now())
+                .build());
     }
 
 
@@ -89,11 +92,11 @@ public class PostRepositoryTest {
     void 포스트_생성_성공() {
         // given
         Post post = Post.builder()
-            .schedule(schedule)
-            .user(user)
-            .text("post content")
-            .title("post title")
-            .build();
+                .schedule(schedule)
+                .user(user)
+                .text("post content")
+                .title("post title")
+                .build();
 
         // when
         Post result = postRepository.save(post);
@@ -108,11 +111,11 @@ public class PostRepositoryTest {
     void 포스트_내용_수정() {
         // given
         Post post = Post.builder()
-            .schedule(schedule)
-            .user(user)
-            .text("post content")
-            .title("post title")
-            .build();
+                .schedule(schedule)
+                .user(user)
+                .text("post content")
+                .title("post title")
+                .build();
         String updateTitle = "post title2";
         String updateText = "post content2";
 

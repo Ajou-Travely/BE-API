@@ -7,6 +7,7 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest(properties = {
 		"auth.kakaoOauth2ClinetId=test",
 		"auth.frontendRedirectUrl=test",
+		"spring.mail.password=temptemptemptemp"
 })
 class TravelyApplicationTests {
 

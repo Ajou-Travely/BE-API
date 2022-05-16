@@ -1,4 +1,4 @@
-package com.ajou.travely.config;
+package com.ajou.travely.config.auth;
 
 import com.ajou.travely.domain.user.User;
 import org.springframework.security.core.Authentication;
