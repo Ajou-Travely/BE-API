@@ -55,7 +55,7 @@ jobs:
       - name: Build, tag, and push image to Amazon ECR
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: travely-dev-spring-boot-api-server
+          ECR_REPOSITORY: travely-dev-spring-boot-server
           IMAGE_TAG: ${{ github.sha }}
         run: |
           docker build --build-arg JAR_FILE=build/libs/\*.jar -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
