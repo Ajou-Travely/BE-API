@@ -23,11 +23,12 @@ spring:
 #      ddl-auto: create
     properties:
       hibernate:
-        show_sql: true
-        format_sql: true
+#        show_sql: true
+#        format_sql: true
   profiles:
     include:
       - "auth"
+      - "domain"
   jackson:
     serialization.WRITE_DATES_AS_TIMESTAMPS=false
 

@@ -5,6 +5,7 @@ import com.ajou.travely.controller.schedule.dto.SimpleScheduleResponseDto;
 import com.ajou.travely.controller.travel.dto.SimpleCostResponseDto;
 import com.ajou.travely.controller.travel.dto.SimpleTravelResponseDto;
 import com.ajou.travely.controller.travel.dto.TravelCreateRequestDto;
+import com.ajou.travely.controller.travel.dto.TravelInviteRequestDto;
 import com.ajou.travely.service.ScheduleService;
 import com.ajou.travely.service.TravelService;
 import lombok.RequiredArgsConstructor;
@@ -52,5 +53,12 @@ public class TravelController {
     @GetMapping("/{travelId}/schedules")
     public ResponseEntity<List<SimpleScheduleResponseDto>> showSchedulesByTravelId(@PathVariable Long travelId) {
         return ResponseEntity.ok(travelService.getSchedulesByTravelId(travelId));
+    }
+
+    @PostMapping("/{travelId}/invite")
+    public ResponseEntity<Void> inviteUserToTravel(@PathVariable Long travelId
+            , @RequestBody TravelInviteRequestDto travelInviteRequestDto) {
+        travelService.inviteUserToTravel(travelId, travelInviteRequestDto);
+        return ResponseEntity.ok().build();
     }
 }

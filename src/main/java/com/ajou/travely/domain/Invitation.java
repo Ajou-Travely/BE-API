@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 @Getter
 @NoArgsConstructor
@@ -17,9 +18,11 @@ public class Invitation {
     @ManyToOne
     @JoinColumn(name = "travel_id")
     private Travel travel;
+    private UUID code;
 
-    public Invitation(String email, Travel travel) {
+    public Invitation(String email, Travel travel, UUID code) {
         this.email = email;
         this.travel = travel;
+        this.code = code;
     }
 }

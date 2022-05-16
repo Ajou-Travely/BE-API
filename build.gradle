@@ -30,6 +30,8 @@ dependencies {
 	implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
 //	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 	implementation 'org.springframework.session:spring-session-jdbc'
+	//Mail
+	implementation('org.springframework.boot:spring-boot-starter-mail')
 
 	// swagger setting
 	implementation 'io.springfox:springfox-boot-starter:3.0.0'
