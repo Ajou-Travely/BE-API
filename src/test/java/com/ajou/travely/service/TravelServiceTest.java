@@ -10,6 +10,7 @@ import com.ajou.travely.controller.travel.dto.TravelCreateRequestDto;
 import com.ajou.travely.controller.travel.dto.TravelResponseDto;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.domain.Place;
+import com.ajou.travely.domain.Travel;
 import com.ajou.travely.domain.user.Type;
 import com.ajou.travely.domain.user.User;
 import org.junit.jupiter.api.DisplayName;
@@ -64,12 +65,13 @@ class TravelServiceTest {
         );
         TravelCreateRequestDto request = TravelCreateRequestDto
                 .builder()
-                .userId(user.getId())
                 .title("test")
                 .startDate(LocalDate.now())
                 .endDate(LocalDate.now().plusDays(1))
+                .userEmails(new ArrayList<>())
                 .build();
-        Long travelId = travelService.createTravel(user.getId(), request);
+        Travel travel = travelService.createTravel(user.getId(), request);
+        Long travelId = travel.getId();
         TravelResponseDto foundTravel = travelService.getTravelById(travelId);
         assertThat(travelService.getAllTravels()).hasSize(1);
         assertThat(foundTravel.getUsers()).hasSize(1);
@@ -90,12 +92,13 @@ class TravelServiceTest {
         );
         TravelCreateRequestDto request = TravelCreateRequestDto
                 .builder()
-                .userId(user.getId())
                 .title("test")
                 .startDate(LocalDate.now())
                 .endDate(LocalDate.now().plusDays(1))
+                .userEmails(new ArrayList<>())
                 .build();
-        Long travelId = travelService.createTravel(user.getId(), request);
+        Travel travel = travelService.createTravel(user.getId(), request);
+        Long travelId = travel.getId();
         TravelResponseDto foundTravel = travelService.getTravelById(travelId);
         User newUser = userService.insertUser(
                 User.builder()
@@ -134,9 +137,10 @@ class TravelServiceTest {
                 .title("첫 여행")
                 .startDate(LocalDate.now())
                 .endDate(LocalDate.now())
-                .userId(users.get(0).getId())
+                .userEmails(new ArrayList<>())
                 .build();
-        Long travelId = travelService.createTravel(request.getUserId() ,request);
+        Travel travel = travelService.createTravel(users.get(0).getId(), request);
+        Long travelId = travel.getId();
         for (User user : users) {
             travelService.addUserToTravel(travelId, user.getId());
         }
@@ -215,13 +219,13 @@ class TravelServiceTest {
         );
         TravelCreateRequestDto request = TravelCreateRequestDto
                 .builder()
-                .userId(user.getId())
                 .title("test")
                 .startDate(LocalDate.now())
                 .endDate(LocalDate.now().plusDays(1))
+                .userEmails(new ArrayList<>())
                 .build();
-        Long travelId = travelService.createTravel(user.getId(), request);
-        TravelResponseDto travel = travelService.getTravelById(travelId);
+        Travel travel = travelService.createTravel(user.getId(), request);
+        Long travelId = travel.getId();
         Long schedule1Id = scheduleService.createSchedule(
                 travelId,
                 ScheduleCreateRequestDto.builder()

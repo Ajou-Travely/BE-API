@@ -1,11 +1,14 @@
 package com.ajou.travely.controller.travel;
 
+import com.ajou.travely.config.auth.LoginUser;
+import com.ajou.travely.config.auth.SessionUser;
 import com.ajou.travely.controller.schedule.dto.ScheduleCreateRequestDto;
 import com.ajou.travely.controller.schedule.dto.SimpleScheduleResponseDto;
 import com.ajou.travely.controller.travel.dto.SimpleCostResponseDto;
 import com.ajou.travely.controller.travel.dto.SimpleTravelResponseDto;
 import com.ajou.travely.controller.travel.dto.TravelCreateRequestDto;
 import com.ajou.travely.controller.travel.dto.TravelInviteRequestDto;
+import com.ajou.travely.domain.Travel;
 import com.ajou.travely.service.ScheduleService;
 import com.ajou.travely.service.TravelService;
 import lombok.RequiredArgsConstructor;
@@ -28,10 +31,16 @@ public class TravelController {
     }
 
     @PostMapping("")
-    public ResponseEntity<Long> createTravel(Long userId,
-                                          @Valid @RequestBody TravelCreateRequestDto travelCreateRequestDto) {
-        Long travelId = travelService.createTravel(userId, travelCreateRequestDto);
-        return ResponseEntity.ok(travelId);
+    public ResponseEntity<Long> createTravel(@LoginUser SessionUser sessionUser,
+                                             @Valid @RequestBody TravelCreateRequestDto travelCreateRequestDto) {
+        Travel travel = travelService.createTravel(
+                sessionUser.getUserId()
+                , travelCreateRequestDto
+        );
+        travelCreateRequestDto.getUserEmails().forEach(
+                email -> travelService.inviteUserToTravelWithNoValidation(travel, email)
+        );
+        return ResponseEntity.ok(travel.getId());
     }
 
     @PostMapping("/{travelId}/users/{userId}")

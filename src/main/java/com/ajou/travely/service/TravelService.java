@@ -40,7 +40,7 @@ public class TravelService {
     }
 
     @Transactional
-    public Long createTravel(Long userId, TravelCreateRequestDto travelCreateRequestDto) {
+    public Travel createTravel(Long userId, TravelCreateRequestDto travelCreateRequestDto) {
         User user = userRepository
                 .findById(userId)
                 .orElseThrow(() -> new RecordNotFoundException(
@@ -52,13 +52,13 @@ public class TravelService {
                         .title(travelCreateRequestDto.getTitle())
                         .startDate(travelCreateRequestDto.getStartDate())
                         .endDate(travelCreateRequestDto.getEndDate())
-                        .managerId(travelCreateRequestDto.getUserId())
+                        .managerId(userId)
                         .build());
         UserTravel userTravel = UserTravel.builder().user(user).travel(travel).build();
         userTravelRepository.save(userTravel);
         travel.addUserTravel(userTravel);
         travelRepository.save(travel);
-        return travel.getId();
+        return travel;
     }
 
     @Transactional
@@ -90,6 +90,25 @@ public class TravelService {
                         new Invitation(
                                 travelInviteRequestDto
                                         .getEmail()
+                                , travel
+                                , code
+                        )
+                );
+    }
+
+    @Transactional
+    public void inviteUserToTravelWithNoValidation(Travel travel, String email) {
+        // TODO email 검증
+        UUID code = UUID.randomUUID();
+        String text = frontDomain + "invite/accept/" + code;
+        customMailSender.sendInvitationEmail(
+                email,
+                text
+        );
+        invitationRepository
+                .save(
+                        new Invitation(
+                                email
                                 , travel
                                 , code
                         )
