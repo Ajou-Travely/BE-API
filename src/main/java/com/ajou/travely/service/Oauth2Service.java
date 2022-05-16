@@ -53,7 +53,6 @@ public class Oauth2Service {
         try {
             ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
             System.out.println("response.getBody() = " + response.getBody());
-            System.out.println("response.getHeaders() = " + response.getHeaders());
 
             return objectMapper.readValue(response.getBody(), AuthorizationKakao.class);
         } catch (RestClientException | JsonProcessingException ex) {
@@ -74,6 +73,7 @@ public class Oauth2Service {
         try {
             ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
             SecurityContext context = SecurityContextHolder.getContext();
+            System.out.println("response = " + response.getBody());
             JSONObject userInfo = stringToJson(response.getBody());
 
             return userInfo;
