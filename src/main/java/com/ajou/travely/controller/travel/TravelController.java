@@ -1,5 +1,7 @@
 package com.ajou.travely.controller.travel;
 
+import com.ajou.travely.config.auth.LoginUser;
+import com.ajou.travely.config.auth.SessionUser;
 import com.ajou.travely.controller.schedule.dto.ScheduleCreateRequestDto;
 import com.ajou.travely.controller.schedule.dto.SimpleScheduleResponseDto;
 import com.ajou.travely.controller.travel.dto.SimpleCostResponseDto;
@@ -29,9 +31,12 @@ public class TravelController {
     }
 
     @PostMapping("")
-    public ResponseEntity<Long> createTravel(Long userId,
-                                          @Valid @RequestBody TravelCreateRequestDto travelCreateRequestDto) {
-        Travel travel = travelService.createTravel(userId, travelCreateRequestDto);
+    public ResponseEntity<Long> createTravel(@LoginUser SessionUser sessionUser,
+                                             @Valid @RequestBody TravelCreateRequestDto travelCreateRequestDto) {
+        Travel travel = travelService.createTravel(
+                sessionUser.getUserId()
+                , travelCreateRequestDto
+        );
         travelCreateRequestDto.getUserEmails().forEach(
                 email -> travelService.inviteUserToTravelWithNoValidation(travel, email)
         );
