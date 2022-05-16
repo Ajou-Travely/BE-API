@@ -1,6 +1,6 @@
 package com.ajou.travely.service;
 
-import com.ajou.travely.config.CustomAuthentication;
+import com.ajou.travely.config.auth.CustomAuthentication;
 import com.ajou.travely.domain.AuthorizationKakao;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.repository.UserRepository;
