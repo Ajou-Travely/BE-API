@@ -5,8 +5,10 @@ import lombok.Getter;
 @Getter
 public class SessionUser {
     private Long userId;
+    private String name;
 
-    public SessionUser(Long userId) {
+    public SessionUser(Long userId, String name) {
         this.userId = userId;
+        this.name = name;
     }
 }
