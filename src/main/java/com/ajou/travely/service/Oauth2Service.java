@@ -1,6 +1,7 @@
 package com.ajou.travely.service;
 
 import com.ajou.travely.config.auth.CustomAuthentication;
+import com.ajou.travely.config.auth.SessionUser;
 import com.ajou.travely.domain.AuthorizationKakao;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.repository.UserRepository;
@@ -98,6 +99,7 @@ public class Oauth2Service {
                 User exUser = user.get();
                 context.setAuthentication(new CustomAuthentication(exUser));
                 result.put("status", 200);
+                result.put("sessionUser", new SessionUser(exUser.getId(), exUser.getName()));
             }
         } else {
             result.put("status", 401);
