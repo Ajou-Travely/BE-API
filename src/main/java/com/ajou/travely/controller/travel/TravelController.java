@@ -6,6 +6,7 @@ import com.ajou.travely.controller.travel.dto.SimpleCostResponseDto;
 import com.ajou.travely.controller.travel.dto.SimpleTravelResponseDto;
 import com.ajou.travely.controller.travel.dto.TravelCreateRequestDto;
 import com.ajou.travely.controller.travel.dto.TravelInviteRequestDto;
+import com.ajou.travely.domain.Travel;
 import com.ajou.travely.service.ScheduleService;
 import com.ajou.travely.service.TravelService;
 import lombok.RequiredArgsConstructor;
@@ -30,8 +31,11 @@ public class TravelController {
     @PostMapping("")
     public ResponseEntity<Long> createTravel(Long userId,
                                           @Valid @RequestBody TravelCreateRequestDto travelCreateRequestDto) {
-        Long travelId = travelService.createTravel(userId, travelCreateRequestDto);
-        return ResponseEntity.ok(travelId);
+        Travel travel = travelService.createTravel(userId, travelCreateRequestDto);
+        travelCreateRequestDto.getUserEmails().forEach(
+                email -> travelService.inviteUserToTravelWithNoValidation(travel, email)
+        );
+        return ResponseEntity.ok(travel.getId());
     }
 
     @PostMapping("/{travelId}/users/{userId}")

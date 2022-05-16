@@ -127,14 +127,16 @@ class CostServiceTest {
                 String.format("11%d", number),
                 number
         ))));
-        Long travelId = travelService.createTravel(users.get(0).getId(),
+        Travel travel = travelService.createTravel(users.get(0).getId(),
                 TravelCreateRequestDto.builder()
                         .title("첫 여행")
                         .startDate(LocalDate.now())
                         .endDate(LocalDate.now())
                         .userId(users.get(0).getId())
+                        .userEmails(new ArrayList<>())
                         .build()
         );
+        Long travelId = travel.getId();
         for (User user : users) {
             travelService.addUserToTravel(travelId, user.getId());
         }
@@ -158,16 +160,8 @@ class CostServiceTest {
         Assertions.assertThat(costById.getCostId()).isEqualTo(createdCost.getId());
         Assertions.assertThat(costById.getContent()).isEqualTo(createdCost.getContent());
         Assertions.assertThat(costById.getPayerId()).isEqualTo(createdCost.getPayer().getId());
-        Assertions.assertThat(costById.getUserCosts().stream().map(userCostResponseDto -> {
-            return userCostResponseDto.getUserCostId();
-        }).toArray()).isEqualTo(createdCost.getUserCosts().stream().map(userCost -> {
-            return userCost.getId();
-        }).toArray());
-        Assertions.assertThat(costById.getUserCosts().stream().map(userCostResponseDto -> {
-            return Arrays.asList(userCostResponseDto.getSimpleUserInfoDto().getUserId(), userCostResponseDto.getSimpleUserInfoDto().getUserName());
-        }).toArray()).isEqualTo(createdCost.getUserCosts().stream().map(userCost -> {
-            return Arrays.asList(userCost.getUser().getId(), userCost.getUser().getName());
-        }).toArray());
+        Assertions.assertThat(costById.getUserCosts().stream().map(UserCostResponseDto::getUserCostId).toArray()).isEqualTo(createdCost.getUserCosts().stream().map(UserCost::getId).toArray());
+        Assertions.assertThat(costById.getUserCosts().stream().map(userCostResponseDto -> Arrays.asList(userCostResponseDto.getSimpleUserInfoDto().getUserId(), userCostResponseDto.getSimpleUserInfoDto().getUserName())).toArray()).isEqualTo(createdCost.getUserCosts().stream().map(userCost -> Arrays.asList(userCost.getUser().getId(), userCost.getUser().getName())).toArray());
     }
 
     @Test
@@ -176,15 +170,13 @@ class CostServiceTest {
     void testUpdateCostById() {
         List<Long> numbers = new ArrayList<>(Arrays.asList(1L, 2L, 3L, 4L, 5L, 6L));
         List<User> users = new ArrayList<>();
-        numbers.forEach(number -> {
-            users.add(userRepository.save(new User(
-                    Type.USER,
-                    String.format("test%d@ajou.ac.kr", number),
-                    String.format("test%d", number),
-                    String.format("11%d", number),
-                    number
-            )));
-        });
+        numbers.forEach(number -> users.add(userRepository.save(new User(
+                Type.USER,
+                String.format("test%d@ajou.ac.kr", number),
+                String.format("test%d", number),
+                String.format("11%d", number),
+                number
+        ))));
         Travel travel = travelService.insertTravel(
                 Travel.builder()
                         .title("첫 여행")
@@ -238,9 +230,9 @@ class CostServiceTest {
         Assertions.assertThat(updatedCost.getContent()).isEqualTo(changedContent);
         Assertions.assertThat(updatedCost.getTitle()).isEqualTo(changedTitle);
         Assertions.assertThat(updatedCost.getPayerId()).isEqualTo(users.get(2).getId());
-        Assertions.assertThat(updatedCost.getUserCosts().stream().map(userCost -> userCost.getUser().getId()).toArray()).isEqualTo(amountsPerUser.keySet().stream().toArray());
-        Assertions.assertThat(updatedCost.getUserCosts().stream().map(userCost -> userCost.getAmount()).toArray()).isEqualTo(amountsPerUser.keySet().stream().map(userId -> amountsPerUser.get(userId).getAmount()).toArray());
-        Assertions.assertThat(updatedCost.getUserCosts().stream().map(userCost -> userCost.getIsRequested()).toArray()).isEqualTo(amountsPerUser.keySet().stream().map(userId -> amountsPerUser.get(userId).getIsRequested()).toArray());
+        Assertions.assertThat(updatedCost.getUserCosts().stream().map(userCost -> userCost.getUser().getId()).toArray()).isEqualTo(amountsPerUser.keySet().toArray());
+        Assertions.assertThat(updatedCost.getUserCosts().stream().map(UserCost::getAmount).toArray()).isEqualTo(amountsPerUser.keySet().stream().map(userId -> amountsPerUser.get(userId).getAmount()).toArray());
+        Assertions.assertThat(updatedCost.getUserCosts().stream().map(UserCost::getIsRequested).toArray()).isEqualTo(amountsPerUser.keySet().stream().map(userId -> amountsPerUser.get(userId).getIsRequested()).toArray());
     }
 
     @Test
@@ -293,7 +285,7 @@ class CostServiceTest {
                 user1.getId()
         );
         CostResponseDto foundCost = costService.getCostById(costCreateResponseDto.getId());
-        Stream<Long> userCostIds = foundCost.getUserCosts().stream().map(userCost -> userCost.getUserCostId());
+        Stream<Long> userCostIds = foundCost.getUserCosts().stream().map(UserCostResponseDto::getUserCostId);
         costService.deleteCostById(costCreateResponseDto.getId());
 
         Assertions.assertThat(userCostIds.map(userCostId ->

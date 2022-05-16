@@ -2,6 +2,8 @@ package com.ajou.travely.controller.travel.dto;
 
 import com.ajou.travely.domain.Travel;
 import java.time.LocalDate;
+import java.util.List;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,6 +24,8 @@ public class TravelCreateRequestDto {
     private LocalDate endDate;
     @NotNull(message = "유저 아이디가 필요합니다.")
     private Long userId;
+    @NotNull
+    private List<String> userEmails;
 
     @Builder
     public TravelCreateRequestDto(
@@ -29,10 +33,12 @@ public class TravelCreateRequestDto {
             , @NonNull LocalDate startDate
             , @NonNull LocalDate endDate
             , @NonNull Long userId
+            , @NonNull List<String> userEmails
     ) {
         this.title = title;
         this.startDate = startDate;
         this.endDate = endDate;
         this.userId = userId;
+        this.userEmails = userEmails;
     }
 }
