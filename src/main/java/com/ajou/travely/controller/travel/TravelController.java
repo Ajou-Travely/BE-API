@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 
 @RequestMapping("/api/v1/travels")
 @RequiredArgsConstructor
@@ -43,9 +44,9 @@ public class TravelController {
         return ResponseEntity.ok(travel.getId());
     }
 
-    @PostMapping("/{travelId}/users/{userId}")
-    public ResponseEntity<Void> addUserToTravel(@PathVariable Long travelId, @PathVariable Long userId) {
-        travelService.addUserToTravel(travelId, userId);
+    @PostMapping("/{travelId}/users/{code}")
+    public ResponseEntity<Void> addUserToTravel(@LoginUser SessionUser sessionUser, @PathVariable Long travelId, @PathVariable UUID code) {
+        travelService.addUserToTravelWithValidation(travelId, sessionUser.getUserId(), code);
         return ResponseEntity.ok().build();
     }
 
