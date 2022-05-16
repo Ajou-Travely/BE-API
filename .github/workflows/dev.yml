@@ -52,6 +52,15 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
 
 
+#       - name: Build and push
+#         uses: docker/build-push-action@v2
+#         with:
+#           context: .
+#           push: true
+#           build-args: |
+#             JAR_FILE=build/libs/\*.jar
+
+    
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
         env:
@@ -61,7 +70,6 @@ jobs:
         run: |
           docker build --build-arg JAR_FILE=build/libs/\*.jar -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
           aws ecs describe-task-definition \
             --task-definition arn:aws:ecs:ap-northeast-2:640836968423:task-definition/spring-boot-server \
