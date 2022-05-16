@@ -68,8 +68,8 @@ jobs:
           ECR_REPOSITORY: travely-dev-spring-boot-server
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build --build-arg JAR_FILE=build/libs/\*.jar -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker build --build-arg JAR_FILE=build/libs/\*.jar -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:dev .
+          docker push --all-tags $ECR_REGISTRY/$ECR_REPOSITORY
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
           aws ecs describe-task-definition \
             --task-definition arn:aws:ecs:ap-northeast-2:640836968423:task-definition/spring-boot-server \
