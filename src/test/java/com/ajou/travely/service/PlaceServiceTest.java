@@ -1,25 +1,24 @@
 package com.ajou.travely.service;
 
+import com.ajou.travely.controller.place.dto.PlaceResponseDto;
 import com.ajou.travely.domain.Place;
-import javax.transaction.Transactional;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.ActiveProfiles;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 @SpringBootTest(properties = {
         "auth.kakaoOauth2ClinetId=test",
         "auth.frontendRedirectUrl=test",
-        "cloud.aws.credentials.accessKey=test",
-        "cloud.aws.credentials.secretKey=test",
-        "cloud.aws.s3.bucket=test"
+        "spring.mail.password=temptemptemptemp"
 })
 @Transactional
 class PlaceServiceTest {
@@ -39,6 +38,7 @@ class PlaceServiceTest {
                         .placeName("아주대학교")
                         .addressName("원천동")
                         .addressRoadName("원천로")
+                        .kakaoMapId(1L)
                         .build());
         inhaUniv = placeService.insertPlace(
                 Place.builder()
@@ -49,32 +49,27 @@ class PlaceServiceTest {
                         .addressName("인천")
                         .addressRoadName("인천로")
                         .phoneNumber("119")
+                        .kakaoMapId(2L)
                         .build());
     }
-
-    @AfterEach
-    public void cleanUp() {
-        placeService.deleteAllPlaces();
-    }
-
     @Test
     @DisplayName("생성한 Place를 DB에 삽입할 수 있다.")
     @Rollback
     public void insertTest() {
-        List<Place> places = placeService.getAllPlaces();
+        List<PlaceResponseDto> places = placeService.getAllPlaces();
 
-        Assertions.assertThat(places).hasSize(2);
+        assertThat(places).hasSize(2);
     }
 
     @Test
     @DisplayName("생성한 place를 id로 검색할 수 있다.")
     @Rollback
     public void findByIDTest() {
-        Place findAjou = placeService.findPlaceById(ajouUniv.getId());
-        Place findInha = placeService.findPlaceById(inhaUniv.getId());
+        PlaceResponseDto findAjou = placeService.findPlaceById(ajouUniv.getId());
+        PlaceResponseDto findInha = placeService.findPlaceById(inhaUniv.getId());
 
-        assertThat(findAjou, samePropertyValuesAs(ajouUniv));
-        assertThat(findInha, samePropertyValuesAs(inhaUniv));
+        assertThat(findAjou.getPlaceUrl()).isEqualTo(ajouUniv.getPlaceUrl());
+        assertThat(findInha.getPlaceName()).isEqualTo(inhaUniv.getPlaceName());
     }
 
     @Test
@@ -88,11 +83,12 @@ class PlaceServiceTest {
                 .placeName("원천아주돈")
                 .addressName("인계동")
                 .addressRoadName("인계로")
+                .kakaoMapId(3L)
                 .build();
         placeService.insertPlace(ajoudon);
 
-        List<Place> ajouPlaces = placeService.findPlacesByName("아주");
+        List<PlaceResponseDto> ajouPlaces = placeService.findPlacesByName("아주");
 
-        assertThat(ajouPlaces, hasSize(2));
+        assertThat(ajouPlaces).hasSize(2);
     }
 }

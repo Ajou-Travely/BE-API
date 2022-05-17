@@ -1,4 +1,4 @@
-package com.ajou.travely.config;
+package com.ajou.travely.config.auth;
 
 import com.ajou.travely.domain.user.User;
 import org.springframework.security.core.Authentication;
@@ -22,7 +22,7 @@ public class CustomAuthentication implements Authentication {
         grantedAuthorityCollection.add(new GrantedAuthority() {
             @Override
             public String getAuthority() {
-                return user.getType().name();
+                return user.getType().getKey();
             }
         });
         return grantedAuthorityCollection;

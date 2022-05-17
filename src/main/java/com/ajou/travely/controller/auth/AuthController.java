@@ -1,5 +1,7 @@
 package com.ajou.travely.controller.auth;
 
+import com.ajou.travely.config.auth.LoginUser;
+import com.ajou.travely.config.auth.SessionUser;
 import com.ajou.travely.service.AuthService;
 
 import lombok.RequiredArgsConstructor;
@@ -17,17 +19,13 @@ import java.util.Optional;
 public class AuthController {
     private final AuthService authService;
 
-    @GetMapping("/api/v1/oauth2/authorization/kakao")
+    @GetMapping("/v1/oauth2/authorization/kakao")
     public JSONObject login(@RequestParam("code") String code) {
         return authService.kakaoAuthentication(code);
     }
 
-    @GetMapping("/api/v1/isLogin")
+    @GetMapping("/v1/isLogin")
     public Boolean isLogin(@RequestHeader("Cookie") Optional<Object> header) {
-        if (header.isPresent()) {
-            return true;
-        } else {
-            return false;
-        }
+        return header.isPresent();
     }
 }

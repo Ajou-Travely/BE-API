@@ -20,9 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
     properties = {
         "auth.kakaoOauth2ClinetId=test",
         "auth.frontendRedirectUrl=test",
-        "cloud.aws.credentials.accessKey=test",
-        "cloud.aws.credentials.secretKey=test",
-        "cloud.aws.s3.bucket=test"
+        "spring.mail.password=temptemptemptemp"
 })
 class UserControllerTest {
     @LocalServerPort
@@ -46,17 +44,17 @@ class UserControllerTest {
     @Test
     @WithMockUser("USER")
     public void authorizationTestWithUserRole() throws Exception {
-        mvc.perform(get("/api/v1/users"))
+        mvc.perform(get("/v1/users"))
                 .andExpect(status().is2xxSuccessful());
-        mvc.perform(get("/api/v1/isLogin"))
+        mvc.perform(get("/v1/isLogin"))
                 .andExpect(status().is2xxSuccessful());
     }
 
     @Test
     public void authorizationTestWithoutAnyRole() throws Exception {
-        mvc.perform(get("/api/v1/users"))
+        mvc.perform(get("/v1/users"))
                 .andExpect(status().is4xxClientError());
-        mvc.perform(get("/api/v1/isLogin"))
+        mvc.perform(get("/v1/isLogin"))
                 .andExpect(status().is2xxSuccessful());
 
     }

@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -25,10 +26,20 @@ public class Branch {
     @JoinColumn(name = "schedule_id")
     private Schedule schedule;
 
-    @Builder
     public Branch(@NonNull User user, @NonNull Schedule schedule) {
-        this.id = id;
         this.user = user;
+        setSchedule(schedule);
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setSchedule(Schedule schedule) {
+        if (Objects.nonNull(this.schedule)) {
+            this.schedule.getBranches().remove(this);
+        }
         this.schedule = schedule;
+        schedule.getBranches().add(this);
     }
 }

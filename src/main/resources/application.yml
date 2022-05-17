@@ -1,13 +1,21 @@
+auth:
+  kakaoOauth2ClinetId: b99373f3227615f7d08e2832df8847d7
+  frontendRedirectUrl: http://localhost:3000/
+
 spring:
   datasource:
-    url: jdbc:mariadb://localhost:3306/travely
-    username: root
-    password: password
+    url: jdbc:mariadb://${DATABASE_HOST:localhost}:${DATABASE_PORT:3306}/${DATABASE_NAME:travely}
+    username: ${DATABASE_USERNAME:root}
+    password: ${DATABASE_PASSWORD:password}
     driver-class-name: org.mariadb.jdbc.Driver
   # swagger setting
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+    throw-exception-if-no-handler-found: true
+  web:
+    resources:
+      add-mappings: false
 
   session:
     store-type: jdbc
@@ -19,14 +27,29 @@ spring:
 #      ddl-auto: create
     properties:
       hibernate:
-        show_sql: true
-        format_sql: true
+#        show_sql: true
+#        format_sql: true
   profiles:
     include:
       - "auth"
       - "aws"
+      - "domain"
   jackson:
     serialization.WRITE_DATES_AS_TIMESTAMPS=false
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: hooo0503@gmail.com
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
 
 logging:
   level:

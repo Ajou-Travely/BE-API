@@ -42,6 +42,6 @@ public class Travel {
     }
 
     public void addUserTravel(UserTravel userTravel) {
-        this.userTravels.add(userTravel);
+        userTravel.setTravel(this);
     }
 }
