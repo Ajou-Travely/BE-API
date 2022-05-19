@@ -37,7 +37,7 @@ spring:
   profiles:
     include:
       - "auth"
-      - "aws"
+#      - "aws"
       - "domain"
   jackson:
     serialization.WRITE_DATES_AS_TIMESTAMPS=false
@@ -64,10 +64,10 @@ logging:
 cloud:
   aws:
     credentials:
-      accessKey: ${AWS_S3_ACCESS_KEY_ID}
-      secretKey: ${AWS_S3_SECRET_ACCESS_KEY}
+      accessKey: ${AWS_S3_ACCESS_KEY_ID:test}
+      secretKey: ${AWS_S3_SECRET_ACCESS_KEY:test}
     s3:
-      bucket: ${AWS_S3_BUCKET}
+      bucket: ${AWS_S3_BUCKET:test}
     region:
       static: ap-northeast-2
     stack:
