@@ -35,10 +35,10 @@ public class Post {
 
     private String title;
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
     private List<Photo> photos = new ArrayList<>();
 
     @Builder
@@ -54,14 +54,4 @@ public class Post {
         this.text = text;
     }
 
-    public void addPhoto(Photo photo) {
-        this.photos.add(photo);
-    }
-
-    @Override
-    public String toString() {
-        return "id: " + this.id.toString() +
-                "title: " + this.title +
-                "text: " + this.text;
-    }
 }

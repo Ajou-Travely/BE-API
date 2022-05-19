@@ -9,12 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface PhotoRepository extends JpaRepository<Photo, Long> {
-    @Transactional
-    @Modifying(clearAutomatically = true)
-    @Query("delete from Photo p where p.id in :ids")
-    void deleteAllPhotosByIdInQuery(@Param("ids") List<Long> ids);
-
-    @Query("select p from Photo p where p.id in :ids")
-    List<Photo> findPhotosByIdsInQuery(@Param("ids") List<Long> ids);
+    @Query("select p.name from Photo p where p.id in :ids")
+    List<String> findPhotoNamesByIdsInQuery(@Param("ids") List<Long> ids);
 
 }

@@ -20,12 +20,12 @@ public class Photo {
     @JoinColumn(name = "post_id")
     private Post post;
 
-    private String path;
+    private String name;
 
     @Builder
-    public Photo(@NonNull Post post, @NonNull String path) {
+    public Photo(@NonNull Post post, @NonNull String name) {
         this.post = post;
-        this.path = path;
+        this.name = name;
         post.getPhotos().add(this);
     }
 }
