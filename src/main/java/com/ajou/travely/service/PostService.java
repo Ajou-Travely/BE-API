@@ -3,18 +3,14 @@ package com.ajou.travely.service;
 import com.ajou.travely.controller.post.dto.PostCreateRequestDto;
 import com.ajou.travely.controller.post.dto.PostResponseDto;
 import com.ajou.travely.controller.post.dto.PostUpdateRequestDto;
-import com.ajou.travely.domain.Photo;
 import com.ajou.travely.domain.Post;
 import com.ajou.travely.domain.Schedule;
 import com.ajou.travely.exception.ErrorCode;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.exception.custom.RecordNotFoundException;
-import com.ajou.travely.repository.PhotoRepository;
 import com.ajou.travely.repository.PostRepository;
 import com.ajou.travely.repository.ScheduleRepository;
 import com.ajou.travely.repository.UserRepository;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
@@ -31,7 +27,7 @@ public class PostService {
 
     private final ScheduleRepository scheduleRepository;
 
-    private final PhotoRepository photoRepository;
+    private final PhotoService photoService;
 
     public Long createPost(Long userId, PostCreateRequestDto requestDto) {
         User user = findUserById(userId);
@@ -43,11 +39,9 @@ public class PostService {
             .title(requestDto.getTitle())
             .build();
 
-        requestDto.getPhotoPaths()
-            .forEach(photoPath ->{
-                    Photo photo = new Photo(post, photoPath);
-                }
-            );
+        if (!requestDto.getPhotos().isEmpty()) {
+            photoService.createPhotos(post, requestDto.getPhotos());
+        }
 
         return postRepository.save(post).getId();
     }
@@ -58,26 +52,26 @@ public class PostService {
     }
 
     public void updatePost(Long postId, PostUpdateRequestDto requestDto) {
-        Post post = initializePostInfo(postId);
+        Post post = findPostById(postId);
         post.update(requestDto.getTitle(), requestDto.getText());
-        List<Photo> addedPhotos = requestDto.getAddedPhotoPaths()
-            .stream()
-            .map(photoPath -> new Photo(post, photoPath))
-            .collect(Collectors.toList());
-        post.getPhotos()
-            .removeAll(photoRepository.findPhotosByIdsInQuery(requestDto.getRemovedPhotoIds()));
-        photoRepository.saveAll(addedPhotos);
-//        photoRepository.deleteAllPhotosByIdInQuery(requestDto.getRemovedPhotoIds());
+
+        if (requestDto.getAddPhotos() != null) {
+            photoService.createPhotos(post, requestDto.getAddPhotos());
+        }
+        if (requestDto.getRemovePhotoIds() != null) {
+            photoService.removePhotoIds(requestDto.getRemovePhotoIds());
+        }
     }
 
     public void deletePost(Long postId){
+        photoService.removePhotos(findPostById(postId).getPhotos());
         postRepository.deleteById(postId);
     }
 
     private Post findPostById(Long postId) {
         return postRepository.findById(postId)
             .orElseThrow(() -> new RecordNotFoundException(
-                    "해당 ID의 Post가 존재하지 않습니다."
+                    "해당 ID의 Post가 존재하지 않습니다. id=" + postId
                     , ErrorCode.POST_NOT_FOUND
             ));
     }
@@ -93,7 +87,7 @@ public class PostService {
     private User findUserById(Long userId) {
         return userRepository.findById(userId)
             .orElseThrow(() -> new RecordNotFoundException(
-                    "해당 ID의 User가 존재하지 않습니다."
+                    "해당 ID의 User가 존재하지 않습니다. id=" + userId
                     , ErrorCode.USER_NOT_FOUND
             ));
     }
@@ -101,7 +95,7 @@ public class PostService {
     private Schedule findScheduleById(Long scheduleId) {
         return scheduleRepository.findById(scheduleId)
             .orElseThrow(() -> new RecordNotFoundException(
-                    "해당 ID의 User가 존재하지 않습니다."
+                    "해당 ID의 User가 존재하지 않습니다. id=" + scheduleId
                     , ErrorCode.USER_NOT_FOUND
             ));
     }

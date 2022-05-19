@@ -1,6 +1,5 @@
 package com.ajou.travely.config.auth;
 
-import com.ajou.travely.domain.user.Type;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -20,5 +19,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/v1/**").hasAnyRole("USER", "ADMIN");
 //                .access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')");
 //                .antMatchers("/api/v2/**").access("hasRole('ROLE_ADMIN')")
+//                .antMatchers("/**").permitAll();
     }
 }

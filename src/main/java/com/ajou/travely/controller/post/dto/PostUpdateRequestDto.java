@@ -4,6 +4,7 @@ import java.util.List;
 import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.web.multipart.MultipartFile;
 
 @AllArgsConstructor
 @Getter
@@ -14,8 +15,8 @@ public class PostUpdateRequestDto {
 
     private String text;
 
-    private List<String> addedPhotoPaths;
+    private List<MultipartFile> addPhotos;
 
-    private List<Long> removedPhotoIds;
+    private List<Long> removePhotoIds;
 
 }
