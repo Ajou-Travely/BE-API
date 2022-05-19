@@ -127,7 +127,7 @@ public class TravelService {
                 .findByCodeAndEmail(code, user.getEmail())
                 .orElseThrow(() -> new RecordNotFoundException(
                         "잘못된 초대 링크입니다."
-                        ,ErrorCode.INVALID_INVITATION
+                        , ErrorCode.INVALID_INVITATION
                 ));
         Travel travel = travelRepository
                 .findById(invitation.getTravel().getId())
@@ -221,5 +221,17 @@ public class TravelService {
                 .stream()
                 .map(SimpleScheduleResponseDto::new)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void changeScheduleOrder(Long travelId,
+                                    ScheduleOrderUpdateRequestDto requestDto) {
+        Travel travel = travelRepository
+                .findById(travelId)
+                .orElseThrow(() -> new RecordNotFoundException(
+                        "해당 ID의 Travel이 존재하지 않습니다."
+                        , ErrorCode.TRAVEL_NOT_FOUND
+                ));
+        travel.setScheduleOrder(requestDto.getScheduleOrder());
     }
 }
