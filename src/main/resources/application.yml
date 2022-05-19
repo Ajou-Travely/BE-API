@@ -28,8 +28,8 @@ spring:
       initialize-schema: always
 
   jpa:
-#    hibernate:
-#      ddl-auto: create
+    hibernate:
+      ddl-auto: create
     properties:
       hibernate:
 #        show_sql: true

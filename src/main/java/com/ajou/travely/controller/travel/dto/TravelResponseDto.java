@@ -5,6 +5,7 @@ import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.domain.Schedule;
 import com.ajou.travely.domain.Travel;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,9 +42,14 @@ public class TravelResponseDto {
                 .stream()
                 .map(SimpleScheduleResponseDto::new)
                 .collect(Collectors.toList());
-        this.scheduleOrder = Arrays
-                .stream(entity.getScheduleOrder().split(","))
-                .map(Long::valueOf)
-                .collect(Collectors.toList());
+        if (entity.getScheduleOrder().isEmpty()) {
+            this.scheduleOrder = new ArrayList<>();
+        } else {
+            this.scheduleOrder = Arrays
+                    .stream(entity.getScheduleOrder().split(","))
+                    .map(Long::valueOf)
+                    .collect(Collectors.toList());
+        }
+
     }
 }
