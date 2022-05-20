@@ -69,7 +69,7 @@ public class JwtTokenProvider {
     }
 
     public String resolveToken(HttpServletRequest request) {
-        return request.getHeader("TOKEN");
+        return request.getHeader("token");
     }
 
     public Boolean validateToken(String jwtToken) {
