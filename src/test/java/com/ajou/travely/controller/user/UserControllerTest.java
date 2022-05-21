@@ -46,16 +46,12 @@ class UserControllerTest {
     public void authorizationTestWithUserRole() throws Exception {
         mvc.perform(get("/v1/users"))
                 .andExpect(status().is2xxSuccessful());
-        mvc.perform(get("/v1/isLogin"))
-                .andExpect(status().is2xxSuccessful());
     }
 
     @Test
     public void authorizationTestWithoutAnyRole() throws Exception {
         mvc.perform(get("/v1/users"))
                 .andExpect(status().is4xxClientError());
-        mvc.perform(get("/v1/isLogin"))
-                .andExpect(status().is2xxSuccessful());
 
     }
 }

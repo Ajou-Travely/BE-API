@@ -37,21 +37,20 @@ public class JwtTokenProvider {
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
     }
 
-    public JSONObject createToken(Long userId) {
+    public String createToken(Long userId) {
         Map<String, Long> userInfo = new HashMap<>();
         userInfo.put("userId", userId);
         JSONObject payload = new JSONObject(userInfo);
         Claims claims = Jwts.claims().setSubject(payload.toJSONString());
         Date now = new Date();
-        JSONObject tokenInfo = new JSONObject();
-        tokenInfo.put("Authentication", Jwts.builder()
+        Date expiredAt = new Date(now.getTime() + tokenValidTime);
+
+        return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + tokenValidTime))
+                .setExpiration(expiredAt)
                 .signWith(SignatureAlgorithm.HS256, secretKey)
-                .compact());
-        tokenInfo.put("expiration", new Date(now.getTime() + tokenValidTime));
-        return tokenInfo;
+                .compact();
     }
 
     public Authentication getAuthentication(String token) throws ParseException {

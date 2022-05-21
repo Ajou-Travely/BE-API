@@ -19,15 +19,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.authorizeRequests()
-                .antMatchers("/", "/v1/oauth2/authorization/kakao", "/v1/isLogin", "/v1/users/signup").permitAll()
-                .antMatchers("/swagger*/**", "/v3/api-docs/**").permitAll()
-                .antMatchers("/v1/**").hasAnyRole("USER", "ADMIN")
+        http
+                .csrf().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider)
-                        ,UsernamePasswordAuthenticationFilter.class);
+                    .authorizeRequests()
+                        .antMatchers("/", "/v1/oauth2/authorization/kakao", "/v1/users/signup").permitAll()
+                        .antMatchers("/swagger*/**", "/v3/api-docs/**").permitAll()
+                        .antMatchers("/v1/**").hasAnyRole("USER", "ADMIN")
+                .and()
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
+                        UsernamePasswordAuthenticationFilter.class);
 //                .access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')");
 //                .antMatchers("/api/v2/**").access("hasRole('ROLE_ADMIN')")
 //                .antMatchers("/**").permitAll();

@@ -26,9 +26,4 @@ public class AuthController {
         String origin = request.getHeader(HttpHeaders.ORIGIN);
         return authService.kakaoAuthentication(origin, code);
     }
-
-    @GetMapping("/v1/isLogin")
-    public Boolean isLogin(@RequestHeader("Cookie") Optional<Object> header) {
-        return header.isPresent();
-    }
 }
