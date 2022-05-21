@@ -1,5 +1,0 @@
-echo DATABASE_HOST=$(aws ssm get-parameters --region ap-northeast-2 --names DATABASE_HOST --with-decryption --query Parameters[0].Value)
-echo DATABASE_PORT=$(aws ssm get-parameters --region ap-northeast-2 --names DATABASE_PORT --with-decryption --query Parameters[0].Value)
-echo DATABASE_USERNAME=$(aws ssm get-parameters --region ap-northeast-2 --names DATABASE_USERNAME --with-decryption --query Parameters[0].Value)
-echo DATABASE_PASSWORD=$(aws ssm get-parameters --region ap-northeast-2 --names DATABASE_PASSWORD --with-decryption --query Parameters[0].Value)
-echo DATABASE_NAME=$(aws ssm get-parameters --region ap-northeast-2 --names DATABASE_NAME --with-decryption --query Parameters[0].Value)
