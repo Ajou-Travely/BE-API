@@ -1,8 +1,8 @@
-export DATABASE_HOST=$(aws ssm get-parameters --region ap-northeast-2 --names /travely/dev/DATABASE_HOST --with-decryption --query Parameters[0].Value)
-export DATABASE_PORT=$(aws ssm get-parameters --region ap-northeast-2 --names /travely/dev/DATABASE_PORT --with-decryption --query Parameters[0].Value)
-export DATABASE_USERNAME=$(aws ssm get-parameters --region ap-northeast-2 --names /travely/dev/DATABASE_USERNAME --with-decryption --query Parameters[0].Value)
-export DATABASE_PASSWORD=$(aws ssm get-parameters --region ap-northeast-2 --names /travely/dev/DATABASE_PASSWORD --with-decryption --query Parameters[0].Value)
-export DATABASE_NAME=$(aws ssm get-parameters --region ap-northeast-2 --names /travely/dev/DATABASE_NAME --with-decryption --query Parameters[0].Value)
+export DATABASE_HOST=$(aws ssm get-parameters --region ap-northeast-2 --names /travely/dev/DATABASE_HOST --with-decryption --query Parameters[0].Value --output text)
+export DATABASE_PORT=$(aws ssm get-parameters --region ap-northeast-2 --names /travely/dev/DATABASE_PORT --with-decryption --query Parameters[0].Value --output text)
+export DATABASE_USERNAME=$(aws ssm get-parameters --region ap-northeast-2 --names /travely/dev/DATABASE_USERNAME --with-decryption --query Parameters[0].Value --output text)
+export DATABASE_PASSWORD=$(aws ssm get-parameters --region ap-northeast-2 --names /travely/dev/DATABASE_PASSWORD --with-decryption --query Parameters[0].Value --output text)
+export DATABASE_NAME=$(aws ssm get-parameters --region ap-northeast-2 --names /travely/dev/DATABASE_NAME --with-decryption --query Parameters[0].Value --output text)
 
 REPOSITORY=/home/ec2-user/app
 cd $REPOSITORY
