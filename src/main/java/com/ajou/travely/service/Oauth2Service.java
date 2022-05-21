@@ -49,7 +49,7 @@ public class Oauth2Service {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", grantType);
         params.add("client_id", kakaoOauth2ClinetId);
-        params.add("redirect_uri", frontendRedirectUrl + "oauth/kakao/callback");
+        params.add("redirect_uri", "https://api.dev.travely.guide/v1/oauth2/authorization/kakao");
         params.add("code", code);
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
