@@ -44,7 +44,7 @@ public class JwtTokenProvider {
         Claims claims = Jwts.claims().setSubject(payload.toJSONString());
         Date now = new Date();
         JSONObject tokenInfo = new JSONObject();
-        tokenInfo.put("token", Jwts.builder()
+        tokenInfo.put("Authentication", Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + tokenValidTime))
@@ -69,7 +69,7 @@ public class JwtTokenProvider {
     }
 
     public String resolveToken(HttpServletRequest request) {
-        return request.getHeader("token");
+        return request.getHeader("Authentication");
     }
 
     public Boolean validateToken(String jwtToken) {
