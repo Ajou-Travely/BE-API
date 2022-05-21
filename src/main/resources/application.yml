@@ -1,6 +1,8 @@
 auth:
   kakaoOauth2ClinetId: b99373f3227615f7d08e2832df8847d7
   frontendRedirectUrl: http://localhost:3000/
+  jwtSecretKey: "test"
+  tokenValidTime: 600000
 
 spring:
   datasource:
@@ -28,8 +30,8 @@ spring:
       initialize-schema: always
 
   jpa:
-    hibernate:
-      ddl-auto: create
+#    hibernate:
+#      ddl-auto: create
     properties:
       hibernate:
 #        show_sql: true

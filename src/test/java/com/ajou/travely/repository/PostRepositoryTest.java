@@ -1,4 +1,4 @@
-package com.ajou.travely.domain.post;
+package com.ajou.travely.repository;
 
 import com.ajou.travely.domain.Place;
 import com.ajou.travely.domain.Post;

@@ -31,6 +31,7 @@ public class TravelController {
     @PostMapping("")
     public ResponseEntity<Long> createTravel(@LoginUser SessionUser sessionUser,
                                              @Valid @RequestBody TravelCreateRequestDto travelCreateRequestDto) {
+        System.out.println("sessionUser.getUserId() = " + sessionUser.getUserId());
         Travel travel = travelService.createTravel(
                 sessionUser.getUserId()
                 , travelCreateRequestDto

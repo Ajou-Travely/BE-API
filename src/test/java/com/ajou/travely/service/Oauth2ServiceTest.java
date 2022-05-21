@@ -69,17 +69,19 @@ class Oauth2ServiceTest {
         userRepository.save(user);
 
         JSONObject s1 = oauth2Service.setSessionOrRedirectToSignUp(userInfoFromKakao);
-        User kakaoIdInAuthenticationDetail = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        //User kakaoIdInAuthenticationDetail = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
         JSONObject s2 = oauth2Service.setSessionOrRedirectToSignUp(notSignedUpUserInfo);
         JSONObject s3 = oauth2Service.setSessionOrRedirectToSignUp(userInfoWithoutEmail);
 
-        System.out.println("SecurityContextHolder.getContext().getAuthentication().getDetails() = " + SecurityContextHolder.getContext().getAuthentication().getDetails());
-        SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().forEach(grantedAuthority -> {
-            System.out.println("grantedAuthority.getAuthority().toString() = " + grantedAuthority.getAuthority().toString());
-        });
+//        System.out.println("SecurityContextHolder.getContext().getAuthentication().getDetails() = " + SecurityContextHolder.getContext().getAuthentication().getDetails());
+//        SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().forEach(grantedAuthority -> {
+//            System.out.println("grantedAuthority.getAuthority().toString() = " + grantedAuthority.getAuthority().toString());
+//        });
         assertThat(s1.get("status")).isEqualTo(200);
+        assertThat(s1.get("token")).isNotNull();
         assertThat(s2.get("status")).isEqualTo(301);
+        assertThat(s2.get("token")).isNull();
         assertThat(s3.get("status")).isEqualTo(401);
-        assertThat(kakaoIdInAuthenticationDetail.getKakaoId()).isEqualTo(kakaoId);
+//        assertThat(kakaoIdInAuthenticationDetail.getKakaoId()).isEqualTo(kakaoId);
     }
 }
