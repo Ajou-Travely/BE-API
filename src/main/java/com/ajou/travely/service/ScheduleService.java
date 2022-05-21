@@ -84,8 +84,7 @@ public class ScheduleService {
                         , ErrorCode.SCHEDULE_NOT_FOUND
                 ));
         Map<Long, User> currentUsers = new HashMap<>();
-        schedule
-                .getTravel()
+        schedule.getTravel()
                 .getUserTravels()
                 .forEach(userTravel -> currentUsers.put(userTravel.getUser().getId(), userTravel.getUser()));
         if (!Objects.equals(schedule.getPlace().getKakaoMapId(), scheduleUpdateRequestDto.getPlace().getKakaoMapId())) {

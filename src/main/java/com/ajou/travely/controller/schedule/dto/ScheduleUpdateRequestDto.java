@@ -1,7 +1,6 @@
 package com.ajou.travely.controller.schedule.dto;
 
 import com.ajou.travely.controller.place.dto.PlaceCreateRequestDto;
-import com.ajou.travely.controller.place.dto.SimplePlaceResponseDto;
 import lombok.Builder;
 import lombok.Getter;
 

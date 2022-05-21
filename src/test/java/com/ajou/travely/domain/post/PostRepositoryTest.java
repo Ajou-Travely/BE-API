@@ -15,8 +15,6 @@ import com.ajou.travely.repository.UserRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import javax.transaction.Transactional;
-
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,7 +83,6 @@ public class PostRepositoryTest {
                 .endTime(LocalDateTime.now())
                 .build());
     }
-
 
     @Rollback
     @Test

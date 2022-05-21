@@ -30,5 +30,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         ,UsernamePasswordAuthenticationFilter.class);
 //                .access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')");
 //                .antMatchers("/api/v2/**").access("hasRole('ROLE_ADMIN')")
+//                .antMatchers("/**").permitAll();
     }
 }

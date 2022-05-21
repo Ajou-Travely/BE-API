@@ -4,10 +4,7 @@ import com.ajou.travely.config.auth.LoginUser;
 import com.ajou.travely.config.auth.SessionUser;
 import com.ajou.travely.controller.schedule.dto.ScheduleCreateRequestDto;
 import com.ajou.travely.controller.schedule.dto.SimpleScheduleResponseDto;
-import com.ajou.travely.controller.travel.dto.SimpleCostResponseDto;
-import com.ajou.travely.controller.travel.dto.SimpleTravelResponseDto;
-import com.ajou.travely.controller.travel.dto.TravelCreateRequestDto;
-import com.ajou.travely.controller.travel.dto.TravelInviteRequestDto;
+import com.ajou.travely.controller.travel.dto.*;
 import com.ajou.travely.domain.Travel;
 import com.ajou.travely.service.ScheduleService;
 import com.ajou.travely.service.TravelService;
@@ -73,6 +70,13 @@ public class TravelController {
     public ResponseEntity<Void> inviteUserToTravel(@PathVariable Long travelId
             , @RequestBody TravelInviteRequestDto travelInviteRequestDto) {
         travelService.inviteUserToTravel(travelId, travelInviteRequestDto);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{travelId}/change")
+    public ResponseEntity<Void> changeScheduleOrder(@PathVariable Long travelId,
+                                                    ScheduleOrderUpdateRequestDto requestDto) {
+        travelService.changeScheduleOrder(travelId, requestDto);
         return ResponseEntity.ok().build();
     }
 }
