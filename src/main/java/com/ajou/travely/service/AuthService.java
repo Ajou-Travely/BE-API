@@ -13,8 +13,8 @@ import org.springframework.stereotype.Service;
 public class AuthService {
     private final Oauth2Service oauth2Service;
 
-    public JSONObject kakaoAuthentication(String code) {
-        AuthorizationKakao authorizationKakao = oauth2Service.callTokenApi(code);
+    public JSONObject kakaoAuthentication(String origin, String code) {
+        AuthorizationKakao authorizationKakao = oauth2Service.callTokenApi(origin, code);
         JSONObject userInfoFromKakao = oauth2Service.callGetUserByAccessToken(authorizationKakao.getAccess_token());
         return oauth2Service.setSessionOrRedirectToSignUp(userInfoFromKakao);
     }
