@@ -100,11 +100,9 @@ public class Oauth2Service {
                 return result;
             } else {
                 User exUser = user.get();
-                JSONObject token = jwtTokenProvider.createToken(exUser.getId());
+                String token = jwtTokenProvider.createToken(exUser.getId());
                 result.put("status", 200);
-                result.put("sessionUser", new SessionUser(exUser.getId(), exUser.getName()));
-                result.put("token", token.get("token"));
-                result.put("expiration", token.get("expiration"));
+                result.put("token", token);
             }
         } else {
             result.put("status", 401);
