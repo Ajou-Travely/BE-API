@@ -11,20 +11,18 @@ import java.util.stream.Collectors;
 
 @Getter
 public class SimpleTravelResponseDto {
-    private Long id;
-    private String title;
-    private LocalDate startDate;
-    private LocalDate endDate;
-    private String memo;
-    private Long managerId;
-    private List<SimpleUserInfoDto> users;
+    private final Long id;
+    private final String title;
+    private final LocalDate startDate;
+    private final LocalDate endDate;
+    private final Long managerId;
+    private final List<SimpleUserInfoDto> users;
 
     public SimpleTravelResponseDto(Travel entity) {
         this.id = entity.getId();
         this.title = entity.getTitle();
         this.startDate = entity.getStartDate();
         this.endDate = entity.getEndDate();
-        this.memo = entity.getMemo();
         this.managerId = entity.getManagerId();
         this.users = entity
                 .getUserTravels()

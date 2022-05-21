@@ -34,7 +34,7 @@ class AuthServiceTest {
     private AuthService authService;
 
     @Test
-    @DisplayName("Security Context에서 사용자 id 가져오기")
+    @DisplayName("Jwt 토큰 생성하기")
     @Rollback
     void getUserId() {
         JSONObject userInfoFromKakao = new JSONObject();
@@ -53,10 +53,9 @@ class AuthServiceTest {
 
         userRepository.save(user);
         JSONObject result = oauth2Service.setSessionOrRedirectToSignUp(userInfoFromKakao);
-        Long userId = authService.getUserId();
+//        Long userId = authService.getUserId();
 
         assertThat(result.get("status")).isEqualTo(200);
-        assertThat(userId).isEqualTo(user.getId());
-
+        assertThat(result.get("token")).isNotNull();
     }
 }
