@@ -7,6 +7,9 @@ import com.ajou.travely.domain.user.User;
 import com.ajou.travely.repository.UserRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -32,6 +35,7 @@ public class Oauth2Service {
     private final UserRepository userRepository;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
+    private final JwtTokenProvider jwtTokenProvider;
     @Value("${auth.kakaoOauth2ClinetId}")
     private String kakaoOauth2ClinetId;
     @Value("${auth.frontendRedirectUrl}")
@@ -95,11 +99,12 @@ public class Oauth2Service {
                 result.put("kakaoId", kakaoId);
                 return result;
             } else {
-                SecurityContext context = SecurityContextHolder.getContext();
                 User exUser = user.get();
-                context.setAuthentication(new CustomAuthentication(exUser));
+                JSONObject token = jwtTokenProvider.createToken(exUser.getId());
                 result.put("status", 200);
                 result.put("sessionUser", new SessionUser(exUser.getId(), exUser.getName()));
+                result.put("token", token.get("token"));
+                result.put("expiration", token.get("expiration"));
             }
         } else {
             result.put("status", 401);
