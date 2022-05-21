@@ -20,6 +20,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      IMAGE_TAG: ${{ github.sha }}
 
     steps:
       - uses: actions/checkout@v3
@@ -48,7 +50,7 @@ jobs:
 
 
       - name: Upload Artifact to S3
-        run: aws deploy push --application-name travely-dev-spring-server --s3-location s3://travely-dev-spring-server-artifact/server/build.zip --source .
+        run: aws deploy push --application-name travely-dev-spring-server --s3-location s3://travely-dev-spring-server-artifact/$IMAGE_TAG.zip --source .
 
       - name: Deploy on EC2 ASG with CodeDeploy
-        run: aws deploy create-deployment --application-name travely-dev-spring-server --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name spring-server-deployment-group --s3-location bucket=travely-dev-spring-server-artifact,bundleType=zip,key=server/build.zip
+        run: aws deploy create-deployment --application-name travely-dev-spring-server --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name spring-server-deployment-group --s3-location bucket=travely-dev-spring-server-artifact,bundleType=zip,key=$IMAGE_TAG.zip
