@@ -1,12 +1,14 @@
 package com.ajou.travely.controller.user;
 
+import com.ajou.travely.config.auth.LoginUser;
+import com.ajou.travely.config.auth.SessionUser;
 import com.ajou.travely.controller.travel.dto.SimpleTravelResponseDto;
-import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.controller.user.dto.UserCreateRequestDto;
 import com.ajou.travely.controller.user.dto.UserResponseInfoDto;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -31,8 +33,13 @@ public class UserController {
         return new UserResponseInfoDto(user);
     }
 
-    @GetMapping("/{userId}/travels")
-    public List<SimpleTravelResponseDto> showTravelsByUser(@PathVariable Long userId) {
-        return userService.getTravelsByUser(userId);
+    @GetMapping("/travels")
+    public List<SimpleTravelResponseDto> showTravelsByUser(
+            @LoginUser SessionUser sessionUser,
+            @RequestParam(value = "page", required = false) Integer page,
+            @RequestParam(value = "size", required = false) Integer size
+            ) {
+        PageRequest pageRequest = PageRequest.of(page == null ? 0 : page, size == null ? 10 : size);
+        return userService.getTravelsByUser(sessionUser.getUserId(), pageRequest);
     }
 }
