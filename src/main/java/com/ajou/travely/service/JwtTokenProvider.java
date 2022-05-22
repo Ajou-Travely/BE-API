@@ -17,10 +17,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Base64;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Component
@@ -69,8 +66,12 @@ public class JwtTokenProvider {
 
     public String resolveToken(HttpServletRequest request) {
         String authentication = request.getHeader("Authentication");
-        String[] result = authentication.split("Bearer ");
-        return result[0];
+        if (Objects.nonNull(authentication)) {
+            String[] result = authentication.split("Bearer ");
+            return result[0];
+        }
+        return null;
+
     }
 
     public Boolean validateToken(String jwtToken) {
