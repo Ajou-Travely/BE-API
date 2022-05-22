@@ -6,6 +6,7 @@ import com.ajou.travely.controller.schedule.dto.ScheduleCreateRequestDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleResponseDto;
 import com.ajou.travely.controller.schedule.dto.SimpleScheduleResponseDto;
 import com.ajou.travely.controller.travel.dto.SimpleCostResponseDto;
+import com.ajou.travely.controller.travel.dto.SimpleTravelResponseDto;
 import com.ajou.travely.controller.travel.dto.TravelCreateRequestDto;
 import com.ajou.travely.controller.travel.dto.TravelResponseDto;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.annotation.Rollback;
 
 import javax.transaction.Transactional;
@@ -242,6 +244,38 @@ class TravelServiceTest {
                         .build());
         List<SimpleScheduleResponseDto> schedules = travelService.getSchedulesByTravelId(travelId);
         assertThat(schedules).hasSize(2);
+    }
+
+    @Test
+    void testPagination() {
+        User user = userService.insertUser(
+                User.builder()
+                        .type(Type.USER)
+                        .email("sophoca@ajou.ac.kr")
+                        .name("홍성빈")
+                        .phoneNumber("112")
+                        .kakaoId(0L)
+                        .build()
+        );
+        for (int i = 0; i < 7; i++) {
+            TravelCreateRequestDto request = TravelCreateRequestDto
+                    .builder()
+                    .title("test" + i)
+                    .startDate(LocalDate.now())
+                    .endDate(LocalDate.now().plusDays(1))
+                    .userEmails(new ArrayList<>())
+                    .build();
+            travelService.createTravel(user.getId(), request);
+        }
+        PageRequest pageRequest0 = PageRequest.of(0, 3);
+        PageRequest pageRequest1 = PageRequest.of(1, 3);
+        PageRequest pageRequest2 = PageRequest.of(2, 3);
+        List<SimpleTravelResponseDto> travels0 = userService.getTravelsByUser(user.getId(), pageRequest0);
+        List<SimpleTravelResponseDto> travels1 = userService.getTravelsByUser(user.getId(), pageRequest1);
+        List<SimpleTravelResponseDto> travels2 = userService.getTravelsByUser(user.getId(), pageRequest2);
+        assertThat(travels0).hasSize(3);
+        assertThat(travels1).hasSize(3);
+        assertThat(travels2).hasSize(1);
     }
 
     //TODO 추후 구현할 테스트케이스
