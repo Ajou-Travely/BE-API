@@ -68,7 +68,9 @@ public class JwtTokenProvider {
     }
 
     public String resolveToken(HttpServletRequest request) {
-        return request.getHeader("Authentication");
+        String authentication = request.getHeader("Authentication");
+        String[] result = authentication.split("Bearer ");
+        return result[0];
     }
 
     public Boolean validateToken(String jwtToken) {
