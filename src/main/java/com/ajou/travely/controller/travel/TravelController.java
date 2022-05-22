@@ -42,6 +42,12 @@ public class TravelController {
         return ResponseEntity.ok(travel.getId());
     }
 
+
+    @GetMapping("/{travelId}")
+    public ResponseEntity<TravelResponseDto> showAllTravels(@PathVariable Long travelId) {
+        return ResponseEntity.ok(travelService.getTravelById(travelId));
+    }
+
     @PostMapping("/accept/{code}")
     public ResponseEntity<Long> addUserToTravel(@LoginUser SessionUser sessionUser, @PathVariable UUID code) {
         return ResponseEntity
