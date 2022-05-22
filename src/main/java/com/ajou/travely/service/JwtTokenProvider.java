@@ -68,7 +68,7 @@ public class JwtTokenProvider {
         String authentication = request.getHeader("Authentication");
         if (Objects.nonNull(authentication)) {
             String[] result = authentication.split("Bearer ");
-            return result[0];
+            return result[1];
         }
         return null;
 
