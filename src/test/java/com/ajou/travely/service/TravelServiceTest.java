@@ -10,6 +10,7 @@ import com.ajou.travely.controller.travel.dto.TravelCreateRequestDto;
 import com.ajou.travely.controller.travel.dto.TravelResponseDto;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.domain.travel.Travel;
+import com.ajou.travely.domain.travel.TravelType;
 import com.ajou.travely.domain.user.UserType;
 import com.ajou.travely.domain.user.User;
 import org.junit.jupiter.api.DisplayName;
@@ -274,6 +275,55 @@ class TravelServiceTest {
         assertThat(travels0).hasSize(3);
         assertThat(travels1).hasSize(3);
         assertThat(travels2).hasSize(1);
+    }
+
+    @Test
+    @DisplayName("여행 타입 기본값 입력")
+    @Rollback
+    public void testTravelTypeDefault() {
+        User user = userService.insertUser(
+            User.builder()
+                .userType(UserType.USER)
+                .email("sophoca@ajou.ac.kr")
+                .name("홍성빈")
+                .phoneNumber("112")
+                .kakaoId(0L)
+                .build()
+        );
+        TravelCreateRequestDto request = TravelCreateRequestDto
+            .builder()
+            .title("test")
+            .startDate(LocalDate.now())
+            .endDate(LocalDate.now().plusDays(1))
+            .userEmails(new ArrayList<>())
+            .build();
+        Travel travel = travelService.createTravel(user.getId(), request);
+        assertThat(travel.getTravelType()).isEqualTo(TravelType.PUBLIC);
+    }
+
+    @Test
+    @DisplayName("여행 타입 private 입력")
+    @Rollback
+    public void testTravelTypePrivate() {
+        User user = userService.insertUser(
+            User.builder()
+                .userType(UserType.USER)
+                .email("sophoca@ajou.ac.kr")
+                .name("홍성빈")
+                .phoneNumber("112")
+                .kakaoId(0L)
+                .build()
+        );
+        TravelCreateRequestDto request = TravelCreateRequestDto
+            .builder()
+            .title("test")
+            .startDate(LocalDate.now())
+            .endDate(LocalDate.now().plusDays(1))
+            .userEmails(new ArrayList<>())
+            .travelType(TravelType.PRIVATE)
+            .build();
+        Travel travel = travelService.createTravel(user.getId(), request);
+        assertThat(travel.getTravelType()).isEqualTo(TravelType.PRIVATE);
     }
 
     //TODO 추후 구현할 테스트케이스

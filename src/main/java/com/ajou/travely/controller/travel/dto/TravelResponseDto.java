@@ -4,6 +4,7 @@ import com.ajou.travely.controller.schedule.dto.SimpleScheduleResponseDto;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.domain.Schedule;
 import com.ajou.travely.domain.travel.Travel;
+import com.ajou.travely.domain.travel.TravelType;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,6 +22,7 @@ public class TravelResponseDto {
     private final LocalDate endDate;
     private final String memo;
     private final Long managerId;
+    private final TravelType travelType;
     private final List<SimpleUserInfoDto> users;
     private final List<SimpleScheduleResponseDto> schedules;
     private final List<Long> scheduleOrder;
@@ -32,6 +34,7 @@ public class TravelResponseDto {
         this.endDate = entity.getEndDate();
         this.memo = entity.getMemo();
         this.managerId = entity.getManagerId();
+        this.travelType = entity.getTravelType();
         this.users = entity
                 .getUserTravels()
                 .stream()

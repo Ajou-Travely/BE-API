@@ -1,5 +1,6 @@
 package com.ajou.travely.controller.travel.dto;
 
+import com.ajou.travely.domain.travel.TravelType;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class TravelCreateRequestDto {
     @NotNull
     private final List<String> userEmails;
 
-    private final Boolean isPublic;
+    private final TravelType travelType;
 
     @Builder
     public TravelCreateRequestDto(
@@ -35,12 +36,12 @@ public class TravelCreateRequestDto {
         @NonNull LocalDate startDate,
         @NonNull LocalDate endDate,
         @NonNull List<String> userEmails,
-        Boolean isPublic
+        TravelType travelType
     ) {
         this.title = title;
         this.startDate = startDate;
         this.endDate = endDate;
         this.userEmails = userEmails;
-        this.isPublic = isPublic;
+        this.travelType = travelType;
     }
 }

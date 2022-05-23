@@ -54,6 +54,7 @@ public class TravelService {
                         .startDate(travelCreateRequestDto.getStartDate())
                         .endDate(travelCreateRequestDto.getEndDate())
                         .managerId(userId)
+                        .travelType(travelCreateRequestDto.getTravelType())
                         .build());
         UserTravel userTravel = UserTravel.builder().user(user).travel(travel).build();
         userTravelRepository.save(userTravel);
