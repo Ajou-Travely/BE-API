@@ -14,13 +14,13 @@ import java.util.List;
 @Getter
 public class ScheduleCreateRequestDto {
     @NotNull
-    private PlaceCreateRequestDto place;
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime startTime;
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime endTime;
+    private final PlaceCreateRequestDto place;
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
+    private final LocalDateTime startTime;
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
+    private final LocalDateTime endTime;
     @NotNull
-    private List<Long> userIds;
+    private final List<Long> userIds;
 
     @Builder
     public ScheduleCreateRequestDto(@NonNull PlaceCreateRequestDto place, @NonNull LocalDateTime startTime, @NonNull LocalDateTime endTime, List<Long> userIds) {

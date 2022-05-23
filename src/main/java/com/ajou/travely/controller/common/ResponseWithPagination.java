@@ -1,4 +1,4 @@
-package com.ajou.travely.controller.travel.dto;
+package com.ajou.travely.controller.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
