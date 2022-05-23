@@ -85,4 +85,20 @@ public class TravelController {
         travelService.changeScheduleOrder(travelId, requestDto);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/{travelId}/accept/{roomId}")
+    public ResponseEntity<Void> acceptInvitation(
+            @LoginUser SessionUser sessionUser,
+            @PathVariable Long travelId,
+            @PathVariable String roomId) {
+
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/reject/{code}")
+    public ResponseEntity<Void> rejectInvitation(@LoginUser SessionUser sessionUser,
+                                                 @PathVariable UUID code) {
+        travelService.rejectInvitation(sessionUser.getUserId(), code);
+        return ResponseEntity.ok().build();
+    }
 }

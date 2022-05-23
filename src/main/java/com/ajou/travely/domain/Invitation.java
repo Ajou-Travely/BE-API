@@ -18,6 +18,7 @@ public class Invitation {
     @ManyToOne
     @JoinColumn(name = "travel_id")
     private Travel travel;
+    @Column(columnDefinition = "BINARY(16)")
     private UUID code;
 
     public Invitation(String email, Travel travel, UUID code) {
