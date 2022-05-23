@@ -62,9 +62,9 @@ public class Travel {
     }
 
     public void updateTravel(TravelUpdateRequestDto requestDto) {
-        this.title = requestDto.getTitle();
-        this.startDate = requestDto.getStartDate();
-        this.endDate = requestDto.getEndDate();
-        this.memo = requestDto.getMemo();
+        this.title = requestDto.getTitle() != null ? requestDto.getTitle() : this.title;
+        this.startDate = requestDto.getStartDate() != null ? requestDto.getStartDate() : this.startDate;
+        this.endDate = requestDto.getEndDate() != null ? requestDto.getEndDate() : this.endDate;
+        this.memo = requestDto.getMemo() != null ? requestDto.getMemo() : this.memo;
     }
 }

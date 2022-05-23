@@ -86,7 +86,7 @@ public class TravelController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/{travelId}")
+    @PatchMapping("/{travelId}")
     public ResponseEntity<Void> updateTravel(@PathVariable Long travelId ,
                                              @RequestBody TravelUpdateRequestDto requestDto) {
         travelService.updateTravel(travelId, requestDto);

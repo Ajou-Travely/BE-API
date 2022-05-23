@@ -14,10 +14,10 @@ public class TravelUpdateRequestDto {
     private final String memo;
 
     @Builder
-    public TravelUpdateRequestDto(@NonNull String title,
-                                  @NonNull LocalDate startDate,
-                                  @NonNull LocalDate endDate,
-                                  @NonNull String memo) {
+    public TravelUpdateRequestDto(String title,
+                                  LocalDate startDate,
+                                  LocalDate endDate,
+                                  String memo) {
         this.title = title;
         this.startDate = startDate;
         this.endDate = endDate;
