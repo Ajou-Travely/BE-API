@@ -49,7 +49,7 @@ public class UserController {
             ) {
         PageRequest pageRequest = PageRequest.of(page == null ? 0 : page, size == null ? 10 : size);
         List<SimpleTravelResponseDto> travels =  userService.getTravelsByUser(sessionUser.getUserId(), pageRequest);
-//        System.out.println(travels.size());
-        return ResponseEntity.ok(new ResponseWithPagination<>(page, size, travels));
+        ResponseWithPagination<SimpleTravelResponseDto> paged = new ResponseWithPagination<>(page, size, travels);
+        return ResponseEntity.ok(paged);
     }
 }
