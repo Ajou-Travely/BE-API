@@ -1,7 +1,7 @@
 package com.ajou.travely.controller.user.dto;
 
+import com.ajou.travely.domain.user.UserType;
 import com.ajou.travely.domain.user.Sex;
-import com.ajou.travely.domain.user.Type;
 import com.ajou.travely.domain.user.User;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,17 +13,24 @@ import java.time.LocalDate;
 
 @Getter
 public class UserCreateRequestDto {
+
     @NotNull(message = "유저 타입이 필요합니다.")
     private final String userType;
+
     @NotNull(message = "이름이 필요합니다.")
     private final String name;
+
     @NotNull(message = "이메일이 필요합니다.")
     private final String email;
+
     private final Sex sex;
+
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private final LocalDate birthday;
+
     @NotNull(message = "전화번호가 필요합니다.")
     private final String phoneNumber;
+
     @NotNull(message = "카카오 아이디가 필요합니다.")
     private final Long kakaoId;
 
@@ -46,11 +53,11 @@ public class UserCreateRequestDto {
 
     public User toEntity() {
         return User.builder()
-                .type(Type.valueOf(this.userType))
-                .name(this.name)
-                .email(this.email)
-                .birthday(this.birthday)
-                .phoneNumber(this.phoneNumber)
-                .kakaoId(this.kakaoId).build();
+            .userType(UserType.valueOf(this.userType))
+            .name(this.name)
+            .email(this.email)
+            .phoneNumber(this.phoneNumber)
+            .kakaoId(this.kakaoId)
+            .build();
     }
 }

@@ -1,5 +1,6 @@
 package com.ajou.travely.domain;
 
+import com.ajou.travely.domain.travel.Travel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -4,6 +4,7 @@ import com.ajou.travely.controller.schedule.dto.SimpleScheduleResponseDto;
 import com.ajou.travely.controller.travel.dto.*;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.domain.*;
+import com.ajou.travely.domain.travel.Travel;
 import com.ajou.travely.exception.ErrorCode;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.exception.custom.RecordNotFoundException;
@@ -53,6 +54,7 @@ public class TravelService {
                         .startDate(travelCreateRequestDto.getStartDate())
                         .endDate(travelCreateRequestDto.getEndDate())
                         .managerId(userId)
+                        .travelType(travelCreateRequestDto.getTravelType())
                         .build());
         UserTravel userTravel = UserTravel.builder().user(user).travel(travel).build();
         userTravelRepository.save(userTravel);
