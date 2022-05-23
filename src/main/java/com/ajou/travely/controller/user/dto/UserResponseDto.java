@@ -1,21 +1,31 @@
 package com.ajou.travely.controller.user.dto;
 
+import com.ajou.travely.domain.user.Sex;
 import com.ajou.travely.domain.user.User;
 import lombok.Getter;
+import java.time.LocalDate;
 
 @Getter
-public class UserResponseInfoDto {
+public class UserResponseDto {
+
     private final Long userId;
-    private final String userType;
+
     private final String name;
+
     private final String email;
+
+    private final Sex sex;
+
     private final String phoneNumber;
 
-    public UserResponseInfoDto(User entity) {
+    private final LocalDate birthday;
+
+    public UserResponseDto(User entity) {
         this.userId = entity.getId();
-        this.userType = entity.getUserType().toString();
         this.name = entity.getName();
         this.email = entity.getEmail();
+        this.sex = entity.getSex();
         this.phoneNumber = entity.getPhoneNumber();
+        this.birthday = entity.getBirthday();
     }
 }

@@ -1,5 +1,6 @@
 package com.ajou.travely.domain.travel;
 
+import com.ajou.travely.controller.travel.dto.TravelUpdateRequestDto;
 import com.ajou.travely.domain.UserTravel;
 import lombok.*;
 
@@ -75,4 +76,12 @@ public class Travel {
     public void setTravelType(TravelType type) {
         this.travelType = type;
     }
+
+    public void updateTravel(TravelUpdateRequestDto requestDto) {
+        this.title = requestDto.getTitle() != null ? requestDto.getTitle() : this.title;
+        this.startDate = requestDto.getStartDate() != null ? requestDto.getStartDate() : this.startDate;
+        this.endDate = requestDto.getEndDate() != null ? requestDto.getEndDate() : this.endDate;
+        this.memo = requestDto.getMemo() != null ? requestDto.getMemo() : this.memo;
+    }
+
 }

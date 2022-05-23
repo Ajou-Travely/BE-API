@@ -32,12 +32,13 @@ import java.util.stream.Stream;
 
 
 @SpringBootTest(properties = {
-        "auth.kakaoOauth2ClinetId=test",
-        "auth.frontendRedirectUrl=test",
-        "spring.mail.password=temptemptemptemp"
+    "auth.kakaoOauth2ClinetId=test",
+    "auth.frontendRedirectUrl=test",
+    "spring.mail.password=temptemptemptemp"
 })
 @Transactional
 class CostServiceTest {
+
     @Autowired
     TravelRepository travelRepository;
     @Autowired
@@ -58,55 +59,56 @@ class CostServiceTest {
     @Rollback
     public void testCreateCost() {
         User user1 = userRepository.save(
-                new User(
-                        UserType.USER,
-                        "test1@ajou.ac.kr",
-                        "테스트1",
-                        "112",
-                        0L
-                ));
+            User.builder()
+                .userType(UserType.USER)
+                .email("test1@ajou.ac.kr")
+                .name("테스트1")
+                .phoneNumber("112")
+                .kakaoId(0L)
+                .build());
         User user2 = userRepository.save(
-                new User(
-                        UserType.USER,
-                        "test2@ajou.ac.kr",
-                        "테스트2",
-                        "113",
-                        1L
-                ));
+            User.builder()
+                .userType(UserType.USER)
+                .email("test2@ajou.ac.kr")
+                .name("테스트2")
+                .phoneNumber("119")
+                .kakaoId(1L)
+                .build());
         User user3 = userRepository.save(
-                new User(
-                        UserType.USER,
-                        "test3@ajou.ac.kr",
-                        "테스트3",
-                        "114",
-                        2L
-                ));
+            User.builder()
+                .userType(UserType.USER)
+                .email("test3@ajou.ac.kr")
+                .name("테스트3")
+                .phoneNumber("114")
+                .kakaoId(2L)
+                .build());
         Travel travel = travelRepository.save(
-                Travel.builder()
-                        .title("첫 여행")
-                        .startDate(LocalDate.now())
-                        .endDate(LocalDate.now())
-                        .managerId(user1.getId())
-                        .build()
+            Travel.builder()
+                .title("첫 여행")
+                .startDate(LocalDate.now())
+                .endDate(LocalDate.now())
+                .managerId(user1.getId())
+                .build()
         );
         Map<Long, Long> amountPerUser = new HashMap<>();
         amountPerUser.put(user1.getId(), 10000L);
         amountPerUser.put(user2.getId(), 10000L);
         amountPerUser.put(user3.getId(), 10000L);
         CostCreateResponseDto costCreateResponseDto = costService.createCost(
-                30000L,
-                travel.getId(),
-                "TestTitle",
-                "안녕난이거야",
-                false,
-                amountPerUser,
-                user1.getId()
+            30000L,
+            travel.getId(),
+            "TestTitle",
+            "안녕난이거야",
+            false,
+            amountPerUser,
+            user1.getId()
         );
 
         Assertions.assertThat(costCreateResponseDto.getTotalAmount()).isEqualTo(30000L);
         Assertions.assertThat(costCreateResponseDto.getTravel().getId()).isEqualTo(travel.getId());
         Assertions.assertThat(costCreateResponseDto.getPayer().getId()).isEqualTo(user1.getId());
-        Assertions.assertThat(costCreateResponseDto.getUserCosts().get(0).getUser().getKakaoId()).isEqualTo(0L);
+        Assertions.assertThat(costCreateResponseDto.getUserCosts().get(0).getUser().getKakaoId())
+            .isEqualTo(0L);
     }
 
     @Test
@@ -115,20 +117,25 @@ class CostServiceTest {
     public void testGetCostById() {
         List<Long> numbers = new ArrayList<>(Arrays.asList(1L, 2L, 3L, 4L));
         List<User> users = new ArrayList<>();
-        numbers.forEach(number -> users.add(userRepository.save(new User(
-                UserType.USER,
-                String.format("test%d@ajou.ac.kr", number),
-                String.format("test%d", number),
-                String.format("11%d", number),
-                number
-        ))));
-        Travel travel = travelService.createTravel(users.get(0).getId(),
-                TravelCreateRequestDto.builder()
-                        .title("첫 여행")
-                        .startDate(LocalDate.now())
-                        .endDate(LocalDate.now())
-                        .userEmails(new ArrayList<>())
+        numbers.forEach(number ->
+            users.add(userRepository.save(
+                    User.builder()
+                        .userType(UserType.USER)
+                        .email(String.format("test%d@ajou.ac.kr", number))
+                        .name(String.format("test%d", number))
+                        .phoneNumber(String.format("11%d", number))
+                        .kakaoId(number)
                         .build()
+                )
+            )
+        );
+        Travel travel = travelService.createTravel(users.get(0).getId(),
+            TravelCreateRequestDto.builder()
+                .title("첫 여행")
+                .startDate(LocalDate.now())
+                .endDate(LocalDate.now())
+                .userEmails(new ArrayList<>())
+                .build()
         );
         Long travelId = travel.getId();
         for (User user : users) {
@@ -141,21 +148,43 @@ class CostServiceTest {
         amountPerUser.put(users.get(2).getId(), 100000L);
 
         CostCreateResponseDto createdCost = costService.createCost(
-                111000L,
-                travelId,
-                "TestTitle",
-                "안녕난이거야",
-                false,
-                amountPerUser,
-                users.get(0).getId()
+            111000L,
+            travelId,
+            "TestTitle",
+            "안녕난이거야",
+            false,
+            amountPerUser,
+            users.get(0).getId()
         );
         CostResponseDto costById = costService.getCostById(createdCost.getId());
 
         Assertions.assertThat(costById.getCostId()).isEqualTo(createdCost.getId());
         Assertions.assertThat(costById.getContent()).isEqualTo(createdCost.getContent());
         Assertions.assertThat(costById.getPayerId()).isEqualTo(createdCost.getPayer().getId());
-        Assertions.assertThat(costById.getUserCosts().stream().map(UserCostResponseDto::getUserCostId).toArray()).isEqualTo(createdCost.getUserCosts().stream().map(UserCost::getId).toArray());
-        Assertions.assertThat(costById.getUserCosts().stream().map(userCostResponseDto -> Arrays.asList(userCostResponseDto.getSimpleUserInfoDto().getUserId(), userCostResponseDto.getSimpleUserInfoDto().getUserName())).toArray()).isEqualTo(createdCost.getUserCosts().stream().map(userCost -> Arrays.asList(userCost.getUser().getId(), userCost.getUser().getName())).toArray());
+        Assertions.assertThat(
+                costById.getUserCosts()
+                    .stream()
+                    .map(UserCostResponseDto::getUserCostId)
+                    .toArray())
+            .isEqualTo(
+                createdCost.getUserCosts()
+                    .stream()
+                    .map(UserCost::getId)
+                    .toArray());
+        Assertions.assertThat(
+                costById.getUserCosts()
+                    .stream()
+                    .map(userCostResponseDto ->
+                        Arrays.asList(
+                            userCostResponseDto.getSimpleUserInfoDto().getUserId(),
+                            userCostResponseDto.getSimpleUserInfoDto().getUserName()))
+                    .toArray())
+            .isEqualTo(
+                createdCost.getUserCosts()
+                    .stream()
+                    .map(userCost ->
+                        Arrays.asList(userCost.getUser().getId(), userCost.getUser().getName()))
+                    .toArray());
     }
 
     @Test
@@ -164,20 +193,24 @@ class CostServiceTest {
     void testUpdateCostById() {
         List<Long> numbers = new ArrayList<>(Arrays.asList(1L, 2L, 3L, 4L, 5L, 6L));
         List<User> users = new ArrayList<>();
-        numbers.forEach(number -> users.add(userRepository.save(new User(
-                UserType.USER,
-                String.format("test%d@ajou.ac.kr", number),
-                String.format("test%d", number),
-                String.format("11%d", number),
-                number
-        ))));
+        numbers.forEach(number ->
+            users.add(userRepository.save(
+                User.builder()
+                    .userType(UserType.USER)
+                    .email(String.format("test%d@ajou.ac.kr", number))
+                    .name(String.format("test%d", number))
+                    .phoneNumber(String.format("11%d", number))
+                    .kakaoId(number)
+                    .build()
+            ))
+        );
         Travel travel = travelService.insertTravel(
-                Travel.builder()
-                        .title("첫 여행")
-                        .startDate(LocalDate.now())
-                        .endDate(LocalDate.now())
-                        .managerId(users.get(0).getId())
-                        .build()
+            Travel.builder()
+                .title("첫 여행")
+                .startDate(LocalDate.now())
+                .endDate(LocalDate.now())
+                .managerId(users.get(0).getId())
+                .build()
         );
         for (User user : users) {
             travelService.addUserToTravel(travel.getId(), user.getId());
@@ -190,17 +223,17 @@ class CostServiceTest {
         amountPerUser.put(users.get(3).getId(), 1000000L);
 
         CostCreateResponseDto createdCost = costService.createCost(
-                1111000L,
-                travel.getId(),
-                "TestTitle",
-                "안녕난이거야",
-                false,
-                amountPerUser,
-                users.get(0).getId()
+            1111000L,
+            travel.getId(),
+            "TestTitle",
+            "안녕난이거야",
+            false,
+            amountPerUser,
+            users.get(0).getId()
         );
 
         Cost cost = costRepository.findById(createdCost.getId())
-                .orElseThrow(() -> new RuntimeException("지출 없다."));
+            .orElseThrow(() -> new RuntimeException("지출 없다."));
         String changedTitle = "ChangedTitle";
         String changedContent = "ChangedContent";
         Map<Long, CostUpdateInfoDto> amountsPerUser = new HashMap<>();
@@ -209,24 +242,32 @@ class CostServiceTest {
         amountsPerUser.put(users.get(4).getId(), new CostUpdateInfoDto(100000L, false));
         amountsPerUser.put(users.get(5).getId(), new CostUpdateInfoDto(1000000L, false));
         CostUpdateDto costUpdateDto = new CostUpdateDto(
-                1122000L,
-                changedTitle,
-                changedContent,
-                false,
-                amountsPerUser,
-                users.get(2).getId()
+            1122000L,
+            changedTitle,
+            changedContent,
+            false,
+            amountsPerUser,
+            users.get(2).getId()
         );
         costService.updateCostById(cost.getId(), costUpdateDto);
         em.clear();
         Cost updatedCost = costRepository.getCostById(cost.getId())
-                .orElseThrow(() -> new RuntimeException("없어"));
+            .orElseThrow(() -> new RuntimeException("없어"));
 
         Assertions.assertThat(updatedCost.getContent()).isEqualTo(changedContent);
         Assertions.assertThat(updatedCost.getTitle()).isEqualTo(changedTitle);
         Assertions.assertThat(updatedCost.getPayerId()).isEqualTo(users.get(2).getId());
-        Assertions.assertThat(updatedCost.getUserCosts().stream().map(userCost -> userCost.getUser().getId()).toArray()).isEqualTo(amountsPerUser.keySet().toArray());
-        Assertions.assertThat(updatedCost.getUserCosts().stream().map(UserCost::getAmount).toArray()).isEqualTo(amountsPerUser.keySet().stream().map(userId -> amountsPerUser.get(userId).getAmount()).toArray());
-        Assertions.assertThat(updatedCost.getUserCosts().stream().map(UserCost::getIsRequested).toArray()).isEqualTo(amountsPerUser.keySet().stream().map(userId -> amountsPerUser.get(userId).getIsRequested()).toArray());
+        Assertions.assertThat(
+            updatedCost.getUserCosts().stream().map(userCost -> userCost.getUser().getId())
+                .toArray()).isEqualTo(amountsPerUser.keySet().toArray());
+        Assertions.assertThat(
+            updatedCost.getUserCosts().stream().map(UserCost::getAmount).toArray()).isEqualTo(
+            amountsPerUser.keySet().stream().map(userId -> amountsPerUser.get(userId).getAmount())
+                .toArray());
+        Assertions.assertThat(
+            updatedCost.getUserCosts().stream().map(UserCost::getIsRequested).toArray()).isEqualTo(
+            amountsPerUser.keySet().stream()
+                .map(userId -> amountsPerUser.get(userId).getIsRequested()).toArray());
     }
 
     @Test
@@ -234,57 +275,58 @@ class CostServiceTest {
     @Rollback
     void testDeleteCostById() {
         User user1 = userRepository.save(
-                new User(
-                        UserType.USER,
-                        "test1@ajou.ac.kr",
-                        "테스트1",
-                        "112",
-                        0L
-                ));
+            User.builder()
+                .userType(UserType.USER)
+                .email("test1@ajou.ac.kr")
+                .name("테스트1")
+                .phoneNumber("112")
+                .kakaoId(0L)
+                .build());
         User user2 = userRepository.save(
-                new User(
-                        UserType.USER,
-                        "test2@ajou.ac.kr",
-                        "테스트2",
-                        "113",
-                        1L
-                ));
+            User.builder()
+                .userType(UserType.USER)
+                .email("test2@ajou.ac.kr")
+                .name("테스트2")
+                .phoneNumber("119")
+                .kakaoId(1L)
+                .build());
         User user3 = userRepository.save(
-                new User(
-                        UserType.USER,
-                        "test3@ajou.ac.kr",
-                        "테스트3",
-                        "114",
-                        2L
-                ));
+            User.builder()
+                .userType(UserType.USER)
+                .email("test3@ajou.ac.kr")
+                .name("테스트3")
+                .phoneNumber("114")
+                .kakaoId(2L)
+                .build());
         Travel travel = travelService.insertTravel(
-                Travel.builder()
-                        .title("첫 여행")
-                        .startDate(LocalDate.now())
-                        .endDate(LocalDate.now())
-                        .managerId(user1.getId())
-                        .build()
+            Travel.builder()
+                .title("첫 여행")
+                .startDate(LocalDate.now())
+                .endDate(LocalDate.now())
+                .managerId(user1.getId())
+                .build()
         );
         Map<Long, Long> amountPerUser = new HashMap<>();
         amountPerUser.put(user1.getId(), 10000L);
         amountPerUser.put(user2.getId(), 10000L);
         amountPerUser.put(user3.getId(), 10000L);
         CostCreateResponseDto costCreateResponseDto = costService.createCost(
-                30000L,
-                travel.getId(),
-                "TestTitle",
-                "안녕난이거야",
-                false,
-                amountPerUser,
-                user1.getId()
+            30000L,
+            travel.getId(),
+            "TestTitle",
+            "안녕난이거야",
+            false,
+            amountPerUser,
+            user1.getId()
         );
         CostResponseDto foundCost = costService.getCostById(costCreateResponseDto.getId());
-        Stream<Long> userCostIds = foundCost.getUserCosts().stream().map(UserCostResponseDto::getUserCostId);
+        Stream<Long> userCostIds = foundCost.getUserCosts().stream()
+            .map(UserCostResponseDto::getUserCostId);
         costService.deleteCostById(costCreateResponseDto.getId());
 
         Assertions.assertThat(userCostIds.map(userCostId ->
-                userCostRepository.findById(userCostId).isEmpty())
+                    userCostRepository.findById(userCostId).isEmpty())
                 .collect(Collectors.toList()))
-                .isEqualTo(Arrays.asList(true, true, true));
+            .isEqualTo(Arrays.asList(true, true, true));
     }
 }

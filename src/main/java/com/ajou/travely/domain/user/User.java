@@ -40,8 +40,8 @@ public class User implements Serializable {
     @NonNull
     private String phoneNumber;
 
-    @Column(length = 5)
-    private String sex;
+    @Column
+    private Sex sex;
 
     @Enumerated(EnumType.STRING)
     private Mbti mbti;
@@ -53,11 +53,20 @@ public class User implements Serializable {
 //    private List<Post> posts;
 
     @Builder
-    public User(@NonNull UserType userType, @NonNull String email, @NonNull String name, @NonNull String phoneNumber, @NonNull Long kakaoId) {
+    public User(@NonNull UserType userType,
+                @NonNull String email,
+                @NonNull String name,
+                @NonNull String phoneNumber,
+                @NonNull Long kakaoId,
+                Sex sex,
+                LocalDate birthday
+    ) {
         this.userType = userType;
         this.email = email;
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.kakaoId = kakaoId;
+        this.sex = sex;
+        this.birthday = birthday;
     }
 }
