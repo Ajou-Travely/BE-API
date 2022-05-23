@@ -85,4 +85,11 @@ public class TravelController {
         travelService.changeScheduleOrder(travelId, requestDto);
         return ResponseEntity.ok().build();
     }
+
+    @PutMapping("/{travelId}")
+    public ResponseEntity<Void> updateTravel(@PathVariable Long travelId ,
+                                             @RequestBody TravelUpdateRequestDto requestDto) {
+        travelService.updateTravel(travelId, requestDto);
+        return ResponseEntity.ok().build();
+    }
 }

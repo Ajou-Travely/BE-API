@@ -5,10 +5,7 @@ import com.ajou.travely.controller.place.dto.PlaceCreateRequestDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleCreateRequestDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleResponseDto;
 import com.ajou.travely.controller.schedule.dto.SimpleScheduleResponseDto;
-import com.ajou.travely.controller.travel.dto.SimpleCostResponseDto;
-import com.ajou.travely.controller.travel.dto.SimpleTravelResponseDto;
-import com.ajou.travely.controller.travel.dto.TravelCreateRequestDto;
-import com.ajou.travely.controller.travel.dto.TravelResponseDto;
+import com.ajou.travely.controller.travel.dto.*;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.domain.Place;
 import com.ajou.travely.domain.Travel;
@@ -72,11 +69,55 @@ class TravelServiceTest {
                 .endDate(LocalDate.now().plusDays(1))
                 .userEmails(new ArrayList<>())
                 .build();
+
         Travel travel = travelService.createTravel(user.getId(), request);
+
         Long travelId = travel.getId();
         TravelResponseDto foundTravel = travelService.getTravelById(travelId);
         assertThat(travelService.getAllTravels()).hasSize(1);
         assertThat(foundTravel.getUsers()).hasSize(1);
+    }
+
+    @Test
+    @DisplayName("여행 객체를 업데이트 할 수 있다.")
+    @Rollback
+    public void testUpdateTravel() {
+        User user = userService.insertUser(
+                User.builder()
+                        .type(Type.USER)
+                        .email("sophoca@ajou.ac.kr")
+                        .name("홍성빈")
+                        .phoneNumber("112")
+                        .kakaoId(0L)
+                        .build()
+        );
+        TravelCreateRequestDto request = TravelCreateRequestDto
+                .builder()
+                .title("test")
+                .startDate(LocalDate.now())
+                .endDate(LocalDate.now().plusDays(1))
+                .userEmails(new ArrayList<>())
+                .build();
+        Travel travel = travelService.createTravel(user.getId(), request);
+        Long travelId = travel.getId();
+
+        String title = "updatedTitle";
+        LocalDate startDate = LocalDate.of(2022, 2, 2);
+        LocalDate endDate = LocalDate.of(2022, 2, 22);
+        String memo = "updatedMemo";
+        TravelUpdateRequestDto travelUpdateRequestDto = TravelUpdateRequestDto.builder()
+                .title(title)
+                .startDate(startDate)
+                .endDate(endDate)
+                .memo(memo)
+                .build();
+        travelService.updateTravel(travelId, travelUpdateRequestDto);
+
+        TravelResponseDto foundTravel = travelService.getTravelById(travelId);
+        assertThat(foundTravel.getTitle()).isEqualTo(title);
+        assertThat(foundTravel.getStartDate()).isEqualTo(startDate);
+        assertThat(foundTravel.getEndDate()).isEqualTo(endDate);
+        assertThat(foundTravel.getMemo()).isEqualTo(memo);
     }
 
     @Test

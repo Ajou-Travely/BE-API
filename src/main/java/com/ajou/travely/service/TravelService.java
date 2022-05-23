@@ -234,4 +234,16 @@ public class TravelService {
                 ));
         travel.setScheduleOrder(requestDto.getScheduleOrder());
     }
+
+    @Transactional
+    public void updateTravel(Long travelId,
+                             TravelUpdateRequestDto requestDto) {
+        Travel travel = travelRepository
+                .findById(travelId)
+                .orElseThrow(() -> new RecordNotFoundException(
+                        "해당 ID의 Travel이 존재하지 않습니다."
+                        , ErrorCode.TRAVEL_NOT_FOUND
+                ));
+        travel.updateTravel(requestDto);
+    }
 }
