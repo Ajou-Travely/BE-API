@@ -39,7 +39,7 @@ import static org.assertj.core.api.Assertions.assertThat;
         "auth.frontendRedirectUrl=test",
         "spring.mail.password=temptemptemptemp"
 })
-//@Transactional
+@Transactional
 class TravelServiceTest {
 
     @Autowired
