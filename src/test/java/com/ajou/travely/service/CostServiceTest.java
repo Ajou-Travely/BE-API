@@ -63,29 +63,29 @@ class CostServiceTest {
     @Rollback
     public void testCreateCost() {
         User user1 = userRepository.save(
-                new User(
-                        Type.USER,
-                        "test1@ajou.ac.kr",
-                        "테스트1",
-                        "112",
-                        0L
-                ));
+                User.builder()
+                        .type(Type.USER)
+                        .email("test1@ajou.ac.kr")
+                        .name("테스트1")
+                        .phoneNumber("112")
+                        .kakaoId(0L)
+                        .build());
         User user2 = userRepository.save(
-                new User(
-                        Type.USER,
-                        "test2@ajou.ac.kr",
-                        "테스트2",
-                        "113",
-                        1L
-                ));
+                User.builder()
+                        .type(Type.USER)
+                        .email("test2@ajou.ac.kr")
+                        .name("테스트2")
+                        .phoneNumber("119")
+                        .kakaoId(1L)
+                        .build());
         User user3 = userRepository.save(
-                new User(
-                        Type.USER,
-                        "test3@ajou.ac.kr",
-                        "테스트3",
-                        "114",
-                        2L
-                ));
+                User.builder()
+                        .type(Type.USER)
+                        .email("test3@ajou.ac.kr")
+                        .name("테스트3")
+                        .phoneNumber("114")
+                        .kakaoId(2L)
+                        .build());
         Travel travel = travelRepository.save(
                 Travel.builder()
                         .title("첫 여행")
@@ -120,13 +120,18 @@ class CostServiceTest {
     public void testGetCostById() {
         List<Long> numbers = new ArrayList<>(Arrays.asList(1L, 2L, 3L, 4L));
         List<User> users = new ArrayList<>();
-        numbers.forEach(number -> users.add(userRepository.save(new User(
-                Type.USER,
-                String.format("test%d@ajou.ac.kr", number),
-                String.format("test%d", number),
-                String.format("11%d", number),
-                number
-        ))));
+        numbers.forEach(number -> users.add(userRepository.save(
+                                User.builder()
+                                        .type(Type.USER)
+                                        .email(String.format("test%d@ajou.ac.kr", number))
+                                        .name(String.format("test%d", number))
+                                        .phoneNumber(String.format("11%d", number))
+                                        .kakaoId(number)
+                                        .build()
+                        )
+                )
+        );
+
         Travel travel = travelService.createTravel(users.get(0).getId(),
                 TravelCreateRequestDto.builder()
                         .title("첫 여행")
@@ -169,13 +174,16 @@ class CostServiceTest {
     void testUpdateCostById() {
         List<Long> numbers = new ArrayList<>(Arrays.asList(1L, 2L, 3L, 4L, 5L, 6L));
         List<User> users = new ArrayList<>();
-        numbers.forEach(number -> users.add(userRepository.save(new User(
-                Type.USER,
-                String.format("test%d@ajou.ac.kr", number),
-                String.format("test%d", number),
-                String.format("11%d", number),
-                number
-        ))));
+        numbers.forEach(number -> users.add(userRepository.save(
+                        User.builder()
+                                .type(Type.USER)
+                                .email(String.format("test%d@ajou.ac.kr", number))
+                                .name(String.format("test%d", number))
+                                .phoneNumber(String.format("11%d", number))
+                                .kakaoId(number)
+                                .build()
+                )
+        ));
         Travel travel = travelService.insertTravel(
                 Travel.builder()
                         .title("첫 여행")
@@ -239,29 +247,29 @@ class CostServiceTest {
     @Rollback
     void testDeleteCostById() {
         User user1 = userRepository.save(
-                new User(
-                        Type.USER,
-                        "test1@ajou.ac.kr",
-                        "테스트1",
-                        "112",
-                        0L
-                ));
+                User.builder()
+                        .type(Type.USER)
+                        .email("test1@ajou.ac.kr")
+                        .name("테스트1")
+                        .phoneNumber("112")
+                        .kakaoId(0L)
+                        .build());
         User user2 = userRepository.save(
-                new User(
-                        Type.USER,
-                        "test2@ajou.ac.kr",
-                        "테스트2",
-                        "113",
-                        1L
-                ));
+                User.builder()
+                        .type(Type.USER)
+                        .email("test2@ajou.ac.kr")
+                        .name("테스트2")
+                        .phoneNumber("119")
+                        .kakaoId(1L)
+                        .build());
         User user3 = userRepository.save(
-                new User(
-                        Type.USER,
-                        "test3@ajou.ac.kr",
-                        "테스트3",
-                        "114",
-                        2L
-                ));
+                User.builder()
+                        .type(Type.USER)
+                        .email("test3@ajou.ac.kr")
+                        .name("테스트3")
+                        .phoneNumber("114")
+                        .kakaoId(2L)
+                        .build());
         Travel travel = travelService.insertTravel(
                 Travel.builder()
                         .title("첫 여행")
@@ -288,8 +296,8 @@ class CostServiceTest {
         costService.deleteCostById(costCreateResponseDto.getId());
 
         Assertions.assertThat(userCostIds.map(userCostId ->
-                userCostRepository.findById(userCostId).isEmpty())
-                .collect(Collectors.toList()))
+                                userCostRepository.findById(userCostId).isEmpty())
+                        .collect(Collectors.toList()))
                 .isEqualTo(Arrays.asList(true, true, true));
     }
 }
