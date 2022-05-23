@@ -9,25 +9,25 @@ import javax.validation.constraints.NotNull;
 @Getter
 public class PlaceCreateRequestDto {
     @NotNull
-    private Double x;
+    private final Double lat;
     @NotNull
-    private Double y;
+    private final Double lng;
     @NotNull
-    private String placeName;
-    private String phoneNumber;
+    private final String placeName;
+    private final String phoneNumber;
     @NotNull
-    private String addressName;
+    private final String addressName;
     @NotNull
-    private String addressRoadName;
+    private final String addressRoadName;
     @NotNull
-    private String placeUrl;
+    private final String placeUrl;
     @NotNull
-    private Long kakaoMapId;
+    private final Long kakaoMapId;
 
     public Place toEntity() {
         return Place.builder()
-                .x(this.x)
-                .y(this.y)
+                .lat(this.lat)
+                .lng(this.lng)
                 .placeName(this.placeName)
                 .phoneNumber(this.phoneNumber)
                 .addressName(this.addressName)
@@ -38,9 +38,9 @@ public class PlaceCreateRequestDto {
     }
 
     @Builder
-    public PlaceCreateRequestDto(Double x, Double y, String placeName, String phoneNumber, String addressName, String addressRoadName, String placeUrl, Long kakaoMapId) {
-        this.x = x;
-        this.y = y;
+    public PlaceCreateRequestDto(Double lat, Double lng, String placeName, String phoneNumber, String addressName, String addressRoadName, String placeUrl, Long kakaoMapId) {
+        this.lat = lat;
+        this.lng = lng;
         this.placeName = placeName;
         this.phoneNumber = phoneNumber;
         this.addressName = addressName;

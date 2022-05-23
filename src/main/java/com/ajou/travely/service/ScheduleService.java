@@ -155,8 +155,8 @@ public class ScheduleService {
                         .placeName(request.getPlaceName())
                         .addressRoadName(request.getAddressRoadName())
                         .addressName(request.getAddressName())
-                        .x(request.getX())
-                        .y(request.getY())
+                        .lat(request.getLat())
+                        .lng(request.getLng())
                         .build()));
     }
 }
