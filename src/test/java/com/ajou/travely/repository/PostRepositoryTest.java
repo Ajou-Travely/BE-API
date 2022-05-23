@@ -3,14 +3,9 @@ package com.ajou.travely.repository;
 import com.ajou.travely.domain.Place;
 import com.ajou.travely.domain.Post;
 import com.ajou.travely.domain.Schedule;
-import com.ajou.travely.domain.Travel;
+import com.ajou.travely.domain.travel.Travel;
 import com.ajou.travely.domain.user.Type;
 import com.ajou.travely.domain.user.User;
-import com.ajou.travely.repository.PlaceRepository;
-import com.ajou.travely.repository.PostRepository;
-import com.ajou.travely.repository.ScheduleRepository;
-import com.ajou.travely.repository.TravelRepository;
-import com.ajou.travely.repository.UserRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

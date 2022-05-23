@@ -5,7 +5,7 @@ import com.ajou.travely.config.auth.SessionUser;
 import com.ajou.travely.controller.schedule.dto.ScheduleCreateRequestDto;
 import com.ajou.travely.controller.schedule.dto.SimpleScheduleResponseDto;
 import com.ajou.travely.controller.travel.dto.*;
-import com.ajou.travely.domain.Travel;
+import com.ajou.travely.domain.travel.Travel;
 import com.ajou.travely.service.ScheduleService;
 import com.ajou.travely.service.TravelService;
 import lombok.RequiredArgsConstructor;

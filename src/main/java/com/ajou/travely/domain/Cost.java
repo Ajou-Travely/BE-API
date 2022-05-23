@@ -2,7 +2,7 @@ package com.ajou.travely.domain;
 
 
 import com.ajou.travely.controller.cost.dto.CostUpdateDto;
-import com.ajou.travely.domain.user.User;
+import com.ajou.travely.domain.travel.Travel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

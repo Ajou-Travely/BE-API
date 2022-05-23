@@ -4,7 +4,7 @@ import com.ajou.travely.controller.place.dto.PlaceCreateRequestDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleCreateRequestDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleResponseDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleUpdateRequestDto;
-import com.ajou.travely.domain.Travel;
+import com.ajou.travely.domain.travel.Travel;
 import com.ajou.travely.domain.user.Type;
 import com.ajou.travely.domain.user.User;
 import org.junit.jupiter.api.BeforeEach;

@@ -3,7 +3,7 @@ package com.ajou.travely.controller.travel.dto;
 import com.ajou.travely.controller.schedule.dto.SimpleScheduleResponseDto;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.domain.Schedule;
-import com.ajou.travely.domain.Travel;
+import com.ajou.travely.domain.travel.Travel;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;

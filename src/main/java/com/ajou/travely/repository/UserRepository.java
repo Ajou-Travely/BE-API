@@ -1,6 +1,6 @@
 package com.ajou.travely.repository;
 
-import com.ajou.travely.domain.Travel;
+import com.ajou.travely.domain.travel.Travel;
 import com.ajou.travely.domain.user.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
