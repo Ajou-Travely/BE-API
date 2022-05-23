@@ -30,8 +30,8 @@ spring:
       initialize-schema: always
 
   jpa:
-#    hibernate:
-#      ddl-auto: create
+    hibernate:
+      ddl-auto: update
     properties:
       hibernate:
 #        show_sql: true
