@@ -1,5 +1,6 @@
 package com.ajou.travely.controller.user.dto;
 
+import com.ajou.travely.domain.user.Sex;
 import com.ajou.travely.domain.user.User;
 import lombok.Getter;
 
@@ -10,7 +11,7 @@ public class UserResponseDto {
     private final Long userId;
     private final String name;
     private final String email;
-    private final String sex;
+    private final Sex sex;
     private final String phoneNumber;
     private final LocalDate birthday;
 
