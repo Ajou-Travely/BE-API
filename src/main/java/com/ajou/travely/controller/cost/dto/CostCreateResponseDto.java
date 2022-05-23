@@ -1,12 +1,11 @@
 package com.ajou.travely.controller.cost.dto;
 
 import com.ajou.travely.domain.Cost;
-import com.ajou.travely.domain.Travel;
+import com.ajou.travely.domain.travel.Travel;
 import com.ajou.travely.domain.UserCost;
 import com.ajou.travely.domain.user.User;
 import lombok.Getter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter

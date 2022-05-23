@@ -7,7 +7,7 @@ import com.ajou.travely.controller.schedule.dto.ScheduleUpdateRequestDto;
 import com.ajou.travely.domain.Branch;
 import com.ajou.travely.domain.Place;
 import com.ajou.travely.domain.Schedule;
-import com.ajou.travely.domain.Travel;
+import com.ajou.travely.domain.travel.Travel;
 import com.ajou.travely.exception.ErrorCode;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.exception.custom.RecordNotFoundException;

@@ -1,7 +1,7 @@
 package com.ajou.travely.service;
 
-import com.ajou.travely.domain.user.Type;
 import com.ajou.travely.domain.user.User;
+import com.ajou.travely.domain.user.UserType;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,7 +32,7 @@ class UserServiceTest {
                         .email(email)
                         .phoneNumber(phoneNumber)
                         .name(name)
-                        .type(Type.USER)
+                        .userType(UserType.USER)
                         .birthday(birthday)
                         .build()
         );

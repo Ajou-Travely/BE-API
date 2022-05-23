@@ -1,7 +1,7 @@
 package com.ajou.travely.controller.travel.dto;
 
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
-import com.ajou.travely.domain.Travel;
+import com.ajou.travely.domain.travel.Travel;
 import com.ajou.travely.domain.UserTravel;
 import lombok.Getter;
 

@@ -1,15 +1,12 @@
 package com.ajou.travely.repository;
 
-import com.ajou.travely.domain.Cost;
 import com.ajou.travely.domain.Schedule;
-import com.ajou.travely.domain.Travel;
+import com.ajou.travely.domain.travel.Travel;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.security.core.parameters.P;
 
 public interface TravelRepository extends JpaRepository<Travel, Long> {
     @Query("SELECT t FROM Travel t ORDER BY t.id DESC")
