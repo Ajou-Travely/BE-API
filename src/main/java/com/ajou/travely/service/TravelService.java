@@ -243,9 +243,6 @@ public class TravelService {
                         ,ErrorCode.USER_NOT_FOUND
                 ));
         List<Invitation> all = invitationRepository.findAll();
-        for (Invitation invitation : all) {
-            System.out.println("invitation.getEmail() = " + invitation.getEmail());
-        }
         Invitation invitation = invitationRepository.findByCodeAndEmail(code, user.getEmail())
                 .orElseThrow(() -> new RecordNotFoundException(
                         "해당 초대가 존재하지 않습니다.",
