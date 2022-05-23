@@ -47,7 +47,9 @@ public class UserController {
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "size", required = false) Integer size
             ) {
-        PageRequest pageRequest = PageRequest.of(page == null ? 0 : page, size == null ? 10 : size);
+        page = page == null ? 0 : page;
+        size = size == null ? 10 : size;
+        PageRequest pageRequest = PageRequest.of(page, size);
         List<SimpleTravelResponseDto> travels =  userService.getTravelsByUser(sessionUser.getUserId(), pageRequest);
         ResponseWithPagination<SimpleTravelResponseDto> paged = new ResponseWithPagination<>(page, size, travels);
         return ResponseEntity.ok(paged);
