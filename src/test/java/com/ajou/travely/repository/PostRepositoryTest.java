@@ -65,7 +65,7 @@ public class PostRepositoryTest {
                 .kakaoMapId(1L)
                 .build());
         user = userRepository.save(User.builder()
-                .type(UserType.USER)
+                .userType(UserType.USER)
                 .email("test@email.com")
                 .name("user name")
                 .phoneNumber("010-1111-1111")

@@ -73,7 +73,7 @@ class ScheduleServiceTest {
                 User.builder()
                         .name("test")
                         .phoneNumber("111")
-                        .type(UserType.USER)
+                        .userType(UserType.USER)
                         .email("test@test")
                         .kakaoId(0L)
                         .build());
@@ -92,7 +92,7 @@ class ScheduleServiceTest {
     public void testCreateSchedule() {
         User user1 = userService.insertUser(
                 User.builder()
-                        .type(UserType.USER)
+                        .userType(UserType.USER)
                         .email("sophoca@ajou.ac.kr")
                         .name("홍성빈")
                         .phoneNumber("112")
@@ -101,7 +101,7 @@ class ScheduleServiceTest {
         );
         User user2 = userService.insertUser(
                 User.builder()
-                        .type(UserType.USER)
+                        .userType(UserType.USER)
                         .email("errander@ajou.ac.kr")
                         .name("이호용")
                         .phoneNumber("119")
@@ -133,7 +133,7 @@ class ScheduleServiceTest {
         LocalDateTime endTime = LocalDateTime.now().plusDays(1);
         User user1 = userService.insertUser(
                 User.builder()
-                        .type(UserType.USER)
+                        .userType(UserType.USER)
                         .email("sophoca@ajou.ac.kr")
                         .name("홍성빈")
                         .phoneNumber("112")
@@ -142,7 +142,7 @@ class ScheduleServiceTest {
         );
         User user2 = userService.insertUser(
                 User.builder()
-                        .type(UserType.USER)
+                        .userType(UserType.USER)
                         .email("errander@ajou.ac.kr")
                         .name("이호용")
                         .phoneNumber("119")
@@ -181,7 +181,7 @@ class ScheduleServiceTest {
     public void testFindSchedule() {
         User user1 = userService.insertUser(
                 User.builder()
-                        .type(UserType.USER)
+                        .userType(UserType.USER)
                         .email("sophoca@ajou.ac.kr")
                         .name("홍성빈")
                         .phoneNumber("112")
@@ -190,7 +190,7 @@ class ScheduleServiceTest {
         );
         User user2 = userService.insertUser(
                 User.builder()
-                        .type(UserType.USER)
+                        .userType(UserType.USER)
                         .email("errander@ajou.ac.kr")
                         .name("이호용")
                         .phoneNumber("119")

@@ -44,7 +44,7 @@ class AuthServiceTest {
         userInfoFromKakao.put("kakao_account", kakao_account);
         Long kakaoId = (Long) userInfoFromKakao.get("id");
         User user = User.builder()
-                .type(UserType.USER)
+                .userType(UserType.USER)
                 .email("test@email.com")
                 .name("NAME")
                 .phoneNumber("0101010101010")

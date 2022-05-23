@@ -20,6 +20,12 @@ public class UserCreateRequestDto {
     private Long kakaoId;
 
     public User toEntity() {
-        return User.builder().type(UserType.valueOf(this.userType)).name(this.name).email(this.email).phoneNumber(this.phoneNumber).kakaoId(this.kakaoId).build();
+        return User.builder()
+            .userType(UserType.valueOf(this.userType))
+            .name(this.name)
+            .email(this.email)
+            .phoneNumber(this.phoneNumber)
+            .kakaoId(this.kakaoId)
+            .build();
     }
 }

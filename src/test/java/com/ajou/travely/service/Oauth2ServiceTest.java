@@ -52,7 +52,7 @@ class Oauth2ServiceTest {
 
 
         User user = User.builder()
-                .type(UserType.USER)
+                .userType(UserType.USER)
                 .email("test@email.com")
                 .name("NAME")
                 .phoneNumber("0101010101010")
