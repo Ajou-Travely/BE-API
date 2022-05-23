@@ -53,11 +53,12 @@ public class User implements Serializable {
 //    private List<Post> posts;
 
     @Builder
-    public User(@NonNull Type type, @NonNull String email, @NonNull String name, @NonNull String phoneNumber, @NonNull Long kakaoId) {
+    public User(@NonNull Type type, @NonNull String email, @NonNull String name, @NonNull String phoneNumber, @NonNull Long kakaoId, LocalDate birthday) {
         this.type = type;
         this.email = email;
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.kakaoId = kakaoId;
+        this.birthday = birthday;
     }
 }
