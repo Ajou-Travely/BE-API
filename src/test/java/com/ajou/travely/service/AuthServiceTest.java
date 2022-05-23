@@ -1,6 +1,6 @@
 package com.ajou.travely.service;
 
-import com.ajou.travely.domain.user.Type;
+import com.ajou.travely.domain.user.UserType;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.repository.UserRepository;
 import org.json.simple.JSONObject;
@@ -44,7 +44,7 @@ class AuthServiceTest {
         userInfoFromKakao.put("kakao_account", kakao_account);
         Long kakaoId = (Long) userInfoFromKakao.get("id");
         User user = User.builder()
-                .type(Type.USER)
+                .type(UserType.USER)
                 .email("test@email.com")
                 .name("NAME")
                 .phoneNumber("0101010101010")

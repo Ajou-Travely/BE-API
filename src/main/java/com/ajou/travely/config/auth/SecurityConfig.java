@@ -1,6 +1,5 @@
 package com.ajou.travely.config.auth;
 
-import com.ajou.travely.domain.user.Type;
 import com.ajou.travely.service.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;

@@ -4,7 +4,7 @@ import com.ajou.travely.domain.Place;
 import com.ajou.travely.domain.Post;
 import com.ajou.travely.domain.Schedule;
 import com.ajou.travely.domain.travel.Travel;
-import com.ajou.travely.domain.user.Type;
+import com.ajou.travely.domain.user.UserType;
 import com.ajou.travely.domain.user.User;
 
 import java.time.LocalDate;
@@ -65,7 +65,7 @@ public class PostRepositoryTest {
                 .kakaoMapId(1L)
                 .build());
         user = userRepository.save(User.builder()
-                .type(Type.USER)
+                .type(UserType.USER)
                 .email("test@email.com")
                 .name("user name")
                 .phoneNumber("010-1111-1111")

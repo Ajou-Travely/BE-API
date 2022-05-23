@@ -10,7 +10,7 @@ import com.ajou.travely.controller.travel.dto.TravelCreateRequestDto;
 import com.ajou.travely.controller.travel.dto.TravelResponseDto;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.domain.travel.Travel;
-import com.ajou.travely.domain.user.Type;
+import com.ajou.travely.domain.user.UserType;
 import com.ajou.travely.domain.user.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -56,7 +56,7 @@ class TravelServiceTest {
     public void testCreateTravel() {
         User user = userService.insertUser(
                 User.builder()
-                        .type(Type.USER)
+                        .userType(UserType.USER)
                         .email("sophoca@ajou.ac.kr")
                         .name("홍성빈")
                         .phoneNumber("112")
@@ -83,7 +83,7 @@ class TravelServiceTest {
     public void testAddUserToTravel() {
         User user = userService.insertUser(
                 User.builder()
-                        .type(Type.USER)
+                        .userType(UserType.USER)
                         .email("sophoca@ajou.ac.kr")
                         .name("홍성빈")
                         .phoneNumber("112")
@@ -102,7 +102,7 @@ class TravelServiceTest {
         TravelResponseDto foundTravel = travelService.getTravelById(travelId);
         User newUser = userService.insertUser(
                 User.builder()
-                        .type(Type.USER)
+                        .userType(UserType.USER)
                         .email("errander@ajou.ac.kr")
                         .name("이호용")
                         .phoneNumber("119")
@@ -125,7 +125,7 @@ class TravelServiceTest {
         List<User> users = new ArrayList<>();
         numbers.forEach(number -> users.add(userService.insertUser(
                 User.builder()
-                        .type(Type.USER)
+                        .userType(UserType.USER)
                         .email(String.format("test%d@ajou.ac.kr", number))
                         .name(String.format("test%d", number))
                         .phoneNumber(String.format("11%d", number))
@@ -210,7 +210,7 @@ class TravelServiceTest {
                 .build();
         User user = userService.insertUser(
                 User.builder()
-                        .type(Type.USER)
+                        .userType(UserType.USER)
                         .email("sophoca@ajou.ac.kr")
                         .name("홍성빈")
                         .phoneNumber("112")
@@ -248,7 +248,7 @@ class TravelServiceTest {
     void testPagination() {
         User user = userService.insertUser(
                 User.builder()
-                        .type(Type.USER)
+                        .userType(UserType.USER)
                         .email("sophoca@ajou.ac.kr")
                         .name("홍성빈")
                         .phoneNumber("112")
@@ -283,7 +283,7 @@ class TravelServiceTest {
 //        //Given
 //        User user = userRepository.save(
 //                User.builder()
-//                        .type(Type.USER)
+//                        .userType(Type.USER)
 //                        .email("sophoca@ajou.ac.kr")
 //                        .name("홍성빈")
 //                        .phoneNumber("112")
@@ -292,7 +292,7 @@ class TravelServiceTest {
 //        );
 //        User user1 = userRepository.save(
 //                User.builder()
-//                        .type(Type.USER)
+//                        .userType(Type.USER)
 //                        .email("errander@ajou.ac.kr")
 //                        .name("이호용")
 //                        .phoneNumber("119")
@@ -301,7 +301,7 @@ class TravelServiceTest {
 //        );
 //        User user2 = userRepository.save(
 //                User.builder()
-//                        .type(Type.USER)
+//                        .userType(Type.USER)
 //                        .email("park@ajou.ac.kr")
 //                        .name("박상혁")
 //                        .phoneNumber("111")

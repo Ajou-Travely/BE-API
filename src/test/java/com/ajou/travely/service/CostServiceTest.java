@@ -9,7 +9,7 @@ import com.ajou.travely.controller.cost.dto.UserCostResponseDto;
 import com.ajou.travely.controller.travel.dto.TravelCreateRequestDto;
 import com.ajou.travely.domain.travel.Travel;
 import com.ajou.travely.domain.UserCost;
-import com.ajou.travely.domain.user.Type;
+import com.ajou.travely.domain.user.UserType;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.repository.CostRepository;
 import com.ajou.travely.repository.TravelRepository;
@@ -59,7 +59,7 @@ class CostServiceTest {
     public void testCreateCost() {
         User user1 = userRepository.save(
                 new User(
-                        Type.USER,
+                        UserType.USER,
                         "test1@ajou.ac.kr",
                         "테스트1",
                         "112",
@@ -67,7 +67,7 @@ class CostServiceTest {
                 ));
         User user2 = userRepository.save(
                 new User(
-                        Type.USER,
+                        UserType.USER,
                         "test2@ajou.ac.kr",
                         "테스트2",
                         "113",
@@ -75,7 +75,7 @@ class CostServiceTest {
                 ));
         User user3 = userRepository.save(
                 new User(
-                        Type.USER,
+                        UserType.USER,
                         "test3@ajou.ac.kr",
                         "테스트3",
                         "114",
@@ -116,7 +116,7 @@ class CostServiceTest {
         List<Long> numbers = new ArrayList<>(Arrays.asList(1L, 2L, 3L, 4L));
         List<User> users = new ArrayList<>();
         numbers.forEach(number -> users.add(userRepository.save(new User(
-                Type.USER,
+                UserType.USER,
                 String.format("test%d@ajou.ac.kr", number),
                 String.format("test%d", number),
                 String.format("11%d", number),
@@ -165,7 +165,7 @@ class CostServiceTest {
         List<Long> numbers = new ArrayList<>(Arrays.asList(1L, 2L, 3L, 4L, 5L, 6L));
         List<User> users = new ArrayList<>();
         numbers.forEach(number -> users.add(userRepository.save(new User(
-                Type.USER,
+                UserType.USER,
                 String.format("test%d@ajou.ac.kr", number),
                 String.format("test%d", number),
                 String.format("11%d", number),
@@ -235,7 +235,7 @@ class CostServiceTest {
     void testDeleteCostById() {
         User user1 = userRepository.save(
                 new User(
-                        Type.USER,
+                        UserType.USER,
                         "test1@ajou.ac.kr",
                         "테스트1",
                         "112",
@@ -243,7 +243,7 @@ class CostServiceTest {
                 ));
         User user2 = userRepository.save(
                 new User(
-                        Type.USER,
+                        UserType.USER,
                         "test2@ajou.ac.kr",
                         "테스트2",
                         "113",
@@ -251,7 +251,7 @@ class CostServiceTest {
                 ));
         User user3 = userRepository.save(
                 new User(
-                        Type.USER,
+                        UserType.USER,
                         "test3@ajou.ac.kr",
                         "테스트3",
                         "114",

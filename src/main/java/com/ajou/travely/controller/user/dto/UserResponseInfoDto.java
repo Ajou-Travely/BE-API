@@ -2,7 +2,6 @@ package com.ajou.travely.controller.user.dto;
 
 import com.ajou.travely.domain.user.User;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 @Getter
 public class UserResponseInfoDto {
@@ -14,7 +13,7 @@ public class UserResponseInfoDto {
 
     public UserResponseInfoDto(User entity) {
         this.userId = entity.getId();
-        this.userType = entity.getType().toString();
+        this.userType = entity.getUserType().toString();
         this.name = entity.getName();
         this.email = entity.getEmail();
         this.phoneNumber = entity.getPhoneNumber();

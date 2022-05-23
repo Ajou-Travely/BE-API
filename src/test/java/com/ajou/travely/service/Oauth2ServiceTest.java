@@ -1,9 +1,8 @@
 package com.ajou.travely.service;
 
-import com.ajou.travely.domain.user.Type;
+import com.ajou.travely.domain.user.UserType;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.repository.UserRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import javax.transaction.Transactional;
 import org.json.simple.JSONObject;
 import org.junit.jupiter.api.DisplayName;
@@ -11,15 +10,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.web.client.RestTemplate;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(properties = {
         "auth.kakaoOauth2ClinetId=test",
@@ -59,7 +52,7 @@ class Oauth2ServiceTest {
 
 
         User user = User.builder()
-                .type(Type.USER)
+                .type(UserType.USER)
                 .email("test@email.com")
                 .name("NAME")
                 .phoneNumber("0101010101010")

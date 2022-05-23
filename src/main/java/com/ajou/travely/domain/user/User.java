@@ -26,7 +26,7 @@ public class User implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column()
     @NonNull
-    private Type type;
+    private UserType userType;
 
     @Column(length = 400, unique = true)
     @NonNull
@@ -53,8 +53,8 @@ public class User implements Serializable {
 //    private List<Post> posts;
 
     @Builder
-    public User(@NonNull Type type, @NonNull String email, @NonNull String name, @NonNull String phoneNumber, @NonNull Long kakaoId) {
-        this.type = type;
+    public User(@NonNull UserType userType, @NonNull String email, @NonNull String name, @NonNull String phoneNumber, @NonNull Long kakaoId) {
+        this.userType = userType;
         this.email = email;
         this.name = name;
         this.phoneNumber = phoneNumber;

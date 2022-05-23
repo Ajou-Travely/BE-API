@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum Type {
+public enum UserType {
     GUEST("ROLE_GUEST", "guest"),
     USER("ROLE_USER", "user"),
     ADMIN("ROLE_ADMIN", "administrator"),
