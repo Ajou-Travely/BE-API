@@ -1,5 +1,6 @@
 package com.ajou.travely.domain;
 
+import com.ajou.travely.controller.travel.dto.TravelUpdateRequestDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -58,5 +59,12 @@ public class Travel {
                 .stream()
                 .map(String::valueOf)
                 .collect(Collectors.joining(","));
+    }
+
+    public void updateTravel(TravelUpdateRequestDto requestDto) {
+        this.title = requestDto.getTitle() != null ? requestDto.getTitle() : this.title;
+        this.startDate = requestDto.getStartDate() != null ? requestDto.getStartDate() : this.startDate;
+        this.endDate = requestDto.getEndDate() != null ? requestDto.getEndDate() : this.endDate;
+        this.memo = requestDto.getMemo() != null ? requestDto.getMemo() : this.memo;
     }
 }
