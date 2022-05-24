@@ -22,7 +22,7 @@ public class CustomUserDetails implements UserDetails {
         grantedAuthorityCollection.add(new GrantedAuthority() {
             @Override
             public String getAuthority() {
-                return user.getType().getKey();
+                return user.getUserType().getKey();
             }
         });
         return grantedAuthorityCollection;

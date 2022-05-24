@@ -1,6 +1,7 @@
 package com.ajou.travely.service;
 
 import com.ajou.travely.controller.travel.dto.SimpleTravelResponseDto;
+import com.ajou.travely.controller.user.dto.UserResponseDto;
 import com.ajou.travely.exception.ErrorCode;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.exception.custom.RecordNotFoundException;
@@ -47,5 +48,17 @@ public class UserService {
                 .stream()
                 .map(SimpleTravelResponseDto::new)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public UserResponseDto getUserById(Long userId) {
+        return userRepository
+                .findById(userId)
+                .map(UserResponseDto::new)
+                .orElseThrow(() -> new RecordNotFoundException(
+                        "해당 ID의 User가 존재하지 않습니다."
+                        , ErrorCode.USER_NOT_FOUND
+                        )
+                );
     }
 }

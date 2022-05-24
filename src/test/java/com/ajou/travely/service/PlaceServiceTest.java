@@ -32,8 +32,8 @@ class PlaceServiceTest {
     public void setUp() {
         ajouUniv = placeService.insertPlace(
                 Place.builder()
-                        .x(4.5)
-                        .y(5.4)
+                        .lat(4.5)
+                        .lng(5.4)
                         .placeUrl("ajou.ac.kr")
                         .placeName("아주대학교")
                         .addressName("원천동")
@@ -42,8 +42,8 @@ class PlaceServiceTest {
                         .build());
         inhaUniv = placeService.insertPlace(
                 Place.builder()
-                        .x(3.7)
-                        .y(7.3)
+                        .lat(3.7)
+                        .lng(7.3)
                         .placeUrl("inha.ac.kr")
                         .placeName("인하대학교")
                         .addressName("인천")
@@ -77,8 +77,8 @@ class PlaceServiceTest {
     @Rollback
     public void findByNameTest() {
         Place ajoudon = Place.builder()
-                .x(2.6)
-                .y(6.2)
+                .lat(2.6)
+                .lng(6.2)
                 .placeUrl("naver.com")
                 .placeName("원천아주돈")
                 .addressName("인계동")

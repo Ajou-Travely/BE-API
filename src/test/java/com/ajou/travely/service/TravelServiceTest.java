@@ -3,18 +3,15 @@ package com.ajou.travely.service;
 import com.ajou.travely.controller.cost.dto.CostCreateResponseDto;
 import com.ajou.travely.controller.place.dto.PlaceCreateRequestDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleCreateRequestDto;
-import com.ajou.travely.controller.schedule.dto.ScheduleResponseDto;
 import com.ajou.travely.controller.schedule.dto.SimpleScheduleResponseDto;
-import com.ajou.travely.controller.travel.dto.SimpleCostResponseDto;
-import com.ajou.travely.controller.travel.dto.SimpleTravelResponseDto;
-import com.ajou.travely.controller.travel.dto.TravelCreateRequestDto;
-import com.ajou.travely.controller.travel.dto.TravelResponseDto;
+import com.ajou.travely.controller.travel.dto.*;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.domain.Invitation;
 import com.ajou.travely.domain.Place;
-import com.ajou.travely.domain.Travel;
 import com.ajou.travely.domain.UserTravel;
-import com.ajou.travely.domain.user.Type;
+import com.ajou.travely.domain.travel.Travel;
+import com.ajou.travely.domain.travel.TravelType;
+import com.ajou.travely.domain.user.UserType;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.repository.InvitationRepository;
 import com.ajou.travely.repository.UserTravelRepository;
@@ -26,8 +23,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.annotation.Rollback;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -74,7 +69,36 @@ class TravelServiceTest {
     public void testCreateTravel() {
         User user = userService.insertUser(
                 User.builder()
-                        .type(Type.USER)
+                        .userType(UserType.USER)
+                        .email("sophoca@ajou.ac.kr")
+                        .name("홍성빈")
+                        .phoneNumber("112")
+                        .kakaoId(0L)
+                        .build()
+        );
+        TravelCreateRequestDto request = TravelCreateRequestDto
+                .builder()
+                .title("test")
+                .startDate(LocalDate.now())
+                .endDate(LocalDate.now().plusDays(1))
+                .userEmails(new ArrayList<>())
+                .build();
+
+        Travel travel = travelService.createTravel(user.getId(), request);
+
+        Long travelId = travel.getId();
+        TravelResponseDto foundTravel = travelService.getTravelById(travelId);
+        assertThat(travelService.getAllTravels()).hasSize(1);
+        assertThat(foundTravel.getUsers()).hasSize(1);
+    }
+
+    @Test
+    @DisplayName("여행 객체를 업데이트 할 수 있다.")
+    @Rollback
+    public void testUpdateTravel() {
+        User user = userService.insertUser(
+                User.builder()
+                        .userType(UserType.USER)
                         .email("sophoca@ajou.ac.kr")
                         .name("홍성빈")
                         .phoneNumber("112")
@@ -90,9 +114,24 @@ class TravelServiceTest {
                 .build();
         Travel travel = travelService.createTravel(user.getId(), request);
         Long travelId = travel.getId();
+
+        String title = "updatedTitle";
+        LocalDate startDate = LocalDate.of(2022, 2, 2);
+        LocalDate endDate = LocalDate.of(2022, 2, 22);
+        String memo = "updatedMemo";
+        TravelUpdateRequestDto travelUpdateRequestDto = TravelUpdateRequestDto.builder()
+                .title(title)
+                .startDate(startDate)
+                .endDate(endDate)
+                .memo(memo)
+                .build();
+        travelService.updateTravel(travelId, travelUpdateRequestDto);
+
         TravelResponseDto foundTravel = travelService.getTravelById(travelId);
-        assertThat(travelService.getAllTravels()).hasSize(1);
-        assertThat(foundTravel.getUsers()).hasSize(1);
+        assertThat(foundTravel.getTitle()).isEqualTo(title);
+        assertThat(foundTravel.getStartDate()).isEqualTo(startDate);
+        assertThat(foundTravel.getEndDate()).isEqualTo(endDate);
+        assertThat(foundTravel.getMemo()).isEqualTo(memo);
     }
 
     @Test
@@ -101,7 +140,7 @@ class TravelServiceTest {
     public void testAddUserToTravel() {
         User user = userService.insertUser(
                 User.builder()
-                        .type(Type.USER)
+                        .userType(UserType.USER)
                         .email("sophoca@ajou.ac.kr")
                         .name("홍성빈")
                         .phoneNumber("112")
@@ -120,7 +159,7 @@ class TravelServiceTest {
         TravelResponseDto foundTravel = travelService.getTravelById(travelId);
         User newUser = userService.insertUser(
                 User.builder()
-                        .type(Type.USER)
+                        .userType(UserType.USER)
                         .email("errander@ajou.ac.kr")
                         .name("이호용")
                         .phoneNumber("119")
@@ -143,7 +182,7 @@ class TravelServiceTest {
         List<User> users = new ArrayList<>();
         numbers.forEach(number -> users.add(userService.insertUser(
                 User.builder()
-                        .type(Type.USER)
+                        .userType(UserType.USER)
                         .email(String.format("test%d@ajou.ac.kr", number))
                         .name(String.format("test%d", number))
                         .phoneNumber(String.format("11%d", number))
@@ -208,8 +247,8 @@ class TravelServiceTest {
     @Rollback
     public void testGetSchedulesByTravel() {
         PlaceCreateRequestDto ajouUniv = PlaceCreateRequestDto.builder()
-                .x(4.5)
-                .y(5.4)
+                .lat(4.5)
+                .lng(5.4)
                 .placeUrl("ajou.ac.kr")
                 .placeName("아주대학교")
                 .addressName("원천동")
@@ -217,8 +256,8 @@ class TravelServiceTest {
                 .kakaoMapId(1L)
                 .build();
         PlaceCreateRequestDto inhaUniv = PlaceCreateRequestDto.builder()
-                .x(3.7)
-                .y(7.3)
+                .lat(3.7)
+                .lng(7.3)
                 .placeUrl("inha.ac.kr")
                 .placeName("인하대학교")
                 .addressName("인천")
@@ -228,7 +267,7 @@ class TravelServiceTest {
                 .build();
         User user = userService.insertUser(
                 User.builder()
-                        .type(Type.USER)
+                        .userType(UserType.USER)
                         .email("sophoca@ajou.ac.kr")
                         .name("홍성빈")
                         .phoneNumber("112")
@@ -266,7 +305,7 @@ class TravelServiceTest {
     void testPagination() {
         User user = userService.insertUser(
                 User.builder()
-                        .type(Type.USER)
+                        .userType(UserType.USER)
                         .email("sophoca@ajou.ac.kr")
                         .name("홍성빈")
                         .phoneNumber("112")
@@ -295,11 +334,60 @@ class TravelServiceTest {
     }
 
     @Test
+    @DisplayName("여행 타입 기본값 입력")
+    @Rollback
+    public void testTravelTypeDefault() {
+        User user = userService.insertUser(
+            User.builder()
+                .userType(UserType.USER)
+                .email("sophoca@ajou.ac.kr")
+                .name("홍성빈")
+                .phoneNumber("112")
+                .kakaoId(0L)
+                .build()
+        );
+        TravelCreateRequestDto request = TravelCreateRequestDto
+            .builder()
+            .title("test")
+            .startDate(LocalDate.now())
+            .endDate(LocalDate.now().plusDays(1))
+            .userEmails(new ArrayList<>())
+            .build();
+        Travel travel = travelService.createTravel(user.getId(), request);
+        assertThat(travel.getTravelType()).isEqualTo(TravelType.PUBLIC);
+    }
+
+    @Test
+    @DisplayName("여행 타입 private 입력")
+    @Rollback
+    public void testTravelTypePrivate() {
+        User user = userService.insertUser(
+            User.builder()
+                .userType(UserType.USER)
+                .email("sophoca@ajou.ac.kr")
+                .name("홍성빈")
+                .phoneNumber("112")
+                .kakaoId(0L)
+                .build()
+        );
+        TravelCreateRequestDto request = TravelCreateRequestDto
+            .builder()
+            .title("test")
+            .startDate(LocalDate.now())
+            .endDate(LocalDate.now().plusDays(1))
+            .userEmails(new ArrayList<>())
+            .travelType(TravelType.PRIVATE)
+            .build();
+        Travel travel = travelService.createTravel(user.getId(), request);
+        assertThat(travel.getTravelType()).isEqualTo(TravelType.PRIVATE);
+    }
+
+    @Test
     @DisplayName("여행 초대를 승락할 수 있다.")
     void testAcceptInvitation() {
         User user = userService.insertUser(
                 User.builder()
-                        .type(Type.USER)
+                        .userType(UserType.USER)
                         .email("sophoca@ajou.ac.kr")
                         .name("홍성빈")
                         .phoneNumber("112")
@@ -308,7 +396,7 @@ class TravelServiceTest {
         );
         User invitedUser = userService.insertUser(
                 User.builder()
-                        .type(Type.USER)
+                        .userType(UserType.USER)
                         .email("hooo0503@ajou.ac.kr")
                         .name("박상혁")
                         .phoneNumber("113")
@@ -343,7 +431,7 @@ class TravelServiceTest {
     void testRejectInvitaion() {
         User user = userService.insertUser(
                 User.builder()
-                        .type(Type.USER)
+                        .userType(UserType.USER)
                         .email("sophoca@ajou.ac.kr")
                         .name("홍성빈")
                         .phoneNumber("112")
@@ -352,7 +440,7 @@ class TravelServiceTest {
         );
         User invitedUser = userService.insertUser(
                 User.builder()
-                        .type(Type.USER)
+                        .userType(UserType.USER)
                         .email("hooo0503@ajou.ac.kr")
                         .name("박상혁")
                         .phoneNumber("113")
@@ -384,7 +472,7 @@ class TravelServiceTest {
 //        //Given
 //        User user = userRepository.save(
 //                User.builder()
-//                        .type(Type.USER)
+//                        .userType(Type.USER)
 //                        .email("sophoca@ajou.ac.kr")
 //                        .name("홍성빈")
 //                        .phoneNumber("112")
@@ -393,7 +481,7 @@ class TravelServiceTest {
 //        );
 //        User user1 = userRepository.save(
 //                User.builder()
-//                        .type(Type.USER)
+//                        .userType(Type.USER)
 //                        .email("errander@ajou.ac.kr")
 //                        .name("이호용")
 //                        .phoneNumber("119")
@@ -402,7 +490,7 @@ class TravelServiceTest {
 //        );
 //        User user2 = userRepository.save(
 //                User.builder()
-//                        .type(Type.USER)
+//                        .userType(Type.USER)
 //                        .email("park@ajou.ac.kr")
 //                        .name("박상혁")
 //                        .phoneNumber("111")

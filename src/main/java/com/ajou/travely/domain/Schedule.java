@@ -1,5 +1,6 @@
 package com.ajou.travely.domain;
 
+import com.ajou.travely.domain.travel.Travel;
 import lombok.*;
 
 import javax.persistence.*;

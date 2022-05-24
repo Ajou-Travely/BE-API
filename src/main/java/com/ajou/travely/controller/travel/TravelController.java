@@ -5,7 +5,8 @@ import com.ajou.travely.config.auth.SessionUser;
 import com.ajou.travely.controller.schedule.dto.ScheduleCreateRequestDto;
 import com.ajou.travely.controller.schedule.dto.SimpleScheduleResponseDto;
 import com.ajou.travely.controller.travel.dto.*;
-import com.ajou.travely.domain.Travel;
+import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
+import com.ajou.travely.domain.travel.Travel;
 import com.ajou.travely.service.ScheduleService;
 import com.ajou.travely.service.TravelService;
 import lombok.RequiredArgsConstructor;
@@ -86,6 +87,18 @@ public class TravelController {
                                                     ScheduleOrderUpdateRequestDto requestDto) {
         travelService.changeScheduleOrder(travelId, requestDto);
         return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/{travelId}")
+    public ResponseEntity<Void> updateTravel(@PathVariable Long travelId ,
+                                             @RequestBody TravelUpdateRequestDto requestDto) {
+        travelService.updateTravel(travelId, requestDto);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{travelId}/users")
+    public ResponseEntity<List<SimpleUserInfoDto>> showUsersByTravelId(@PathVariable Long travelId) {
+        return ResponseEntity.ok(travelService.getSimpleUsersOfTravel(travelId));
     }
 
     @GetMapping("/{travelId}/accept/{code}")

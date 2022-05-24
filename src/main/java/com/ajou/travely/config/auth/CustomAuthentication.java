@@ -4,8 +4,6 @@ import com.ajou.travely.domain.user.User;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
-import javax.security.auth.Subject;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -22,7 +20,7 @@ public class CustomAuthentication implements Authentication {
         grantedAuthorityCollection.add(new GrantedAuthority() {
             @Override
             public String getAuthority() {
-                return user.getType().getKey();
+                return user.getUserType().getKey();
             }
         });
         return grantedAuthorityCollection;

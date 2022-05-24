@@ -11,6 +11,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
 import lombok.*;
 
 @Getter
@@ -25,27 +27,28 @@ public class User implements Serializable {
 
     @Enumerated(EnumType.STRING)
     @Column()
-    @NonNull
-    private Type type;
+    @NotNull
+    private UserType userType;
 
     @Column(length = 400, unique = true)
-    @NonNull
+    @NotNull
     private String email;
 
     @Column(length = 20)
-    @NonNull
+    @NotNull
     private String name;
 
     @Column(length = 30)
-    @NonNull
+    @NotNull
     private String phoneNumber;
 
-    @Column(length = 5)
-    private String sex;
+    @Column
+    private Sex sex;
 
     @Enumerated(EnumType.STRING)
     private Mbti mbti;
 
+    @NotNull
     private Long kakaoId;
 
     private LocalDate birthday;
@@ -53,11 +56,20 @@ public class User implements Serializable {
 //    private List<Post> posts;
 
     @Builder
-    public User(@NonNull Type type, @NonNull String email, @NonNull String name, @NonNull String phoneNumber, @NonNull Long kakaoId) {
-        this.type = type;
+    public User(@NonNull UserType userType,
+                @NonNull String email,
+                @NonNull String name,
+                @NonNull String phoneNumber,
+                @NonNull Long kakaoId,
+                Sex sex,
+                LocalDate birthday
+    ) {
+        this.userType = userType;
         this.email = email;
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.kakaoId = kakaoId;
+        this.sex = sex;
+        this.birthday = birthday;
     }
 }

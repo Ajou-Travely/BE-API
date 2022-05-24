@@ -17,9 +17,9 @@ public class Place {
     @Column(name = "place_id")
     private Long id;
 
-    private Double x;
+    private Double lat;
 
-    private Double y;
+    private Double lng;
 
     private String placeName;
 
@@ -34,9 +34,9 @@ public class Place {
     private Long kakaoMapId;
 
     @Builder
-    public Place(@NonNull Double x, @NonNull Double y, @NonNull String placeName, String phoneNumber, @NonNull String addressName, @NonNull String addressRoadName, @NonNull String placeUrl, @NonNull Long kakaoMapId) {
-        this.x = x;
-        this.y = y;
+    public Place(@NonNull Double lat, @NonNull Double lng, @NonNull String placeName, String phoneNumber, @NonNull String addressName, @NonNull String addressRoadName, @NonNull String placeUrl, @NonNull Long kakaoMapId) {
+        this.lat = lat;
+        this.lng = lng;
         this.placeName = placeName;
         this.phoneNumber = phoneNumber;
         this.addressName = addressName;

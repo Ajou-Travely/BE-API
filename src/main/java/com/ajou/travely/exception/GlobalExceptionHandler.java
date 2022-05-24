@@ -12,20 +12,20 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 public class GlobalExceptionHandler {
     @ExceptionHandler(NoHandlerFoundException.class)
     public ResponseEntity<ErrorResponse> handleNoHandlerFoundException(NoHandlerFoundException ex) {
-        ErrorResponse errorResponse = new ErrorResponse(ErrorCode.API_NOT_FOUND);
+        ErrorResponse errorResponse = new ErrorResponse(ErrorCode.API_NOT_FOUND, ex.getMessage());
         return ResponseEntity.status(errorResponse.getStatus()).body(errorResponse);
     }
 
     @ExceptionHandler(RecordNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleRecordNotFoundException(RecordNotFoundException ex) {
-        ErrorResponse errorResponse = new ErrorResponse(ex.getErrorCode());
+        ErrorResponse errorResponse = new ErrorResponse(ex.getErrorCode(), ex.getMessage());
         return ResponseEntity.status(errorResponse.getStatus()).body(errorResponse);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception ex) {
         log.error("Error!! {}", ex.getMessage(), ex);
-        ErrorResponse errorResponse = new ErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR);
+        ErrorResponse errorResponse = new ErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR, ex.getMessage());
         return ResponseEntity.status(errorResponse.getStatus()).body(errorResponse);
     }
 }

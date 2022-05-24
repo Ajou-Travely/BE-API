@@ -4,8 +4,8 @@ import com.ajou.travely.controller.place.dto.PlaceCreateRequestDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleCreateRequestDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleResponseDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleUpdateRequestDto;
-import com.ajou.travely.domain.Travel;
-import com.ajou.travely.domain.user.Type;
+import com.ajou.travely.domain.travel.Travel;
+import com.ajou.travely.domain.user.UserType;
 import com.ajou.travely.domain.user.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -51,8 +51,8 @@ class ScheduleServiceTest {
     @BeforeEach
     public void setUp() {
         ajouUniv = PlaceCreateRequestDto.builder()
-                .x(4.5)
-                .y(5.4)
+                .lat(4.5)
+                .lng(5.4)
                 .placeUrl("ajou.ac.kr")
                 .placeName("아주대학교")
                 .addressName("원천동")
@@ -60,8 +60,8 @@ class ScheduleServiceTest {
                 .kakaoMapId(1L)
                 .build();
         inhaUniv = PlaceCreateRequestDto.builder()
-                .x(3.7)
-                .y(7.3)
+                .lat(3.7)
+                .lng(7.3)
                 .placeUrl("inha.ac.kr")
                 .placeName("인하대학교")
                 .addressName("인천")
@@ -73,7 +73,7 @@ class ScheduleServiceTest {
                 User.builder()
                         .name("test")
                         .phoneNumber("111")
-                        .type(Type.USER)
+                        .userType(UserType.USER)
                         .email("test@test")
                         .kakaoId(0L)
                         .build());
@@ -92,7 +92,7 @@ class ScheduleServiceTest {
     public void testCreateSchedule() {
         User user1 = userService.insertUser(
                 User.builder()
-                        .type(Type.USER)
+                        .userType(UserType.USER)
                         .email("sophoca@ajou.ac.kr")
                         .name("홍성빈")
                         .phoneNumber("112")
@@ -101,7 +101,7 @@ class ScheduleServiceTest {
         );
         User user2 = userService.insertUser(
                 User.builder()
-                        .type(Type.USER)
+                        .userType(UserType.USER)
                         .email("errander@ajou.ac.kr")
                         .name("이호용")
                         .phoneNumber("119")
@@ -133,7 +133,7 @@ class ScheduleServiceTest {
         LocalDateTime endTime = LocalDateTime.now().plusDays(1);
         User user1 = userService.insertUser(
                 User.builder()
-                        .type(Type.USER)
+                        .userType(UserType.USER)
                         .email("sophoca@ajou.ac.kr")
                         .name("홍성빈")
                         .phoneNumber("112")
@@ -142,7 +142,7 @@ class ScheduleServiceTest {
         );
         User user2 = userService.insertUser(
                 User.builder()
-                        .type(Type.USER)
+                        .userType(UserType.USER)
                         .email("errander@ajou.ac.kr")
                         .name("이호용")
                         .phoneNumber("119")
@@ -181,7 +181,7 @@ class ScheduleServiceTest {
     public void testFindSchedule() {
         User user1 = userService.insertUser(
                 User.builder()
-                        .type(Type.USER)
+                        .userType(UserType.USER)
                         .email("sophoca@ajou.ac.kr")
                         .name("홍성빈")
                         .phoneNumber("112")
@@ -190,7 +190,7 @@ class ScheduleServiceTest {
         );
         User user2 = userService.insertUser(
                 User.builder()
-                        .type(Type.USER)
+                        .userType(UserType.USER)
                         .email("errander@ajou.ac.kr")
                         .name("이호용")
                         .phoneNumber("119")
