@@ -232,8 +232,8 @@ class TravelServiceTest {
     @Rollback
     public void testGetSchedulesByTravel() {
         PlaceCreateRequestDto ajouUniv = PlaceCreateRequestDto.builder()
-                .x(4.5)
-                .y(5.4)
+                .lat(4.5)
+                .lng(5.4)
                 .placeUrl("ajou.ac.kr")
                 .placeName("아주대학교")
                 .addressName("원천동")
@@ -241,8 +241,8 @@ class TravelServiceTest {
                 .kakaoMapId(1L)
                 .build();
         PlaceCreateRequestDto inhaUniv = PlaceCreateRequestDto.builder()
-                .x(3.7)
-                .y(7.3)
+                .lat(3.7)
+                .lng(7.3)
                 .placeUrl("inha.ac.kr")
                 .placeName("인하대학교")
                 .addressName("인천")
