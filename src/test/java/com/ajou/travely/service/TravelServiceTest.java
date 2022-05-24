@@ -110,7 +110,7 @@ class TravelServiceTest {
                 .endDate(endDate)
                 .memo(memo)
                 .build();
-        travelService.updateTravel(travelId, travelUpdateRequestDto);
+        travelService.updateTravel(travelId, user.getId(), travelUpdateRequestDto);
 
         TravelResponseDto foundTravel = travelService.getTravelById(travelId, user.getId());
         assertThat(foundTravel.getTitle()).isEqualTo(title);
@@ -155,7 +155,7 @@ class TravelServiceTest {
                 foundTravel.getId()
                 , newUser.getId()
         );
-        List<SimpleUserInfoDto> users = travelService.getSimpleUsersOfTravel(foundTravel.getId());
+        List<SimpleUserInfoDto> users = travelService.getSimpleUsersOfTravel(foundTravel.getId(), user.getId());
         assertThat(users).hasSize(2);
         users.forEach(u -> System.out.println(u.toString()));
     }
@@ -214,7 +214,7 @@ class TravelServiceTest {
                 amountPerUser2,
                 users.get(2).getId()
         );
-        List<SimpleCostResponseDto> costsByTravelId = travelService.getCostsByTravelId(travelId);
+        List<SimpleCostResponseDto> costsByTravelId = travelService.getCostsByTravelId(travelId, users.get(0).getId());
 
         assertThat(costsByTravelId).hasSize(2);
 
@@ -282,7 +282,7 @@ class TravelServiceTest {
                         .startTime(LocalDateTime.now().plusDays(1))
                         .endTime(LocalDateTime.now().plusDays(2))
                         .build());
-        List<SimpleScheduleResponseDto> schedules = travelService.getSchedulesByTravelId(travelId);
+        List<SimpleScheduleResponseDto> schedules = travelService.getSchedulesByTravelId(travelId, user.getId());
         assertThat(schedules).hasSize(2);
     }
 

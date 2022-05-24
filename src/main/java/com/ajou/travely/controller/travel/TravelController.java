@@ -44,12 +44,14 @@ public class TravelController {
 
 
     @GetMapping("/{travelId}")
-    public ResponseEntity<TravelResponseDto> showTravelById(@LoginUser SessionUser sessionUser, @PathVariable Long travelId) {
+    public ResponseEntity<TravelResponseDto> showTravelById(@PathVariable Long travelId,
+                                                            @LoginUser SessionUser sessionUser) {
         return ResponseEntity.ok(travelService.getTravelById(travelId, sessionUser.getUserId()));
     }
 
     @PostMapping("/accept/{code}")
-    public ResponseEntity<Long> addUserToTravel(@LoginUser SessionUser sessionUser, @PathVariable UUID code) {
+    public ResponseEntity<Long> addUserToTravel(@LoginUser SessionUser sessionUser,
+                                                @PathVariable UUID code) {
         return ResponseEntity
                 .ok(
                         travelService
@@ -58,38 +60,44 @@ public class TravelController {
     }
 
     @GetMapping("/{travelId}/costs")
-    public ResponseEntity<List<SimpleCostResponseDto>> showCostsByTravelId(@PathVariable Long travelId) {
-        return ResponseEntity.ok(travelService.getCostsByTravelId(travelId));
+    public ResponseEntity<List<SimpleCostResponseDto>> showCostsByTravelId(@PathVariable Long travelId,
+                                                                           @LoginUser SessionUser sessionUser) {
+        return ResponseEntity.ok(travelService.getCostsByTravelId(travelId, sessionUser.getUserId()));
     }
 
     @PostMapping("/{travelId}/schedules")
-    public ResponseEntity<Long> createSchedule(@PathVariable Long travelId, @RequestBody ScheduleCreateRequestDto scheduleCreateRequestDto) {
+    public ResponseEntity<Long> createSchedule(@PathVariable Long travelId,
+                                               @RequestBody ScheduleCreateRequestDto scheduleCreateRequestDto) {
         return ResponseEntity.ok(scheduleService.createSchedule(travelId, scheduleCreateRequestDto));
     }
 
     @GetMapping("/{travelId}/schedules")
-    public ResponseEntity<List<SimpleScheduleResponseDto>> showSchedulesByTravelId(@PathVariable Long travelId) {
-        return ResponseEntity.ok(travelService.getSchedulesByTravelId(travelId));
+    public ResponseEntity<List<SimpleScheduleResponseDto>> showSchedulesByTravelId(@PathVariable Long travelId,
+                                                                                   @LoginUser SessionUser sessionUser) {
+        return ResponseEntity.ok(travelService.getSchedulesByTravelId(travelId, sessionUser.getUserId()));
     }
 
     @PostMapping("/{travelId}/invite")
-    public ResponseEntity<Void> inviteUserToTravel(@PathVariable Long travelId
-            , @RequestBody TravelInviteRequestDto travelInviteRequestDto) {
-        travelService.inviteUserToTravel(travelId, travelInviteRequestDto);
+    public ResponseEntity<Void> inviteUserToTravel(@PathVariable Long travelId,
+                                                   @LoginUser SessionUser sessionUser,
+                                                   @RequestBody TravelInviteRequestDto travelInviteRequestDto) {
+        travelService.inviteUserToTravel(travelId, sessionUser.getUserId(), travelInviteRequestDto);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{travelId}/change")
     public ResponseEntity<Void> changeScheduleOrder(@PathVariable Long travelId,
+                                                    @LoginUser SessionUser sessionUser,
                                                     ScheduleOrderUpdateRequestDto requestDto) {
-        travelService.changeScheduleOrder(travelId, requestDto);
+        travelService.changeScheduleOrder(travelId, sessionUser.getUserId(), requestDto);
         return ResponseEntity.ok().build();
     }
 
     @PatchMapping("/{travelId}")
     public ResponseEntity<Void> updateTravel(@PathVariable Long travelId ,
+                                             @LoginUser SessionUser sessionUser,
                                              @RequestBody TravelUpdateRequestDto requestDto) {
-        travelService.updateTravel(travelId, requestDto);
+        travelService.updateTravel(travelId, sessionUser.getUserId(), requestDto);
         return ResponseEntity.ok().build();
     }
 }

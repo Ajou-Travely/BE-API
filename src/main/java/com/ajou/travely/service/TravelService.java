@@ -74,13 +74,8 @@ public class TravelService {
     }
 
     @Transactional
-    public void inviteUserToTravel(Long travelId, TravelInviteRequestDto travelInviteRequestDto) {
-        Travel travel = travelRepository
-                .findById(travelId)
-                .orElseThrow(() -> new RecordNotFoundException(
-                        "해당 ID의 Travel이 존재하지 않습니다."
-                        , ErrorCode.TRAVEL_NOT_FOUND
-                ));
+    public void inviteUserToTravel(Long travelId, Long userId, TravelInviteRequestDto travelInviteRequestDto) {
+        Travel travel = checkAuthorization(travelId, userId);
         // TODO email 검증
         UUID code = UUID.randomUUID();
         String text = frontDomain + "invite/accept/" + code;
@@ -132,12 +127,7 @@ public class TravelService {
                         "잘못된 초대 링크입니다."
                         , ErrorCode.INVALID_INVITATION
                 ));
-        Travel travel = travelRepository
-                .findById(invitation.getTravel().getId())
-                .orElseThrow(() -> new RecordNotFoundException(
-                        "해당 ID의 Travel이 존재하지 않습니다."
-                        , ErrorCode.TRAVEL_NOT_FOUND
-                ));
+        Travel travel = invitation.getTravel();
         invitationRepository.deleteById(invitation.getId());
         UserTravel userTravel = UserTravel.builder().user(user).travel(travel).build();
         userTravelRepository.save(userTravel);
@@ -146,12 +136,7 @@ public class TravelService {
 
     @Transactional
     public void addUserToTravel(Long travelId, Long userId) {
-        Travel travel = travelRepository
-                .findById(travelId)
-                .orElseThrow(() -> new RecordNotFoundException(
-                        "해당 ID의 Travel이 존재하지 않습니다."
-                        , ErrorCode.TRAVEL_NOT_FOUND
-                ));
+        Travel travel = checkRecord(travelId);
         User user = userRepository
                 .findById(userId)
                 .orElseThrow(() -> new RecordNotFoundException(
@@ -164,27 +149,14 @@ public class TravelService {
 
     @Transactional
     public TravelResponseDto getTravelById(Long travelId, Long userId) {
-        Travel travel = travelRepository
-                .findTravelById(travelId)
-                .orElseThrow(() -> new RecordNotFoundException(
-                        "해당 ID의 Travel이 존재하지 않습니다."
-                        , ErrorCode.TRAVEL_NOT_FOUND
-                ));
-        if (!travel.getUserTravels().stream().map(ut -> ut.getUser().getId()).collect(Collectors.toList()).contains(userId)) {
-            throw new UnauthorizedException("해당 Travel에 대해 접근 권한이 없습니다.", ErrorCode.UNAUTHORIZED_TRAVEL);
-        }
+        Travel travel = checkAuthorization(travelId, userId);
         List<Schedule> schedules = travelRepository.findSchedulesWithPlaceByTravelId(travel.getId());
         return new TravelResponseDto(travel, schedules);
     }
 
     @Transactional
-    public List<User> getUsersOfTravel(Long travelId) {
-        return travelRepository
-                .findById(travelId)
-                .orElseThrow(() -> new RecordNotFoundException(
-                        "해당 ID의 Travel이 존재하지 않습니다."
-                        , ErrorCode.TRAVEL_NOT_FOUND
-                ))
+    public List<User> getUsersOfTravel(Long travelId, Long userId) {
+        return checkAuthorization(travelId, userId)
                 .getUserTravels()
                 .stream()
                 .map(UserTravel::getUser)
@@ -192,13 +164,8 @@ public class TravelService {
     }
 
     @Transactional
-    public List<SimpleUserInfoDto> getSimpleUsersOfTravel(Long travelId) {
-        return travelRepository
-                .findById(travelId)
-                .orElseThrow(() -> new RecordNotFoundException(
-                        "해당 ID의 Travel이 존재하지 않습니다."
-                        , ErrorCode.TRAVEL_NOT_FOUND
-                ))
+    public List<SimpleUserInfoDto> getSimpleUsersOfTravel(Long travelId, Long userId) {
+        return checkAuthorization(travelId, userId)
                 .getUserTravels()
                 .stream()
                 .map(UserTravel::getUser)
@@ -212,16 +179,15 @@ public class TravelService {
     }
 
     @Transactional(readOnly = true)
-    public List<SimpleCostResponseDto> getCostsByTravelId(Long travelId) {
+    public List<SimpleCostResponseDto> getCostsByTravelId(Long travelId, Long userId) {
+        checkAuthorization(travelId, userId);
         List<Cost> costs = costRepository.findCostsByTravelId(travelId);
-        List<User> usersByTravelId = userRepository.findUsersByTravelId(travelId);
-        List<SimpleCostResponseDto> costsResponseDtos = new ArrayList<>();
-
         return costs.stream().map(SimpleCostResponseDto::new).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public List<SimpleScheduleResponseDto> getSchedulesByTravelId(Long travelId) {
+    public List<SimpleScheduleResponseDto> getSchedulesByTravelId(Long travelId, Long userId) {
+        Travel travel = checkAuthorization(travelId, userId);
         return travelRepository
                 .findSchedulesWithPlaceByTravelId(travelId)
                 .stream()
@@ -231,25 +197,34 @@ public class TravelService {
 
     @Transactional
     public void changeScheduleOrder(Long travelId,
+                                    Long userId,
                                     ScheduleOrderUpdateRequestDto requestDto) {
-        Travel travel = travelRepository
-                .findById(travelId)
-                .orElseThrow(() -> new RecordNotFoundException(
-                        "해당 ID의 Travel이 존재하지 않습니다."
-                        , ErrorCode.TRAVEL_NOT_FOUND
-                ));
+        Travel travel = checkAuthorization(travelId, userId);
         travel.setScheduleOrder(requestDto.getScheduleOrder());
     }
 
     @Transactional
     public void updateTravel(Long travelId,
+                             Long userId,
                              TravelUpdateRequestDto requestDto) {
-        Travel travel = travelRepository
-                .findById(travelId)
+        Travel travel = checkAuthorization(travelId, userId);
+        travel.updateTravel(requestDto);
+    }
+
+    private Travel checkRecord(Long travelId) {
+        return travelRepository
+                .findTravelById(travelId)
                 .orElseThrow(() -> new RecordNotFoundException(
                         "해당 ID의 Travel이 존재하지 않습니다."
                         , ErrorCode.TRAVEL_NOT_FOUND
                 ));
-        travel.updateTravel(requestDto);
+    }
+
+    private Travel checkAuthorization(Long travelId, Long userId) {
+        Travel travel = checkRecord(travelId);
+        if (!travel.getUserTravels().stream().map(ut -> ut.getUser().getId()).collect(Collectors.toList()).contains(userId)) {
+            throw new UnauthorizedException("해당 Travel에 대해 접근 권한이 없습니다.", ErrorCode.UNAUTHORIZED_TRAVEL);
+        }
+        return travel;
     }
 }
