@@ -18,6 +18,8 @@ public class UserCreateRequestDto {
 
     @NotNull(message = "이메일이 필요합니다.")
     private final String email;
+
+    private final String password;
 //
 //    private final Sex sex;
 
@@ -27,7 +29,7 @@ public class UserCreateRequestDto {
     @NotNull(message = "전화번호가 필요합니다.")
     private final String phoneNumber;
 
-    @NotNull(message = "카카오 아이디가 필요합니다.")
+//    @NotNull(message = "카카오 아이디가 필요합니다.")
     private final Long kakaoId;
 
     @Builder
@@ -36,13 +38,15 @@ public class UserCreateRequestDto {
 //                                Sex sex,
 //                                LocalDate birthday,
                                 @NonNull String phoneNumber,
-                                @NonNull Long kakaoId) {
+                                Long kakaoId,
+                                String password) {
         this.name = name;
         this.email = email;
 //        this.sex = sex;
 //        this.birthday = birthday;
         this.phoneNumber = phoneNumber;
         this.kakaoId = kakaoId;
+        this.password = password;
     }
 
     public User toEntity() {
@@ -50,6 +54,7 @@ public class UserCreateRequestDto {
             .userType(UserType.USER)
             .name(this.name)
             .email(this.email)
+            .password(this.password)
             .phoneNumber(this.phoneNumber)
             .kakaoId(this.kakaoId)
             .build();

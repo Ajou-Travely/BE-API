@@ -14,6 +14,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import lombok.*;
+import org.springframework.lang.Nullable;
 
 @Getter
 @NoArgsConstructor
@@ -34,6 +35,10 @@ public class User implements Serializable {
     @NotNull
     private String email;
 
+    @Column(length = 30)
+    @Nullable
+    private String password;
+
     @Column(length = 20)
     @NotNull
     private String name;
@@ -48,7 +53,7 @@ public class User implements Serializable {
     @Enumerated(EnumType.STRING)
     private Mbti mbti;
 
-    @NotNull
+    @Nullable
     private Long kakaoId;
 
     private LocalDate birthday;
@@ -60,9 +65,10 @@ public class User implements Serializable {
                 @NonNull String email,
                 @NonNull String name,
                 @NonNull String phoneNumber,
-                @NonNull Long kakaoId,
+                Long kakaoId,
                 Sex sex,
-                LocalDate birthday
+                LocalDate birthday,
+                String password
     ) {
         this.userType = userType;
         this.email = email;
@@ -71,5 +77,6 @@ public class User implements Serializable {
         this.kakaoId = kakaoId;
         this.sex = sex;
         this.birthday = birthday;
+        this.password = password;
     }
 }
