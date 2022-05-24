@@ -26,7 +26,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public void updateUserInfo(Long userId, UserUpdateRequestDto requestDto) {
+    public void updateUser(Long userId, UserUpdateRequestDto requestDto) {
         User user = findUserById(userId);
         String profilePath = awsS3Service.uploadFile(requestDto.getProfileImage());
         user.update(requestDto.getName(),
