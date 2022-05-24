@@ -9,15 +9,10 @@ import java.time.LocalDate;
 public class UserResponseDto {
 
     private final Long userId;
-
     private final String name;
-
     private final String email;
-
     private final Sex sex;
-
     private final String phoneNumber;
-
     private final LocalDate birthday;
 
     public UserResponseDto(User entity) {

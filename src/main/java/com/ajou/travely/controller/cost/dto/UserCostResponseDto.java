@@ -5,10 +5,10 @@ import lombok.Getter;
 
 @Getter
 public class UserCostResponseDto {
-    private Long userCostId;
-    private Long amount;
-    private SimpleUserInfoDto simpleUserInfoDto;
-    private Boolean isRequested;
+    private final Long userCostId;
+    private final Long amount;
+    private final SimpleUserInfoDto simpleUserInfoDto;
+    private final Boolean isRequested;
 
     public UserCostResponseDto(
             Long userCostId,

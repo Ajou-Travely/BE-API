@@ -10,14 +10,14 @@ import java.util.List;
 
 @Getter
 public class CostCreateResponseDto {
-    private Long id;
-    private Travel travel;
-    private Long totalAmount;
-    private String content;
-    private String title;
-    private Boolean isEquallyDivided;
-    private List<UserCost> userCosts;
-    private User payer;
+    private final Long id;
+    private final Travel travel;
+    private final Long totalAmount;
+    private final String content;
+    private final String title;
+    private final Boolean isEquallyDivided;
+    private final List<UserCost> userCosts;
+    private final User payer;
 
     public CostCreateResponseDto(Cost entity, User payer) {
         this.id = entity.getId();

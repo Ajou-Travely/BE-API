@@ -16,18 +16,14 @@ public class TravelCreateRequestDto {
 
     @NotNull(message = "제목이 필요합니다.")
     private final String title;
-
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @NotNull(message = "시작 날짜가 필요합니다.")
     private final LocalDate startDate;
-
     @NotNull(message = "종료 날짜가 필요합니다.")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private final LocalDate endDate;
-
     @NotNull
     private final List<String> userEmails;
-
     private final TravelType travelType;
 
     @Builder

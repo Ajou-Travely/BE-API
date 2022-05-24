@@ -14,12 +14,12 @@ import java.util.stream.Collectors;
 @Getter
 @AllArgsConstructor
 public class ScheduleResponseDto {
-    private Long travelId;
-    private Long scheduleId;
-    private PlaceResponseDto place;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
-    private List<SimpleUserInfoDto> users;
+    private final Long travelId;
+    private final Long scheduleId;
+    private final PlaceResponseDto place;
+    private final LocalDateTime startTime;
+    private final LocalDateTime endTime;
+    private final List<SimpleUserInfoDto> users;
 
     public ScheduleResponseDto(Schedule entity) {
         this.travelId = entity.getTravel().getId();

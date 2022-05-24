@@ -9,20 +9,20 @@ import javax.validation.constraints.NotNull;
 @Getter
 public class PlaceCreateRequestDto {
     @NotNull
-    private Double x;
+    private final Double x;
     @NotNull
-    private Double y;
+    private final Double y;
     @NotNull
-    private String placeName;
-    private String phoneNumber;
+    private final String placeName;
+    private final String phoneNumber;
     @NotNull
-    private String addressName;
+    private final String addressName;
     @NotNull
-    private String addressRoadName;
+    private final String addressRoadName;
     @NotNull
-    private String placeUrl;
+    private final String placeUrl;
     @NotNull
-    private Long kakaoMapId;
+    private final Long kakaoMapId;
 
     public Place toEntity() {
         return Place.builder()

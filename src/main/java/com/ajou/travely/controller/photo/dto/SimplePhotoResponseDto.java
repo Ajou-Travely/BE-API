@@ -7,7 +7,6 @@ import lombok.Getter;
 public class SimplePhotoResponseDto {
 
     private final Long photoId;
-
     private final String name;
 
     public SimplePhotoResponseDto(Photo entity) {

@@ -10,13 +10,13 @@ import java.util.stream.Collectors;
 
 @Getter
 public class CostResponseDto {
-    private Long costId;
-    private Long totalAmount;
-    private String content;
-    private String title;
-    private Boolean isEquallyDivided;
-    private List<UserCostResponseDto> userCosts;
-    private Long payerId;
+    private final Long costId;
+    private final Long totalAmount;
+    private final String content;
+    private final String title;
+    private final Boolean isEquallyDivided;
+    private final List<UserCostResponseDto> userCosts;
+    private final Long payerId;
 
     public CostResponseDto(Cost entity) {
         this.costId = entity.getId();
@@ -24,17 +24,15 @@ public class CostResponseDto {
         this.content = entity.getContent();
         this.title = entity.getTitle();
         this.isEquallyDivided = entity.getIsEquallyDivided();
-        this.userCosts = entity.getUserCosts().stream().map(userCost -> {
-            return new UserCostResponseDto(
-                    userCost.getId(),
-                    userCost.getAmount(),
-                    new SimpleUserInfoDto(
-                            userCost.getUser().getId(),
-                            userCost.getUser().getName()
-                    ),
-                    userCost.getIsRequested()
-            );
-        }).collect(Collectors.toList());
+        this.userCosts = entity.getUserCosts().stream().map(userCost -> new UserCostResponseDto(
+                userCost.getId(),
+                userCost.getAmount(),
+                new SimpleUserInfoDto(
+                        userCost.getUser().getId(),
+                        userCost.getUser().getName()
+                ),
+                userCost.getIsRequested()
+        )).collect(Collectors.toList());
         this.payerId = entity.getPayerId();
     }
 }

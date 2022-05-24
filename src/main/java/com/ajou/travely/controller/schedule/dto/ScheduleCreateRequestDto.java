@@ -23,7 +23,10 @@ public class ScheduleCreateRequestDto {
     private final List<Long> userIds;
 
     @Builder
-    public ScheduleCreateRequestDto(@NonNull PlaceCreateRequestDto place, @NonNull LocalDateTime startTime, @NonNull LocalDateTime endTime, List<Long> userIds) {
+    public ScheduleCreateRequestDto(@NonNull PlaceCreateRequestDto place,
+                                    @NonNull LocalDateTime startTime,
+                                    @NonNull LocalDateTime endTime,
+                                    List<Long> userIds) {
         this.place = place;
         this.startTime = startTime;
         this.endTime = endTime;

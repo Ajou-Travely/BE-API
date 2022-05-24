@@ -9,11 +9,11 @@ import java.util.stream.Collectors;
 
 @Getter
 public class SimpleCostResponseDto {
-    private Long costId;
-    private Long totalAmount;
-    private String title;
-    private List<Long> userIds;
-    private Long payerId;
+    private final Long costId;
+    private final Long totalAmount;
+    private final String title;
+    private final List<Long> userIds;
+    private final Long payerId;
 
     public SimpleCostResponseDto(Cost entity) {
         this.costId = entity.getId();

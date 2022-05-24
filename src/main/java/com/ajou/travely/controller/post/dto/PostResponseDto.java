@@ -11,17 +11,11 @@ import lombok.Getter;
 public class PostResponseDto {
 
     private final Long postId;
-
     private final Long scheduleId;
-
     private final SimpleUserInfoDto userInfo;
-
     private final String title;
-
     private final String text;
-
     private final List<CommentResponseDto> comments;
-
     private final List<SimplePhotoResponseDto> photoInfos;
 
     public PostResponseDto(Post entity) {

@@ -8,9 +8,7 @@ import lombok.Getter;
 public class CommentResponseDto {
 
     private final Long commentId;
-
     private final SimpleUserInfoDto userInfo;
-
     private final String content;
 
     public CommentResponseDto(Comment entity) {

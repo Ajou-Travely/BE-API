@@ -5,8 +5,8 @@ import lombok.Getter;
 
 @Getter
 public class SimplePlaceResponseDto {
-    private Long placeId;
-    private String placeName;
+    private final Long placeId;
+    private final String placeName;
 
     public SimplePlaceResponseDto(Place entity) {
         this.placeId = entity.getId();

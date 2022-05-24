@@ -5,15 +5,15 @@ import lombok.Getter;
 
 @Getter
 public class PlaceResponseDto {
-    private Long placeId;
-    private Double x;
-    private Double y;
-    private String placeName;
-    private String phoneNumber;
-    private String addressName;
-    private String addressRoadName;
-    private String placeUrl;
-    private Long kakaoMapId;
+    private final Long placeId;
+    private final Double x;
+    private final Double y;
+    private final String placeName;
+    private final String phoneNumber;
+    private final String addressName;
+    private final String addressRoadName;
+    private final String placeUrl;
+    private final Long kakaoMapId;
 
     public PlaceResponseDto(Place entity) {
         this.placeId = entity.getId();

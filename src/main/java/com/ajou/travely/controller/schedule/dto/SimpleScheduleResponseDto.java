@@ -11,11 +11,11 @@ import java.util.stream.Collectors;
 
 @Getter
 public class SimpleScheduleResponseDto {
-    private Long scheduleId;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
-    private SimplePlaceResponseDto place;
-    private List<SimpleUserInfoDto> users;
+    private final Long scheduleId;
+    private final LocalDateTime startTime;
+    private final LocalDateTime endTime;
+    private final SimplePlaceResponseDto place;
+    private final List<SimpleUserInfoDto> users;
 
     public SimpleScheduleResponseDto(Schedule entity) {
         this.scheduleId = entity.getId();

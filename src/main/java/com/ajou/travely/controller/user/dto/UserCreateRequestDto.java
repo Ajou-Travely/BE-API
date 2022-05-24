@@ -16,21 +16,15 @@ public class UserCreateRequestDto {
 
     @NotNull(message = "유저 타입이 필요합니다.")
     private final String userType;
-
     @NotNull(message = "이름이 필요합니다.")
     private final String name;
-
     @NotNull(message = "이메일이 필요합니다.")
     private final String email;
-
     private final Sex sex;
-
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private final LocalDate birthday;
-
     @NotNull(message = "전화번호가 필요합니다.")
     private final String phoneNumber;
-
     @NotNull(message = "카카오 아이디가 필요합니다.")
     private final Long kakaoId;
 
