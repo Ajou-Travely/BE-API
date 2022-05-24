@@ -13,10 +13,6 @@ import java.time.LocalDate;
 
 @Getter
 public class UserCreateRequestDto {
-
-    @NotNull(message = "유저 타입이 필요합니다.")
-    private final UserType userType;
-
     @NotNull(message = "이름이 필요합니다.")
     private final String name;
 
@@ -35,14 +31,12 @@ public class UserCreateRequestDto {
     private final Long kakaoId;
 
     @Builder
-    public UserCreateRequestDto(@NonNull UserType userType,
-                                @NonNull String name,
+    public UserCreateRequestDto(@NonNull String name,
                                 @NonNull String email,
                                 Sex sex,
                                 LocalDate birthday,
                                 @NonNull String phoneNumber,
                                 @NonNull Long kakaoId) {
-        this.userType = userType;
         this.name = name;
         this.email = email;
         this.sex = sex;
@@ -53,7 +47,7 @@ public class UserCreateRequestDto {
 
     public User toEntity() {
         return User.builder()
-            .userType(this.userType)
+            .userType(UserType.USER)
             .name(this.name)
             .email(this.email)
             .phoneNumber(this.phoneNumber)
