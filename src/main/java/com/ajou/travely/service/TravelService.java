@@ -8,6 +8,7 @@ import com.ajou.travely.domain.travel.Travel;
 import com.ajou.travely.exception.ErrorCode;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.exception.custom.RecordNotFoundException;
+import com.ajou.travely.exception.custom.UnauthorizedException;
 import com.ajou.travely.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -162,13 +163,16 @@ public class TravelService {
     }
 
     @Transactional
-    public TravelResponseDto getTravelById(Long travelId) {
+    public TravelResponseDto getTravelById(Long travelId, Long userId) {
         Travel travel = travelRepository
-                .findById(travelId)
+                .findTravelById(travelId)
                 .orElseThrow(() -> new RecordNotFoundException(
                         "해당 ID의 Travel이 존재하지 않습니다."
                         , ErrorCode.TRAVEL_NOT_FOUND
                 ));
+        if (!travel.getUserTravels().stream().map(ut -> ut.getUser().getId()).collect(Collectors.toList()).contains(userId)) {
+            throw new UnauthorizedException("해당 Travel에 대해 접근 권한이 없습니다.", ErrorCode.UNAUTHORIZED_TRAVEL);
+        }
         List<Schedule> schedules = travelRepository.findSchedulesWithPlaceByTravelId(travel.getId());
         return new TravelResponseDto(travel, schedules);
     }

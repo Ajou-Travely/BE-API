@@ -53,11 +53,13 @@ public class UserCreateRequestDto {
 
     public User toEntity() {
         return User.builder()
-            .userType(UserType.valueOf(this.userType))
-            .name(this.name)
-            .email(this.email)
-            .phoneNumber(this.phoneNumber)
-            .kakaoId(this.kakaoId)
-            .build();
+                .userType(UserType.valueOf(this.userType))
+                .name(this.name)
+                .email(this.email)
+                .sex(this.sex)
+                .birthday(this.birthday)
+                .phoneNumber(this.phoneNumber)
+                .kakaoId(this.kakaoId)
+                .build();
     }
 }

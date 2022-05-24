@@ -72,7 +72,7 @@ class TravelServiceTest {
         Travel travel = travelService.createTravel(user.getId(), request);
 
         Long travelId = travel.getId();
-        TravelResponseDto foundTravel = travelService.getTravelById(travelId);
+        TravelResponseDto foundTravel = travelService.getTravelById(travelId, user.getId());
         assertThat(travelService.getAllTravels()).hasSize(1);
         assertThat(foundTravel.getUsers()).hasSize(1);
     }
@@ -112,7 +112,7 @@ class TravelServiceTest {
                 .build();
         travelService.updateTravel(travelId, travelUpdateRequestDto);
 
-        TravelResponseDto foundTravel = travelService.getTravelById(travelId);
+        TravelResponseDto foundTravel = travelService.getTravelById(travelId, user.getId());
         assertThat(foundTravel.getTitle()).isEqualTo(title);
         assertThat(foundTravel.getStartDate()).isEqualTo(startDate);
         assertThat(foundTravel.getEndDate()).isEqualTo(endDate);
@@ -141,7 +141,7 @@ class TravelServiceTest {
                 .build();
         Travel travel = travelService.createTravel(user.getId(), request);
         Long travelId = travel.getId();
-        TravelResponseDto foundTravel = travelService.getTravelById(travelId);
+        TravelResponseDto foundTravel = travelService.getTravelById(travelId, user.getId());
         User newUser = userService.insertUser(
                 User.builder()
                         .userType(UserType.USER)
@@ -366,68 +366,4 @@ class TravelServiceTest {
         Travel travel = travelService.createTravel(user.getId(), request);
         assertThat(travel.getTravelType()).isEqualTo(TravelType.PRIVATE);
     }
-
-    //TODO 추후 구현할 테스트케이스
-//    @Test
-//    @DisplayName("여행을 업데이트 할 수 있다.")
-//    public void update_travel() {
-//        //Given
-//        User user = userRepository.save(
-//                User.builder()
-//                        .userType(Type.USER)
-//                        .email("sophoca@ajou.ac.kr")
-//                        .name("홍성빈")
-//                        .phoneNumber("112")
-//                        .kakaoId(0L)
-//                        .build()
-//        );
-//        User user1 = userRepository.save(
-//                User.builder()
-//                        .userType(Type.USER)
-//                        .email("errander@ajou.ac.kr")
-//                        .name("이호용")
-//                        .phoneNumber("119")
-//                        .kakaoId(1L)
-//                        .build()
-//        );
-//        User user2 = userRepository.save(
-//                User.builder()
-//                        .userType(Type.USER)
-//                        .email("park@ajou.ac.kr")
-//                        .name("박상혁")
-//                        .phoneNumber("111")
-//                        .kakaoId(2L)
-//                        .build()
-//        );
-//        TravelCreateRequestDto request = TravelCreateRequestDto
-//                .builder()
-//                .userId(user.getId())
-//                .title("test")
-//                .startDate(LocalDate.now())
-//                .endDate(LocalDate.now().plusDays(1))
-//                .build();
-//        Long travelId = travelService.createTravel(user.getId(), request);
-//        Travel travel = travelRepository.findTravelWithUsersById(travelId)
-//                .orElseThrow(() -> new RecordNotFoundException(
-//                        "해당 ID의 Travel이 존재하지 않습니다."
-//                        , ErrorCode.TRAVEL_NOT_FOUND
-//                ));
-//        travelService.addUserToTravel(travelId, user1.getId());
-//        travelService.addUserToTravel(travelId, user2.getId());
-//        Place ajouUniv = placeService.insertPlace(
-//                Place.builder()
-//                        .x(4.5)
-//                        .y(5.4)
-//                        .placeUrl("ajou.ac.kr")
-//                        .placeName("아주대학교")
-//                        .addressName("원천동")
-//                        .addressRoadName("원천로")
-//                        .build());
-//        Schedule schedule = Schedule.builder()
-//                .travel(travel)
-//                .startTime(LocalDateTime.now().plusDays(2))
-//                .endTime(LocalDateTime.now().plusDays(3))
-//                .place(ajouUniv)
-//                .build();
-//    }
 }
