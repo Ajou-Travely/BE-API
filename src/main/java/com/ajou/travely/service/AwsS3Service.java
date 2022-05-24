@@ -1,5 +1,7 @@
 package com.ajou.travely.service;
 
+import com.ajou.travely.exception.ErrorCode;
+import com.ajou.travely.exception.custom.ImageTypeException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
@@ -12,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -28,30 +31,42 @@ public class AwsS3Service {
 
     private final AmazonS3 amazonS3;
 
-    public List<String> uploadFile(List<MultipartFile> files) {
-        List<String> fileNameList = new ArrayList<>();
+    public List<String> uploadFiles(List<MultipartFile> files) {
+        return files
+            .stream()
+            .map(this::uploadFile)
+            .collect(Collectors.toList());
+    }
 
-        // forEach 구문을 통해 multipartFile로 넘어온 파일들 하나씩 fileNameList에 추가
-        files.forEach(file -> {
-            if(!Objects.requireNonNull(file.getContentType()).startsWith("image")){
-                return;
-            }
-            String fileName = createFileName(file.getOriginalFilename());
-            ObjectMetadata objectMetadata = new ObjectMetadata();
-            objectMetadata.setContentLength(file.getSize());
-            objectMetadata.setContentType(file.getContentType());
+    public String uploadFile(MultipartFile file) {
+        isImage(file);
 
-            try(InputStream inputStream = file.getInputStream()) {
-                amazonS3.putObject(new PutObjectRequest(bucket, fileName, inputStream, objectMetadata)
+        String fileName = createFileName(file.getOriginalFilename());
+
+        ObjectMetadata objectMetadata = new ObjectMetadata();
+        objectMetadata.setContentLength(file.getSize());
+        objectMetadata.setContentType(file.getContentType());
+
+        try (InputStream inputStream = file.getInputStream()) {
+            amazonS3.putObject(
+                new PutObjectRequest(bucket, fileName, inputStream, objectMetadata)
                     .withCannedAcl(CannedAccessControlList.PublicRead));
-            } catch(IOException e) {
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다.");
-            }
+        } catch (IOException e) {
+            throw new ResponseStatusException(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                "파일 업로드에 실패했습니다.");
+        }
 
-            fileNameList.add(fileName);
-        });
+        return fileName;
+    }
 
-        return fileNameList;
+    private void isImage(MultipartFile file) {
+        if(!Objects.requireNonNull(file.getContentType()).startsWith("image")) {
+            throw new ImageTypeException(
+                "이미지 파일이 아닙니다.",
+                ErrorCode.INVALID_FILE_TYPE
+            );
+        }
     }
 
     public void deleteFile(String fileName) {
