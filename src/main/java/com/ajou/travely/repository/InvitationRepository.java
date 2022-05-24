@@ -8,5 +8,4 @@ import java.util.UUID;
 
 public interface InvitationRepository extends JpaRepository<Invitation, Long> {
     Optional<Invitation> findByCodeAndEmail(UUID code, String email);
-    Optional<Invitation> findByEmailAndTravelId(String email, Long travelId);
 }
