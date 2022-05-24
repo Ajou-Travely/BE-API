@@ -236,18 +236,25 @@ public class TravelService {
     }
 
     @Transactional
-    public void rejectInvitation(Long userId, UUID code) {
+    public String acceptInvitation(Long userId,
+                                   Long travelId,
+                                   UUID code) {
+        addUserToTravel(travelId, userId);
+        deleteInvitation(userId, code);
+        return "https://dev.travely.guide/" + travelId;
+    }
+
+    @Transactional
+    public void deleteInvitation(Long userId, UUID code) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RecordNotFoundException(
                         "해당 ID의 User가 존재하지 않습니다."
-                        ,ErrorCode.USER_NOT_FOUND
+                        , ErrorCode.USER_NOT_FOUND
                 ));
-        List<Invitation> all = invitationRepository.findAll();
-        Invitation invitation = invitationRepository.findByCodeAndEmail(code, user.getEmail())
+        invitationRepository.delete(invitationRepository.findByCodeAndEmail(code, user.getEmail())
                 .orElseThrow(() -> new RecordNotFoundException(
                         "해당 초대가 존재하지 않습니다.",
                         ErrorCode.INVALID_INVITATION
-                ));
-        invitationRepository.delete(invitation);
+                )));
     }
 }
