@@ -18,11 +18,11 @@ public class UserCreateRequestDto {
 
     @NotNull(message = "이메일이 필요합니다.")
     private final String email;
+//
+//    private final Sex sex;
 
-    private final Sex sex;
-
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private final LocalDate birthday;
+//    @DateTimeFormat(pattern = "yyyy-MM-dd")
+//    private final LocalDate birthday;
 
     @NotNull(message = "전화번호가 필요합니다.")
     private final String phoneNumber;
@@ -33,14 +33,14 @@ public class UserCreateRequestDto {
     @Builder
     public UserCreateRequestDto(@NonNull String name,
                                 @NonNull String email,
-                                Sex sex,
-                                LocalDate birthday,
+//                                Sex sex,
+//                                LocalDate birthday,
                                 @NonNull String phoneNumber,
                                 @NonNull Long kakaoId) {
         this.name = name;
         this.email = email;
-        this.sex = sex;
-        this.birthday = birthday;
+//        this.sex = sex;
+//        this.birthday = birthday;
         this.phoneNumber = phoneNumber;
         this.kakaoId = kakaoId;
     }
