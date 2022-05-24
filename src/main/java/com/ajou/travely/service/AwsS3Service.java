@@ -57,7 +57,11 @@ public class AwsS3Service {
                 "파일 업로드에 실패했습니다.");
         }
 
-        return fileName;
+        return getFileUrl(fileName);
+    }
+
+    private String getFileUrl(String fileName) {
+        return amazonS3.getUrl(bucket, fileName).toString();
     }
 
     private void isImage(MultipartFile file) {
