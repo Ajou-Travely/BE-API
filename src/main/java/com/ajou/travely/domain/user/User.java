@@ -53,6 +53,8 @@ public class User implements Serializable {
 
     private LocalDate birthday;
 
+    private String profilePath;
+
 //    private List<Post> posts;
 
     @Builder
@@ -62,7 +64,8 @@ public class User implements Serializable {
                 @NonNull String phoneNumber,
                 @NonNull Long kakaoId,
                 Sex sex,
-                LocalDate birthday
+                LocalDate birthday,
+                String profilePath
     ) {
         this.userType = userType;
         this.email = email;
@@ -71,5 +74,6 @@ public class User implements Serializable {
         this.kakaoId = kakaoId;
         this.sex = sex;
         this.birthday = birthday;
+        this.profilePath = profilePath;
     }
 }

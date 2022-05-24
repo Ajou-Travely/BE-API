@@ -30,11 +30,12 @@ public class UserService {
 
     public User findUserById(Long userId) {
         return userRepository
-                .findById(userId)
-                .orElseThrow(() -> new RecordNotFoundException(
-                "해당 ID의 User가 존재하지 않습니다."
-                , ErrorCode.USER_NOT_FOUND
-        ));
+            .findById(userId)
+            .orElseThrow(() ->
+                new RecordNotFoundException(
+                    "해당 ID의 User가 존재하지 않습니다.",
+                    ErrorCode.USER_NOT_FOUND
+                ));
     }
 
     public void deleteAllUsers() {
@@ -44,21 +45,23 @@ public class UserService {
     @Transactional(readOnly = true)
     public List<SimpleTravelResponseDto> getTravelsByUser(Long userId, Pageable pageable) {
         return userRepository
-                .findTravelsByUserId(userId, pageable)
-                .stream()
-                .map(SimpleTravelResponseDto::new)
-                .collect(Collectors.toList());
+            .findTravelsByUserId(userId, pageable)
+            .stream()
+            .map(SimpleTravelResponseDto::new)
+            .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     public UserResponseDto getUserById(Long userId) {
         return userRepository
-                .findById(userId)
-                .map(UserResponseDto::new)
-                .orElseThrow(() -> new RecordNotFoundException(
-                        "해당 ID의 User가 존재하지 않습니다."
-                        , ErrorCode.USER_NOT_FOUND
-                        )
-                );
+            .findById(userId)
+            .map(UserResponseDto::new)
+            .orElseThrow(() ->
+                new RecordNotFoundException(
+                    "해당 ID의 User가 존재하지 않습니다.",
+                    ErrorCode.USER_NOT_FOUND
+                )
+            );
     }
+
 }
