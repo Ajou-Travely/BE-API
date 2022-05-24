@@ -1,5 +1,6 @@
 package com.ajou.travely.domain.user;
 
+import com.ajou.travely.controller.user.dto.UserUpdateRequestDto;
 import java.io.Serializable;
 import java.time.LocalDate;
 import javax.persistence.Column;
@@ -63,15 +64,32 @@ public class User implements Serializable {
                 @NonNull String name,
                 @NonNull String phoneNumber,
                 @NonNull Long kakaoId,
+                Mbti mbti,
                 Sex sex,
                 LocalDate birthday,
                 String profilePath
-    ) {
+        ) {
         this.userType = userType;
         this.email = email;
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.kakaoId = kakaoId;
+        this.mbti = mbti;
+        this.sex = sex;
+        this.birthday = birthday;
+        this.profilePath = profilePath;
+    }
+
+    public void update(@NonNull String name,
+                    @NonNull String phoneNumber,
+                    Mbti mbti,
+                    Sex sex,
+                    LocalDate birthday,
+                    String profilePath
+    ) {
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.mbti = mbti;
         this.sex = sex;
         this.birthday = birthday;
         this.profilePath = profilePath;

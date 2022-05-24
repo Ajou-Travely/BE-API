@@ -2,6 +2,7 @@ package com.ajou.travely.service;
 
 import com.ajou.travely.controller.travel.dto.SimpleTravelResponseDto;
 import com.ajou.travely.controller.user.dto.UserResponseDto;
+import com.ajou.travely.controller.user.dto.UserUpdateRequestDto;
 import com.ajou.travely.exception.ErrorCode;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.exception.custom.RecordNotFoundException;
@@ -19,9 +20,21 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final AwsS3Service awsS3Service;
 
     public User insertUser(User user) {
         return userRepository.save(user);
+    }
+
+    public void updateUserInfo(Long userId, UserUpdateRequestDto requestDto) {
+        User user = findUserById(userId);
+        String profilePath = awsS3Service.uploadFile(requestDto.getProfileImage());
+        user.update(requestDto.getName(),
+            requestDto.getPhoneNumber(),
+            requestDto.getMbti(),
+            requestDto.getSex(),
+            requestDto.getBirthday(),
+            profilePath);
     }
 
     public List<User> getAllUsers() {
@@ -38,6 +51,11 @@ public class UserService {
                 ));
     }
 
+    @Transactional(readOnly = true)
+    public UserResponseDto getUserById(Long userId) {
+        return new UserResponseDto(findUserById(userId));
+    }
+
     public void deleteAllUsers() {
         userRepository.deleteAll();
     }
@@ -51,17 +69,6 @@ public class UserService {
             .collect(Collectors.toList());
     }
 
-    @Transactional(readOnly = true)
-    public UserResponseDto getUserById(Long userId) {
-        return userRepository
-            .findById(userId)
-            .map(UserResponseDto::new)
-            .orElseThrow(() ->
-                new RecordNotFoundException(
-                    "해당 ID의 User가 존재하지 않습니다.",
-                    ErrorCode.USER_NOT_FOUND
-                )
-            );
-    }
+
 
 }
