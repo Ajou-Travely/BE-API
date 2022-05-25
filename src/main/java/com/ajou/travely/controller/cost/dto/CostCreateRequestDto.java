@@ -30,7 +30,6 @@ public class CostCreateRequestDto {
     public CostCreateRequestDto(Long totalAmount,
                                 String title,
                                 String content,
-                                Boolean isEquallyDivided,
                                 Map<Long, Long> amountsPerUser,
                                 Long payerId) {
         this.totalAmount = totalAmount;

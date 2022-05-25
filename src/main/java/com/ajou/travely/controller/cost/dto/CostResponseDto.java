@@ -14,7 +14,6 @@ public class CostResponseDto {
     private Long totalAmount;
     private String content;
     private String title;
-    private Boolean isEquallyDivided;
     private List<UserCostResponseDto> userCosts;
     private Long payerId;
 
