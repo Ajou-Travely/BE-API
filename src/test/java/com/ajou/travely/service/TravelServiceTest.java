@@ -1,5 +1,6 @@
 package com.ajou.travely.service;
 
+import com.ajou.travely.controller.cost.dto.CostCreateRequestDto;
 import com.ajou.travely.controller.cost.dto.CostCreateResponseDto;
 import com.ajou.travely.controller.place.dto.PlaceCreateRequestDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleCreateRequestDto;
@@ -206,29 +207,29 @@ class TravelServiceTest {
         Map<Long, Long> amountPerUser1 = new HashMap<>();
         amountPerUser1.put(users.get(0).getId(), 1000L);
         amountPerUser1.put(users.get(1).getId(), 10000L);
-
+        CostCreateRequestDto requestDto1 = CostCreateRequestDto.builder()
+                .totalAmount(11000L)
+                .title("TestTitle")
+                .content("안녕난이거야")
+                .amountsPerUser(amountPerUser1)
+                .payerId(users.get(0).getId())
+                .build();
         CostCreateResponseDto createdCost1 = costService.createCost(
-                11000L,
-                travelId,
-                "TestTitle",
-                "안녕난이거야",
-                false,
-                amountPerUser1,
-                users.get(0).getId()
+                requestDto1, travelId
         );
 
         Map<Long, Long> amountPerUser2 = new HashMap<>();
         amountPerUser2.put(users.get(2).getId(), 10000L);
         amountPerUser2.put(users.get(3).getId(), 10000L);
-
+        CostCreateRequestDto requestDto2 = CostCreateRequestDto.builder()
+                .totalAmount(20000L)
+                .title("SecondTitle")
+                .content("안녕난그거야")
+                .amountsPerUser(amountPerUser2)
+                .payerId(users.get(2).getId())
+                .build();
         CostCreateResponseDto createdCost2 = costService.createCost(
-                20000L,
-                travelId,
-                "SecondTitle",
-                "안녕난그거야",
-                true,
-                amountPerUser2,
-                users.get(2).getId()
+                requestDto2, travelId
         );
         List<SimpleCostResponseDto> costsByTravelId = travelService.getCostsByTravelId(travelId);
 

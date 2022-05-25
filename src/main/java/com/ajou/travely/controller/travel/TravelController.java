@@ -168,13 +168,7 @@ public class TravelController {
     public CostCreateResponseDto createCost(@Valid @RequestBody CostCreateRequestDto costCreateRequestDto,
                                             @PathVariable Long travelId) {
         return costService.createCost(
-                costCreateRequestDto.getTotalAmount(),
-                costCreateRequestDto.getTravelId(),
-                costCreateRequestDto.getTitle(),
-                costCreateRequestDto.getContent(),
-                costCreateRequestDto.getIsEquallyDivided(),
-                costCreateRequestDto.getAmountsPerUser(),
-                costCreateRequestDto.getPayerId()
+                costCreateRequestDto, travelId
         );
     }
 

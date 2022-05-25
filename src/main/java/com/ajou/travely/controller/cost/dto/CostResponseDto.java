@@ -23,7 +23,6 @@ public class CostResponseDto {
         this.totalAmount = entity.getTotalAmount();
         this.content = entity.getContent();
         this.title = entity.getTitle();
-        this.isEquallyDivided = entity.getIsEquallyDivided();
         this.userCosts = entity.getUserCosts().stream().map(userCost -> {
             return new UserCostResponseDto(
                     userCost.getId(),
