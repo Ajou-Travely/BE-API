@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.Optional;
 
 @RestController
@@ -26,7 +27,7 @@ public class AuthController {
     }
 
     @PostMapping("/v1/login")
-    public String login(@RequestBody EmailPasswordInputDto emailPasswordInputDto) {
+    public String login(@Valid @RequestBody EmailPasswordInputDto emailPasswordInputDto) {
         return authService.login(emailPasswordInputDto);
     }
 }
