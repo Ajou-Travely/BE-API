@@ -25,7 +25,7 @@ public class AuthController {
         return authService.kakaoAuthentication(origin, code);
     }
 
-    @GetMapping("/v1/login")
+    @PostMapping("/v1/login")
     public String login(@RequestBody EmailPasswordInputDto emailPasswordInputDto) {
         return authService.login(emailPasswordInputDto);
     }
