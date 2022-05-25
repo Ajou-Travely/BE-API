@@ -58,16 +58,6 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    @GetMapping("/travels")
-    public ResponseEntity<Page<SimpleTravelResponseDto>> showTravelsByUser(
-            @LoginUser SessionUser sessionUser,
-            @PageableDefault(
-                sort = "id",
-                direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<SimpleTravelResponseDto> travels =  userService.getTravelsByUser(sessionUser.getUserId(), pageable);
-        return ResponseEntity.ok(travels);
-    }
-
     @GetMapping("/friends")
     public ResponseEntity<List<SimpleUserInfoDto>> showFriends(@LoginUser SessionUser sessionUser) {
         return ResponseEntity.ok(userService.getFriends(sessionUser.getUserId()));
