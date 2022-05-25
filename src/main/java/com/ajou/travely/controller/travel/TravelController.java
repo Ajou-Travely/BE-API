@@ -173,13 +173,13 @@ public class TravelController {
         );
     }
 
-    @PatchMapping("/{costId}")
+    @PutMapping("/{travelId}/costs/{costId}")
     public ResponseEntity<Void> updateCost(@PathVariable Long costId, CostUpdateDto costUpdateDto) {
         this.costService.updateCostById(costId, costUpdateDto);
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/{costId}")
+    @DeleteMapping("/{travelId}/costs/{costId}")
     public ResponseEntity<Void> deleteCost(@PathVariable Long costId) {
         this.costService.deleteCostById(costId);
         return ResponseEntity.ok().build();
