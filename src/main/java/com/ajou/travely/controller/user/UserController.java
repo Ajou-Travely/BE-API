@@ -54,20 +54,6 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    @GetMapping("/travels")
-    public ResponseEntity<ResponseWithPagination<SimpleTravelResponseDto>> showTravelsByUser(
-            @LoginUser SessionUser sessionUser,
-            @RequestParam(value = "page", required = false) Integer page,
-            @RequestParam(value = "size", required = false) Integer size
-    ) {
-        page = page == null ? 0 : page;
-        size = size == null ? 10 : size;
-        PageRequest pageRequest = PageRequest.of(page, size);
-        List<SimpleTravelResponseDto> travels = userService.getTravelsByUser(sessionUser.getUserId(), pageRequest);
-        ResponseWithPagination<SimpleTravelResponseDto> paged = new ResponseWithPagination<>(page, size, travels);
-        return ResponseEntity.ok(paged);
-    }
-
     @GetMapping("/friends")
     public ResponseEntity<List<SimpleUserInfoDto>> showFriends(@LoginUser SessionUser sessionUser) {
         return ResponseEntity.ok(userService.getFriends(sessionUser.getUserId()));
