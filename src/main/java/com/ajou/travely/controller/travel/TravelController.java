@@ -146,6 +146,13 @@ public class TravelController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/{travelId}/change")
+    public ResponseEntity<Void> changeScheduleOrder(@PathVariable Long travelId,
+                                                    ScheduleOrderUpdateRequestDto requestDto) {
+        travelService.changeScheduleOrder(travelId, requestDto);
+        return ResponseEntity.ok().build();
+    }
+
     // Costs
 
     @GetMapping("/{travelId}/costs")
@@ -174,21 +181,17 @@ public class TravelController {
     }
 
     @PutMapping("/{travelId}/costs/{costId}")
-    public ResponseEntity<Void> updateCost(@PathVariable Long costId, CostUpdateDto costUpdateDto) {
+    public ResponseEntity<Void> updateCost(@PathVariable Long travelId,
+                                           @PathVariable Long costId,
+                                           CostUpdateDto costUpdateDto) {
         this.costService.updateCostById(costId, costUpdateDto);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{travelId}/costs/{costId}")
-    public ResponseEntity<Void> deleteCost(@PathVariable Long costId) {
+    public ResponseEntity<Void> deleteCost(@PathVariable Long travelId,
+                                           @PathVariable Long costId) {
         this.costService.deleteCostById(costId);
-        return ResponseEntity.ok().build();
-    }
-
-    @PostMapping("/{travelId}/change")
-    public ResponseEntity<Void> changeScheduleOrder(@PathVariable Long travelId,
-                                                    ScheduleOrderUpdateRequestDto requestDto) {
-        travelService.changeScheduleOrder(travelId, requestDto);
         return ResponseEntity.ok().build();
     }
 }
