@@ -6,9 +6,9 @@ auth:
 
 spring:
   datasource:
-    url: jdbc:mariadb://${DATABASE_HOST:localhost}:${DATABASE_PORT:3306}/${DATABASE_NAME:travely}
+    url: jdbc:mariadb://${DATABASE_HOST:localhost}:${DATABASE_PORT:3306}/${DATABASE_NAME:travely}?allowPublicKeyRetrieval=true&useSSL=false
     username: ${DATABASE_USERNAME:root}
-    password: ${DATABASE_PASSWORD:password}
+    password: ${DATABASE_PASSWORD:ajoulee1214}
     driver-class-name: org.mariadb.jdbc.Driver
   # swagger setting
   mvc:

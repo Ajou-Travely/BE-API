@@ -40,7 +40,7 @@ public class AuthService {
         Optional<User> res = userRepository.findByEmail(emailPasswordInputDto.getEmail());
         if (res.isPresent()) {
             User user = res.get();
-            if (user.getPassword() != emailPasswordInputDto.getPassword()) {
+            if (!user.getPassword().equals(emailPasswordInputDto.getPassword())) {
                 result.put("status", 400);
                 result.put("message", "비밀번호가 틀렸습니다.");
 
