@@ -92,7 +92,6 @@ public class User implements Serializable {
                     Mbti mbti,
                     Sex sex,
                     LocalDate birthday,
-                    String password,
                     String profilePath
     ) {
         this.name = name;
@@ -100,7 +99,6 @@ public class User implements Serializable {
         this.mbti = mbti;
         this.sex = sex;
         this.birthday = birthday;
-        this.password = password;
         this.profilePath = profilePath;
     }
 }
