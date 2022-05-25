@@ -6,10 +6,16 @@ import com.ajou.travely.controller.schedule.dto.ScheduleCreateRequestDto;
 import com.ajou.travely.controller.schedule.dto.SimpleScheduleResponseDto;
 import com.ajou.travely.controller.travel.dto.*;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
+import com.ajou.travely.domain.Invitation;
+import com.ajou.travely.domain.Place;
+import com.ajou.travely.domain.UserTravel;
 import com.ajou.travely.domain.travel.Travel;
 import com.ajou.travely.domain.travel.TravelType;
 import com.ajou.travely.domain.user.UserType;
 import com.ajou.travely.domain.user.User;
+import com.ajou.travely.repository.InvitationRepository;
+import com.ajou.travely.repository.UserTravelRepository;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +53,15 @@ class TravelServiceTest {
 
     @Autowired
     PlaceService placeService;
+
+    @Autowired
+    InvitationRepository invitationRepository;
+
+    @Autowired
+    InvitationService invitationService;
+
+    @Autowired
+    UserTravelRepository userTravelRepository;
 
     @Test
     @DisplayName("여행 객체를 만들 수 있다.")
@@ -367,6 +382,89 @@ class TravelServiceTest {
         assertThat(travel.getTravelType()).isEqualTo(TravelType.PRIVATE);
     }
 
+    @Test
+    @DisplayName("여행 초대를 승락할 수 있다.")
+    void testAcceptInvitation() {
+        User user = userService.insertUser(
+                User.builder()
+                        .userType(UserType.USER)
+                        .email("sophoca@ajou.ac.kr")
+                        .name("홍성빈")
+                        .phoneNumber("112")
+                        .kakaoId(0L)
+                        .build()
+        );
+        User invitedUser = userService.insertUser(
+                User.builder()
+                        .userType(UserType.USER)
+                        .email("hooo0503@ajou.ac.kr")
+                        .name("박상혁")
+                        .phoneNumber("113")
+                        .kakaoId(1L)
+                        .build()
+        );
+        TravelCreateRequestDto request = TravelCreateRequestDto
+                .builder()
+                .title("test")
+                .startDate(LocalDate.now())
+                .endDate(LocalDate.now().plusDays(1))
+                .userEmails(new ArrayList<>())
+                .build();
+        Travel travel = travelService.createTravel(user.getId(), request);
+        UUID code = UUID.randomUUID();
+        Invitation invitation = invitationService.insertInvitation(
+                new Invitation(invitedUser.getEmail(), travel, code)
+        );
+
+        String redirectUri = travelService.acceptInvitation(invitedUser.getId(), travel.getId(), code);
+        List<UserTravel> userTravelList = userTravelRepository.findAll();
+        Optional<Invitation> deletedInvitation = invitationRepository.findById(invitation.getId());
+
+        Assertions.assertThat(redirectUri).isEqualTo("https://dev.travely.guide/" + travel.getId());
+        Assertions.assertThat(userTravelList.get(1).getUser().getId()).isEqualTo(invitedUser.getId());
+        Assertions.assertThat(userTravelList.get(1).getTravel().getId()).isEqualTo(travel.getId());
+        Assertions.assertThat(deletedInvitation.isEmpty()).isEqualTo(true);
+    }
+
+    @Test
+    @DisplayName("여행 초대를 거절할 수 있다.")
+    void testRejectInvitaion() {
+        User user = userService.insertUser(
+                User.builder()
+                        .userType(UserType.USER)
+                        .email("sophoca@ajou.ac.kr")
+                        .name("홍성빈")
+                        .phoneNumber("112")
+                        .kakaoId(0L)
+                        .build()
+        );
+        User invitedUser = userService.insertUser(
+                User.builder()
+                        .userType(UserType.USER)
+                        .email("hooo0503@ajou.ac.kr")
+                        .name("박상혁")
+                        .phoneNumber("113")
+                        .kakaoId(1L)
+                        .build()
+        );
+        TravelCreateRequestDto request = TravelCreateRequestDto
+                .builder()
+                .title("test")
+                .startDate(LocalDate.now())
+                .endDate(LocalDate.now().plusDays(1))
+                .userEmails(new ArrayList<>())
+                .build();
+        Travel travel = travelService.createTravel(user.getId(), request);
+        UUID code = UUID.randomUUID();
+        Invitation invitation = invitationService.insertInvitation(
+                new Invitation(invitedUser.getEmail(), travel, code)
+        );
+
+        travelService.rejectInvitation(invitedUser.getId(), code);
+        Optional<Invitation> foundInvitation = invitationRepository.findById(invitation.getId());
+
+        Assertions.assertThat(foundInvitation.isEmpty()).isEqualTo(true);
+    }
     //TODO 추후 구현할 테스트케이스
 //    @Test
 //    @DisplayName("여행을 업데이트 할 수 있다.")
