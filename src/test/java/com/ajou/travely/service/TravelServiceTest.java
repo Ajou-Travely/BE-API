@@ -14,6 +14,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.annotation.Rollback;
 
@@ -288,6 +289,7 @@ class TravelServiceTest {
 
     @Test
     void testPagination() {
+        // given
         User user = userService.insertUser(
                 User.builder()
                         .userType(UserType.USER)
@@ -307,15 +309,42 @@ class TravelServiceTest {
                     .build();
             travelService.createTravel(user.getId(), request);
         }
+
+        // when
         PageRequest pageRequest0 = PageRequest.of(0, 3);
         PageRequest pageRequest1 = PageRequest.of(1, 3);
         PageRequest pageRequest2 = PageRequest.of(2, 3);
-        List<SimpleTravelResponseDto> travels0 = userService.getTravelsByUser(user.getId(), pageRequest0);
-        List<SimpleTravelResponseDto> travels1 = userService.getTravelsByUser(user.getId(), pageRequest1);
-        List<SimpleTravelResponseDto> travels2 = userService.getTravelsByUser(user.getId(), pageRequest2);
-        assertThat(travels0).hasSize(3);
-        assertThat(travels1).hasSize(3);
-        assertThat(travels2).hasSize(1);
+        Page<SimpleTravelResponseDto> travels0 = userService.getTravelsByUser(user.getId(), pageRequest0);
+        Page<SimpleTravelResponseDto> travels1 = userService.getTravelsByUser(user.getId(), pageRequest1);
+        Page<SimpleTravelResponseDto> travels2 = userService.getTravelsByUser(user.getId(), pageRequest2);
+
+        // then
+        assertThat(travels0.getTotalElements()).isEqualTo(7);
+        assertThat(travels0.getTotalPages()).isEqualTo(3);
+
+        assertThat(travels0.isFirst()).isEqualTo(true);
+        assertThat(travels0.isLast()).isEqualTo(false);
+        assertThat(travels0.getSize()).isEqualTo(3);
+        assertThat(travels0.getNumberOfElements()).isEqualTo(3);
+        assertThat(travels0.getPageable().getPageNumber()).isEqualTo(0);
+
+        assertThat(travels1.getTotalElements()).isEqualTo(7);
+        assertThat(travels1.getTotalPages()).isEqualTo(3);
+
+        assertThat(travels1.isFirst()).isEqualTo(false);
+        assertThat(travels1.isLast()).isEqualTo(false);
+        assertThat(travels2.getSize()).isEqualTo(3);
+        assertThat(travels1.getNumberOfElements()).isEqualTo(3);
+        assertThat(travels1.getPageable().getPageNumber()).isEqualTo(1);
+
+        assertThat(travels2.getTotalElements()).isEqualTo(7);
+        assertThat(travels2.getTotalPages()).isEqualTo(3);
+
+        assertThat(travels2.isFirst()).isEqualTo(false);
+        assertThat(travels2.isLast()).isEqualTo(true);
+        assertThat(travels2.getSize()).isEqualTo(3);
+        assertThat(travels2.getNumberOfElements()).isEqualTo(1);
+        assertThat(travels2.getPageable().getPageNumber()).isEqualTo(2);
     }
 
     @Test
