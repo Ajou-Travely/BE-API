@@ -2,7 +2,6 @@ package com.ajou.travely.controller.travel;
 
 import com.ajou.travely.config.auth.LoginUser;
 import com.ajou.travely.config.auth.SessionUser;
-import com.ajou.travely.controller.common.ResponseWithPagination;
 import com.ajou.travely.controller.cost.dto.CostCreateRequestDto;
 import com.ajou.travely.controller.cost.dto.CostCreateResponseDto;
 import com.ajou.travely.controller.cost.dto.CostResponseDto;
@@ -19,7 +18,10 @@ import com.ajou.travely.service.ScheduleService;
 import com.ajou.travely.service.TravelService;
 import com.ajou.travely.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,17 +52,13 @@ public class TravelController {
     }
 
     @GetMapping("/travels")
-    public ResponseEntity<ResponseWithPagination<SimpleTravelResponseDto>> showTravelsByUser(
+    public ResponseEntity<Page<SimpleTravelResponseDto>> showTravelsByUser(
             @LoginUser SessionUser sessionUser,
-            @RequestParam(value = "page", required = false) Integer page,
-            @RequestParam(value = "size", required = false) Integer size
-    ) {
-        page = page == null ? 0 : page;
-        size = size == null ? 10 : size;
-        PageRequest pageRequest = PageRequest.of(page, size);
-        List<SimpleTravelResponseDto> travels = userService.getTravelsByUser(sessionUser.getUserId(), pageRequest);
-        ResponseWithPagination<SimpleTravelResponseDto> paged = new ResponseWithPagination<>(page, size, travels);
-        return ResponseEntity.ok(paged);
+            @PageableDefault(
+                    sort = "id",
+                    direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<SimpleTravelResponseDto> travels =  userService.getTravelsByUser(sessionUser.getUserId(), pageable);
+        return ResponseEntity.ok(travels);
     }
 
     @GetMapping("/{travelId}")

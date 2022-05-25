@@ -11,7 +11,11 @@ import com.ajou.travely.controller.user.dto.UserUpdateRequestDto;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
