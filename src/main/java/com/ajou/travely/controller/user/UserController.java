@@ -6,6 +6,7 @@ import com.ajou.travely.controller.common.ResponseWithPagination;
 import com.ajou.travely.controller.travel.dto.SimpleTravelResponseDto;
 import com.ajou.travely.controller.user.dto.UserCreateRequestDto;
 import com.ajou.travely.controller.user.dto.UserResponseDto;
+import com.ajou.travely.controller.user.dto.UserUpdateRequestDto;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,18 @@ public class UserController {
 
     @GetMapping("")
     public List<UserResponseDto> getAllUsers() {
-        return userService.getAllUsers().stream().map(UserResponseDto::new).collect(Collectors.toList());
+        return userService.getAllUsers().stream()
+            .map(UserResponseDto::new)
+            .collect(Collectors.toList());
+    }
+
+    @PatchMapping("")
+    public ResponseEntity<Void> updateUser(
+            @LoginUser SessionUser sessionUser,
+            @Valid UserUpdateRequestDto requestDto
+    ) {
+        userService.updateUser(sessionUser.getUserId(), requestDto);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/signup")
