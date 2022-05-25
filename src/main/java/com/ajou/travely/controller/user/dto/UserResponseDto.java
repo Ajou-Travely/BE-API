@@ -14,18 +14,18 @@ public class UserResponseDto {
 
     private final String email;
 
-    private final Sex sex;
+//    private final Sex sex;
 
     private final String phoneNumber;
 
-    private final LocalDate birthday;
+//    private final LocalDate birthday;
 
     public UserResponseDto(User entity) {
         this.userId = entity.getId();
         this.name = entity.getName();
         this.email = entity.getEmail();
-        this.sex = entity.getSex();
+//        this.sex = entity.getSex();
         this.phoneNumber = entity.getPhoneNumber();
-        this.birthday = entity.getBirthday();
+//        this.birthday = entity.getBirthday();
     }
 }

@@ -5,6 +5,7 @@ import com.ajou.travely.domain.user.Sex;
 import com.ajou.travely.domain.user.User;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -12,25 +13,26 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Getter
+@NoArgsConstructor
 public class UserCreateRequestDto {
     @NotNull(message = "이름이 필요합니다.")
-    private final String name;
+    private String name;
 
     @NotNull(message = "이메일이 필요합니다.")
-    private final String email;
+    private String email;
 
-    private final String password;
+    private String password;
 //
-//    private final Sex sex;
+//    private Sex sex;
 
 //    @DateTimeFormat(pattern = "yyyy-MM-dd")
-//    private final LocalDate birthday;
+//    private LocalDate birthday;
 
     @NotNull(message = "전화번호가 필요합니다.")
-    private final String phoneNumber;
+    private String phoneNumber;
 
 //    @NotNull(message = "카카오 아이디가 필요합니다.")
-    private final Long kakaoId;
+    private Long kakaoId;
 
     @Builder
     public UserCreateRequestDto(@NonNull String name,
