@@ -72,21 +72,25 @@ public class TravelService {
     }
 
     @Transactional
-    public void inviteUserToTravel(Long travelId, TravelInviteRequestDto travelInviteRequestDto) {
-        // TODO email 검증
-        UUID code = UUID.randomUUID();
-        String text = frontDomain + "invite/accept/" + code;
-        customMailSender.sendInvitationEmail(
-            travelInviteRequestDto.getEmail(),
-            text
-        );
-        invitationRepository.save(
-            new Invitation(
-                travelInviteRequestDto.getEmail(),
-                checkTravelRecord(travelId),
-                code
-            )
-        );
+    public void inviteUserToTravel(Long travelId, TravelInviteRequestDto requestDto) {
+        Travel travel = checkTravelRecord(travelId);
+        invitationRepository.findByTravelAndEmail(
+            travel, requestDto.getEmail())
+            .orElseGet(() -> {
+                UUID code = UUID.randomUUID();
+                String text = frontDomain + "invite/accept/" + code;
+                customMailSender.sendInvitationEmail(
+                    requestDto.getEmail(),
+                    text
+                );
+                return invitationRepository.save(
+                    new Invitation(
+                        requestDto.getEmail(),
+                        travel,
+                        code
+                    )
+                );
+            });
     }
 
     @Transactional
@@ -101,7 +105,7 @@ public class TravelService {
     }
 
     @Transactional
-    public Long addUserToTravelWithValidation(Long userId, UUID code) {
+    public void addUserToTravelWithValidation(Long userId, UUID code) {
         User user = checkUserRecord(userId);
         Invitation invitation = checkInvitationRecord(code, user.getEmail());
         Travel travel = checkTravelRecord(invitation.getTravel().getId());
@@ -112,7 +116,6 @@ public class TravelService {
             .travel(travel)
             .build();
         userTravelRepository.save(userTravel);
-        return travel.getId();
     }
 
     @Transactional
@@ -144,11 +147,8 @@ public class TravelService {
 
     @Transactional
     public List<SimpleUserInfoDto> getSimpleUsersOfTravel(Long travelId) {
-        Travel travel = checkTravelRecord(travelId);
-        return travel
-            .getUserTravels()
+        return getUsersOfTravel(travelId)
             .stream()
-            .map(UserTravel::getUser)
             .map(SimpleUserInfoDto::new)
             .collect(Collectors.toList());
     }
