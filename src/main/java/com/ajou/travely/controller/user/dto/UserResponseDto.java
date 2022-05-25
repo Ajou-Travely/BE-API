@@ -20,6 +20,8 @@ public class UserResponseDto {
 
     private final LocalDate birthday;
 
+    private final String profilePath;
+
     public UserResponseDto(User entity) {
         this.userId = entity.getId();
         this.name = entity.getName();
@@ -27,5 +29,6 @@ public class UserResponseDto {
         this.sex = entity.getSex();
         this.phoneNumber = entity.getPhoneNumber();
         this.birthday = entity.getBirthday();
+        this.profilePath = entity.getProfilePath();
     }
 }

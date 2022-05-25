@@ -26,6 +26,6 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
         User user = principal.getUser();
-        return new SessionUser(user.getId(), user.getName());
+        return new SessionUser(user.getId(), user.getName(), user.getProfilePath());
     }
 }

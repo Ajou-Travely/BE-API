@@ -28,10 +28,7 @@ public class CostResponseDto {
             return new UserCostResponseDto(
                     userCost.getId(),
                     userCost.getAmount(),
-                    new SimpleUserInfoDto(
-                            userCost.getUser().getId(),
-                            userCost.getUser().getName()
-                    ),
+                    new SimpleUserInfoDto(userCost.getUser()),
                     userCost.getIsRequested()
             );
         }).collect(Collectors.toList());

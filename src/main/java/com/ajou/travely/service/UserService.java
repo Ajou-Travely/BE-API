@@ -2,6 +2,7 @@ package com.ajou.travely.service;
 
 import com.ajou.travely.controller.travel.dto.SimpleTravelResponseDto;
 import com.ajou.travely.controller.user.dto.UserResponseDto;
+import com.ajou.travely.controller.user.dto.UserUpdateRequestDto;
 import com.ajou.travely.exception.ErrorCode;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.exception.custom.RecordNotFoundException;
@@ -19,9 +20,24 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final AwsS3Service awsS3Service;
 
     public User insertUser(User user) {
         return userRepository.save(user);
+    }
+
+    public void updateUser(Long userId, UserUpdateRequestDto requestDto) {
+        User user = findUserById(userId);
+        String profilePath = requestDto.getProfileImage() == null
+            ? null
+            : awsS3Service.uploadFile(requestDto.getProfileImage());
+
+        user.update(requestDto.getName(),
+            requestDto.getPhoneNumber(),
+            requestDto.getMbti(),
+            requestDto.getSex(),
+            requestDto.getBirthday(),
+            profilePath);
     }
 
     public List<User> getAllUsers() {
@@ -30,11 +46,17 @@ public class UserService {
 
     public User findUserById(Long userId) {
         return userRepository
-                .findById(userId)
-                .orElseThrow(() -> new RecordNotFoundException(
-                "해당 ID의 User가 존재하지 않습니다."
-                , ErrorCode.USER_NOT_FOUND
-        ));
+            .findById(userId)
+            .orElseThrow(() ->
+                new RecordNotFoundException(
+                    "해당 ID의 User가 존재하지 않습니다.",
+                    ErrorCode.USER_NOT_FOUND
+                ));
+    }
+
+    @Transactional(readOnly = true)
+    public UserResponseDto getUserById(Long userId) {
+        return new UserResponseDto(findUserById(userId));
     }
 
     public void deleteAllUsers() {
@@ -44,21 +66,12 @@ public class UserService {
     @Transactional(readOnly = true)
     public List<SimpleTravelResponseDto> getTravelsByUser(Long userId, Pageable pageable) {
         return userRepository
-                .findTravelsByUserId(userId, pageable)
-                .stream()
-                .map(SimpleTravelResponseDto::new)
-                .collect(Collectors.toList());
+            .findTravelsByUserId(userId, pageable)
+            .stream()
+            .map(SimpleTravelResponseDto::new)
+            .collect(Collectors.toList());
     }
 
-    @Transactional(readOnly = true)
-    public UserResponseDto getUserById(Long userId) {
-        return userRepository
-                .findById(userId)
-                .map(UserResponseDto::new)
-                .orElseThrow(() -> new RecordNotFoundException(
-                        "해당 ID의 User가 존재하지 않습니다."
-                        , ErrorCode.USER_NOT_FOUND
-                        )
-                );
-    }
+
+
 }
