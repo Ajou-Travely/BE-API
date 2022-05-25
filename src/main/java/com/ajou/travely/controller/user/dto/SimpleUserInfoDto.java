@@ -16,10 +16,4 @@ public class SimpleUserInfoDto {
         this.userName = entity.getName();
         this.profilePath = entity.getProfilePath();
     }
-
-    public SimpleUserInfoDto(Long userId, String userName, String profilePath) {
-        this.userId = userId;
-        this.userName = userName;
-        this.profilePath = profilePath;
-    }
 }
