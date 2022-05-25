@@ -148,7 +148,7 @@ public class ScheduleService {
 
     private Place createOrFindPlace(PlaceCreateRequestDto request) {
         return placeRepository.findByKakaoMapId(request.getKakaoMapId())
-                .orElse(placeRepository.save(Place
+                .orElseGet(() -> placeRepository.save(Place
                         .builder()
                         .kakaoMapId(request.getKakaoMapId())
                         .placeUrl(request.getPlaceUrl())
