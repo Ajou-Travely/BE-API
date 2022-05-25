@@ -113,34 +113,8 @@ public class UserService {
     public void requestFollowing(Long userId, Long targetId) {
         User user = checkRecord(userId);
         User target = checkRecord(targetId);
-        Optional<Friend> isExcept = friendRepository.findByFolloweeAndFollower(user, target);
-        if (isExcept.isPresent()) {
-            if (isExcept.get().getIsFriend()) {
-                throw new DuplicatedRequestException(
-                        "해당 user와 이미 친구 상태입니다.",
-                        ErrorCode.ALREADY_FRIEND
-                );
-            } else {
-                throw new DuplicatedRequestException(
-                        "해당 user에게 이미 친구 요청을 보냈습니다.",
-                        ErrorCode.ALREADY_REQUESTED
-                );
-            }
-        }
-        Optional<Friend> isExceptReverse = friendRepository.findByFolloweeAndFollower(target, user);
-        if (isExceptReverse.isPresent()) {
-            if (isExceptReverse.get().getIsFriend()) {
-                throw new DuplicatedRequestException(
-                        "해당 user와 이미 친구 상태입니다.",
-                        ErrorCode.ALREADY_FRIEND
-                );
-            } else {
-                throw new DuplicatedRequestException(
-                        "해당 user로부터 이미 친구 요청이 와있습니다.",
-                        ErrorCode.ALREADY_REQUESTED
-                );
-            }
-        }
+        checkDuplicatedRequest(user, target, false);
+        checkDuplicatedRequest(target, user, true);
         friendRepository.save(new Friend(user, target));
     }
 
@@ -160,5 +134,25 @@ public class UserService {
                                 , ErrorCode.USER_NOT_FOUND
                         )
                 );
+    }
+
+    private void checkDuplicatedRequest(User user, User target, Boolean isReverse) {
+        String msg = isReverse
+                ? "해당 user로부터 이미 친구 요청이 와있습니다."
+                : "해당 user에게 이미 친구 요청을 보냈습니다.";
+        Optional<Friend> isExcept = friendRepository.findByFolloweeAndFollower(user, target);
+        if (isExcept.isPresent()) {
+            if (isExcept.get().getIsFriend()) {
+                throw new DuplicatedRequestException(
+                        "해당 user와 이미 친구 상태입니다.",
+                        ErrorCode.ALREADY_FRIEND
+                );
+            } else {
+                throw new DuplicatedRequestException(
+                        msg,
+                        ErrorCode.ALREADY_REQUESTED
+                );
+            }
+        }
     }
 }
