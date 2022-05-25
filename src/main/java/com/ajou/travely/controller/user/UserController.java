@@ -32,10 +32,10 @@ public class UserController {
             .collect(Collectors.toList());
     }
 
-    @PatchMapping("")
+    @PatchMapping(value = "", consumes = "multipart/form-data")
     public ResponseEntity<Void> updateUser(
             @LoginUser SessionUser sessionUser,
-            @Valid UserUpdateRequestDto requestDto
+            @Valid @ModelAttribute UserUpdateRequestDto requestDto
     ) {
         userService.updateUser(sessionUser.getUserId(), requestDto);
         return ResponseEntity.ok().build();
