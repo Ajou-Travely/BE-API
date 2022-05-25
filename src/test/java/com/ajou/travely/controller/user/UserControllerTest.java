@@ -52,6 +52,5 @@ class UserControllerTest {
     public void authorizationTestWithoutAnyRole() throws Exception {
         mvc.perform(get("/v1/users"))
                 .andExpect(status().is4xxClientError());
-
     }
 }

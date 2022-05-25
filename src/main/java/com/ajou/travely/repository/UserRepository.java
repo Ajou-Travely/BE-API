@@ -25,4 +25,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("select t from Travel t join t.userTravels ut join ut.user u where u.id = :userId")
     Page<Travel> findTravelsByUserId(@Param("userId") Long userId, Pageable pageable);
+
+    Optional<User> findByEmail(String email);
 }
