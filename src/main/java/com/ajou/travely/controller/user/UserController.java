@@ -32,7 +32,7 @@ public class UserController {
             .collect(Collectors.toList());
     }
 
-    @PatchMapping(value = "", consumes = "multipart/form-data")
+    @PutMapping(value = "", consumes = "multipart/form-data")
     public ResponseEntity<Void> updateUser(
             @LoginUser SessionUser sessionUser,
             @Valid @ModelAttribute UserUpdateRequestDto requestDto
