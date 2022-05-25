@@ -8,6 +8,7 @@ import com.ajou.travely.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -27,7 +28,8 @@ public class AuthController {
     }
 
     @PostMapping("/v1/login")
-    public JSONObject login(@Valid @RequestBody EmailPasswordInputDto emailPasswordInputDto) {
-        return authService.login(emailPasswordInputDto);
+    public ResponseEntity<JSONObject> login(@Valid @RequestBody EmailPasswordInputDto emailPasswordInputDto) {
+        JSONObject result = authService.login(emailPasswordInputDto);
+        return ResponseEntity.ok(result);
     }
 }
