@@ -28,7 +28,10 @@ public class UserService {
 
     public void updateUser(Long userId, UserUpdateRequestDto requestDto) {
         User user = findUserById(userId);
-        String profilePath = awsS3Service.uploadFile(requestDto.getProfileImage());
+        String profilePath = requestDto.getProfileImage() == null
+            ? null
+            : awsS3Service.uploadFile(requestDto.getProfileImage());
+
         user.update(requestDto.getName(),
             requestDto.getPhoneNumber(),
             requestDto.getMbti(),
