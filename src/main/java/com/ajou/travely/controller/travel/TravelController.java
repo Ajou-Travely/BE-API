@@ -13,7 +13,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -47,15 +49,6 @@ public class TravelController {
     @GetMapping("/{travelId}")
     public ResponseEntity<TravelResponseDto> showAllTravels(@PathVariable Long travelId) {
         return ResponseEntity.ok(travelService.getTravelById(travelId));
-    }
-
-    @PostMapping("/accept/{code}")
-    public ResponseEntity<Long> addUserToTravel(@LoginUser SessionUser sessionUser, @PathVariable UUID code) {
-        return ResponseEntity
-                .ok(
-                        travelService
-                                .addUserToTravelWithValidation(sessionUser.getUserId()
-                                        , code));
     }
 
     @GetMapping("/{travelId}/costs")
@@ -97,5 +90,22 @@ public class TravelController {
     @GetMapping("/{travelId}/users")
     public ResponseEntity<List<SimpleUserInfoDto>> showUsersByTravelId(@PathVariable Long travelId) {
         return ResponseEntity.ok(travelService.getSimpleUsersOfTravel(travelId));
+    }
+
+    @GetMapping("/{travelId}/accept/{code}")
+    public void acceptInvitation(
+            @LoginUser SessionUser sessionUser,
+            @PathVariable Long travelId,
+            @PathVariable UUID code,
+            HttpServletResponse response) throws IOException {
+        String redirectUri = travelService.acceptInvitation(sessionUser.getUserId(), travelId, code);
+        response.sendRedirect(redirectUri);
+    }
+
+    @GetMapping("/reject/{code}")
+    public ResponseEntity<Void> rejectInvitation(@LoginUser SessionUser sessionUser,
+                                                 @PathVariable UUID code) {
+        travelService.rejectInvitation(sessionUser.getUserId(), code);
+        return ResponseEntity.ok().build();
     }
 }

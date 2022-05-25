@@ -1,6 +1,5 @@
 package com.ajou.travely.service;
 
-import com.ajou.travely.controller.photo.dto.SimplePhotoResponseDto;
 import com.ajou.travely.domain.Photo;
 import com.ajou.travely.domain.Post;
 import com.ajou.travely.repository.PhotoRepository;
@@ -30,7 +29,7 @@ public class PhotoService {
 
     public List<Photo> createPhotos(Post post, List<MultipartFile> photos) {
         return photoRepository.saveAll(
-            s3Service.uploadFile(photos)
+            s3Service.uploadFiles(photos)
                 .stream()
                 .map(photoName -> new Photo(post, photoName))
                 .collect(Collectors.toList())

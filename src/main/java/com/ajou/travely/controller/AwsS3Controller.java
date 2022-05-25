@@ -28,7 +28,7 @@ public class AwsS3Controller {
     @ApiOperation(value = "Amazon S3에 파일 업로드", notes = "Amazon S3에 파일 업로드 ")
     @PostMapping("/file")
     public ResponseEntity<List<String>> uploadFile(@ApiParam(value="파일들(여러 파일 업로드 가능)", required = true) @RequestPart List<MultipartFile> multipartFile) {
-        return ResponseEntity.ok(awsS3Service.uploadFile(multipartFile));
+        return ResponseEntity.ok(awsS3Service.uploadFiles(multipartFile));
     }
 
     /**

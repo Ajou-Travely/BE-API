@@ -27,6 +27,7 @@ public class UserCreateRequestDto {
 
 //    @DateTimeFormat(pattern = "yyyy-MM-dd")
 //    private LocalDate birthday;
+    private Sex sex;
 
     @NotNull(message = "전화번호가 필요합니다.")
     private String phoneNumber;
