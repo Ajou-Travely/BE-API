@@ -7,6 +7,7 @@ import com.ajou.travely.domain.*;
 import com.ajou.travely.domain.travel.Travel;
 import com.ajou.travely.exception.ErrorCode;
 import com.ajou.travely.domain.user.User;
+import com.ajou.travely.exception.custom.DuplicatedRequestException;
 import com.ajou.travely.exception.custom.RecordNotFoundException;
 import com.ajou.travely.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -74,8 +75,16 @@ public class TravelService {
     @Transactional
     public void inviteUserToTravel(Long travelId, TravelInviteRequestDto requestDto) {
         Travel travel = checkTravelRecord(travelId);
-        invitationRepository.findByTravelAndEmail(
-            travel, requestDto.getEmail())
+        if (getUsersOfTravel(travelId).stream()
+            .map(User::getEmail)
+            .collect(Collectors.toList())
+            .contains(requestDto.getEmail())) {
+            throw new DuplicatedRequestException(
+                "이미 여행에 초대된 사용자입니다.",
+                ErrorCode.ALREADY_REQUESTED
+            );
+        }
+        invitationRepository.findByTravelAndEmail(travel, requestDto.getEmail())
             .orElseGet(() -> {
                 UUID code = UUID.randomUUID();
                 String text = frontDomain + "invite/accept/" + code;
