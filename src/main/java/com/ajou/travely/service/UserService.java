@@ -4,6 +4,7 @@ import com.ajou.travely.controller.travel.dto.SimpleTravelResponseDto;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.controller.user.dto.UserResponseDto;
 import com.ajou.travely.domain.Friend;
+import com.ajou.travely.controller.user.dto.UserUpdateRequestDto;
 import com.ajou.travely.exception.ErrorCode;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.exception.custom.DuplicatedRequestException;
@@ -24,11 +25,26 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final AwsS3Service awsS3Service;
 
     private final FriendRepository friendRepository;
 
     public User insertUser(User user) {
         return userRepository.save(user);
+    }
+
+    public void updateUser(Long userId, UserUpdateRequestDto requestDto) {
+        User user = findUserById(userId);
+        String profilePath = requestDto.getProfileImage() == null
+            ? null
+            : awsS3Service.uploadFile(requestDto.getProfileImage());
+
+        user.update(requestDto.getName(),
+            requestDto.getPhoneNumber(),
+            requestDto.getMbti(),
+            requestDto.getSex(),
+            requestDto.getBirthday(),
+            profilePath);
     }
 
     public List<User> getAllUsers() {
@@ -46,10 +62,10 @@ public class UserService {
     @Transactional(readOnly = true)
     public List<SimpleTravelResponseDto> getTravelsByUser(Long userId, Pageable pageable) {
         return userRepository
-                .findTravelsByUserId(userId, pageable)
-                .stream()
-                .map(SimpleTravelResponseDto::new)
-                .collect(Collectors.toList());
+            .findTravelsByUserId(userId, pageable)
+            .stream()
+            .map(SimpleTravelResponseDto::new)
+            .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
