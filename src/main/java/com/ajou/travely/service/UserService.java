@@ -36,15 +36,15 @@ public class UserService {
     public void updateUser(Long userId, UserUpdateRequestDto requestDto) {
         User user = findUserById(userId);
         String profilePath = requestDto.getProfileImage() == null
-            ? null
-            : awsS3Service.uploadFile(requestDto.getProfileImage());
+                ? null
+                : awsS3Service.uploadFile(requestDto.getProfileImage());
 
         user.update(requestDto.getName(),
-            requestDto.getPhoneNumber(),
-            requestDto.getMbti(),
-            requestDto.getSex(),
-            requestDto.getBirthday(),
-            profilePath);
+                requestDto.getPhoneNumber(),
+                requestDto.getMbti(),
+                requestDto.getSex(),
+                requestDto.getBirthday(),
+                profilePath);
     }
 
     public List<User> getAllUsers() {
@@ -62,10 +62,10 @@ public class UserService {
     @Transactional(readOnly = true)
     public List<SimpleTravelResponseDto> getTravelsByUser(Long userId, Pageable pageable) {
         return userRepository
-            .findTravelsByUserId(userId, pageable)
-            .stream()
-            .map(SimpleTravelResponseDto::new)
-            .collect(Collectors.toList());
+                .findTravelsByUserId(userId, pageable)
+                .stream()
+                .map(SimpleTravelResponseDto::new)
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
