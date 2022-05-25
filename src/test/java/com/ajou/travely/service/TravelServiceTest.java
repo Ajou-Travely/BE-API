@@ -460,7 +460,7 @@ class TravelServiceTest {
                 new Invitation(invitedUser.getEmail(), travel, code)
         );
 
-        travelService.deleteInvitation(invitedUser.getId(), code);
+        travelService.rejectInvitation(invitedUser.getId(), code);
         Optional<Invitation> foundInvitation = invitationRepository.findById(invitation.getId());
 
         Assertions.assertThat(foundInvitation.isEmpty()).isEqualTo(true);

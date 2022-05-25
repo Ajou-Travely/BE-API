@@ -51,15 +51,6 @@ public class TravelController {
         return ResponseEntity.ok(travelService.getTravelById(travelId));
     }
 
-    @PostMapping("/accept/{code}")
-    public ResponseEntity<Long> addUserToTravel(@LoginUser SessionUser sessionUser, @PathVariable UUID code) {
-        return ResponseEntity
-                .ok(
-                        travelService
-                                .addUserToTravelWithValidation(sessionUser.getUserId()
-                                        , code));
-    }
-
     @GetMapping("/{travelId}/costs")
     public ResponseEntity<List<SimpleCostResponseDto>> showCostsByTravelId(@PathVariable Long travelId) {
         return ResponseEntity.ok(travelService.getCostsByTravelId(travelId));
@@ -114,7 +105,7 @@ public class TravelController {
     @GetMapping("/reject/{code}")
     public ResponseEntity<Void> rejectInvitation(@LoginUser SessionUser sessionUser,
                                                  @PathVariable UUID code) {
-        travelService.deleteInvitation(sessionUser.getUserId(), code);
+        travelService.rejectInvitation(sessionUser.getUserId(), code);
         return ResponseEntity.ok().build();
     }
 }

@@ -253,13 +253,12 @@ public class TravelService {
     public String acceptInvitation(Long userId,
                                    Long travelId,
                                    UUID code) {
-        addUserToTravel(travelId, userId);
-        deleteInvitation(userId, code);
+        addUserToTravelWithValidation(userId, code);
         return "https://dev.travely.guide/" + travelId;
     }
 
     @Transactional
-    public void deleteInvitation(Long userId, UUID code) {
+    public void rejectInvitation(Long userId, UUID code) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RecordNotFoundException(
                         "해당 ID의 User가 존재하지 않습니다."
