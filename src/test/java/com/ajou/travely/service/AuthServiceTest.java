@@ -88,11 +88,11 @@ class AuthServiceTest {
 
         Assertions.assertThat(token).isNotNull();
         Assertions.assertThat(principal.getUser().getId()).isEqualTo(user.getId());
-        Assertions.assertThatThrownBy(() -> {
-            authService.login(new EmailPasswordInputDto("wrong@email.com", password));
-        }).isInstanceOf(RecordNotFoundException.class).hasMessageContaining("이메일");
-        Assertions.assertThatThrownBy(() -> {
-            authService.login(new EmailPasswordInputDto(email, "invalid_password"));
-        }).isInstanceOf(RecordNotFoundException.class).hasMessageContaining("비밀번호");
+        Assertions.assertThat(
+                authService.login(new EmailPasswordInputDto("wrong@email.com", password)).get("status")
+        ).isEqualTo(400);
+        Assertions.assertThat(
+                authService.login(new EmailPasswordInputDto(email, "invalid_password")).get("status")
+        ).isEqualTo(400);
     }
 }

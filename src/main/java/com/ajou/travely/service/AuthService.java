@@ -12,6 +12,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -32,22 +35,25 @@ public class AuthService {
     }
 
     public JSONObject login(EmailPasswordInputDto emailPasswordInputDto) {
-        User user = userRepository.findByEmail(emailPasswordInputDto.getEmail())
-                .orElseThrow(() -> new RecordNotFoundException(
-                        "해당 이메일을 가진 사용자를 찾을 수 없습니다.",
-                        ErrorCode.USER_NOT_FOUND
-                ));
-        if (user.getPassword() != emailPasswordInputDto.getPassword()) {
-            throw new RecordNotFoundException(
-                    "비밀번호가 틀렸습니다.",
-                    ErrorCode.INVALID_PASSWORD
-            );
-        }
-
-        String token = jwtTokenProvider.createToken(user.getId());
         JSONObject result = new JSONObject();
-        result.put("status", 200);
-        result.put("token", token);
+
+        Optional<User> res = userRepository.findByEmail(emailPasswordInputDto.getEmail());
+        if (res.isPresent()) {
+            User user = res.get();
+            if (user.getPassword() != emailPasswordInputDto.getPassword()) {
+                result.put("status", 400);
+                result.put("message", "비밀번호가 틀렸습니다.");
+
+                return result;
+            }
+            String token = jwtTokenProvider.createToken(user.getId());
+            result.put("status", 200);
+            result.put("token", token);
+
+            return result;
+        }
+        result.put("status", 400);
+        result.put("message", "해당 이메일을 가진 사용자를 찾을 수 없습니다.");
 
         return result;
     }
