@@ -1,14 +1,21 @@
 package com.ajou.travely.service;
 
+import com.ajou.travely.controller.auth.dto.EmailPasswordInputDto;
+import com.ajou.travely.domain.user.CustomUserDetails;
 import com.ajou.travely.domain.user.UserType;
 import com.ajou.travely.domain.user.User;
+import com.ajou.travely.exception.custom.RecordNotFoundException;
 import com.ajou.travely.repository.UserRepository;
+import org.assertj.core.api.Assertions;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.test.annotation.Rollback;
 
 import javax.transaction.Transactional;
@@ -32,10 +39,11 @@ class AuthServiceTest {
     private UserRepository userRepository;
     @Autowired
     private AuthService authService;
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
 
     @Test
-    @DisplayName("Jwt 토큰 생성하기")
-    @Rollback
+    @DisplayName("카카오 로그인을 통한 Jwt 토큰 생성하기")
     void getUserId() {
         JSONObject userInfoFromKakao = new JSONObject();
         JSONObject kakao_account = new JSONObject();
@@ -57,5 +65,33 @@ class AuthServiceTest {
 
         assertThat(result.get("status")).isEqualTo(200);
         assertThat(result.get("token")).isNotNull();
+    }
+
+    @Test
+    @DisplayName("이메일과 비밀번호를 통해 Jwt 토큰 생성하기")
+    void testLogin() throws ParseException {
+        String email = "test@test.com";
+        String password = "password";
+
+        User user = userRepository.save(User.builder()
+                .userType(UserType.USER)
+                .email(email)
+                .name("test")
+                .phoneNumber("01011112222")
+                .password(password)
+                .build());
+
+        String token = authService.login(new EmailPasswordInputDto(email, password));
+        UsernamePasswordAuthenticationToken authentication = (UsernamePasswordAuthenticationToken) jwtTokenProvider.getAuthentication(token);
+        CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
+
+        Assertions.assertThat(token).isNotNull();
+        Assertions.assertThat(principal.getUser().getId()).isEqualTo(user.getId());
+        Assertions.assertThatThrownBy(() -> {
+            authService.login(new EmailPasswordInputDto("wrong@email.com", password));
+        }).isInstanceOf(RecordNotFoundException.class).hasMessageContaining("이메일");
+        Assertions.assertThatThrownBy(() -> {
+            authService.login(new EmailPasswordInputDto(email, "invalid_password"));
+        }).isInstanceOf(RecordNotFoundException.class).hasMessageContaining("비밀번호");
     }
 }

@@ -7,8 +7,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @RequiredArgsConstructor
@@ -27,7 +25,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                     .authorizeRequests()
-                        .antMatchers("/", "/v1/oauth2/authorization/kakao", "/v1/users/signup").permitAll()
+                        .antMatchers("/", "/v1/oauth2/authorization/kakao", "/v1/users/signup", "/v1/login").permitAll()
                         .antMatchers("/swagger*/**", "/v3/api-docs/**").permitAll()
                         .antMatchers("/v1/**").hasAnyRole("USER", "ADMIN")
                 .and()
