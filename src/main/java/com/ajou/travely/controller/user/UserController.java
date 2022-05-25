@@ -10,7 +10,11 @@ import com.ajou.travely.controller.user.dto.UserUpdateRequestDto;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,16 +58,13 @@ public class UserController {
     }
 
     @GetMapping("/travels")
-    public ResponseEntity<ResponseWithPagination<SimpleTravelResponseDto>> showTravelsByUser(
+    public ResponseEntity<Page<SimpleTravelResponseDto>> showTravelsByUser(
             @LoginUser SessionUser sessionUser,
-            @RequestParam(value = "page", required = false) Integer page,
-            @RequestParam(value = "size", required = false) Integer size
-            ) {
-        page = page == null ? 0 : page;
-        size = size == null ? 10 : size;
-        PageRequest pageRequest = PageRequest.of(page, size);
-        List<SimpleTravelResponseDto> travels =  userService.getTravelsByUser(sessionUser.getUserId(), pageRequest);
-        ResponseWithPagination<SimpleTravelResponseDto> paged = new ResponseWithPagination<>(page, size, travels);
-        return ResponseEntity.ok(paged);
+            @PageableDefault(
+                size = 12,
+                sort = "id",
+                direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<SimpleTravelResponseDto> travels =  userService.getTravelsByUser(sessionUser.getUserId(), pageable);
+        return ResponseEntity.ok(travels);
     }
 }

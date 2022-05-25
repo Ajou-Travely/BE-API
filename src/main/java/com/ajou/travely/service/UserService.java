@@ -8,6 +8,7 @@ import com.ajou.travely.domain.user.User;
 import com.ajou.travely.exception.custom.RecordNotFoundException;
 import com.ajou.travely.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,14 +65,10 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public List<SimpleTravelResponseDto> getTravelsByUser(Long userId, Pageable pageable) {
+    public Page<SimpleTravelResponseDto> getTravelsByUser(Long userId, Pageable pageable) {
         return userRepository
             .findTravelsByUserId(userId, pageable)
-            .stream()
-            .map(SimpleTravelResponseDto::new)
-            .collect(Collectors.toList());
+            .map(SimpleTravelResponseDto::new);
     }
-
-
 
 }

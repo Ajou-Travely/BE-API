@@ -2,6 +2,7 @@ package com.ajou.travely.repository;
 
 import com.ajou.travely.domain.travel.Travel;
 import com.ajou.travely.domain.user.User;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -23,5 +24,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findUsersByTravelId(@Param("travelId") Long travelId);
 
     @Query("select t from Travel t join t.userTravels ut join ut.user u where u.id = :userId")
-    List<Travel> findTravelsByUserId(@Param("userId") Long userId, Pageable pageable);
+    Page<Travel> findTravelsByUserId(@Param("userId") Long userId, Pageable pageable);
 }
