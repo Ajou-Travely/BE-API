@@ -27,7 +27,7 @@ public class AuthController {
     }
 
     @PostMapping("/v1/login")
-    public String login(@Valid @RequestBody EmailPasswordInputDto emailPasswordInputDto) {
+    public JSONObject login(@Valid @RequestBody EmailPasswordInputDto emailPasswordInputDto) {
         return authService.login(emailPasswordInputDto);
     }
 }

@@ -81,7 +81,8 @@ class AuthServiceTest {
                 .password(password)
                 .build());
 
-        String token = authService.login(new EmailPasswordInputDto(email, password));
+        JSONObject result = authService.login(new EmailPasswordInputDto(email, password));
+        String token = (String) result.get("token");
         UsernamePasswordAuthenticationToken authentication = (UsernamePasswordAuthenticationToken) jwtTokenProvider.getAuthentication(token);
         CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
 
