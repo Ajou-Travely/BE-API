@@ -107,8 +107,7 @@ class CostServiceTest {
         Assertions.assertThat(costCreateResponseDto.getTotalAmount()).isEqualTo(30000L);
         Assertions.assertThat(costCreateResponseDto.getTravel().getId()).isEqualTo(travel.getId());
         Assertions.assertThat(costCreateResponseDto.getPayer().getId()).isEqualTo(user1.getId());
-        Assertions.assertThat(costCreateResponseDto.getUserCosts().get(0).getUser().getKakaoId())
-            .isEqualTo(0L);
+        Assertions.assertThat(costCreateResponseDto.getUserCosts().size()).isEqualTo(amountPerUser.keySet().size());
     }
 
     @Test
