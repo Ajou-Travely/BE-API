@@ -47,6 +47,7 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: hooo0503@gmail.com
+    password: ${MAIL_SECRET_KEY:secret}
     properties:
       mail:
         smtp:
@@ -57,6 +58,7 @@ spring:
           connectiontimeout: 5000
           timeout: 5000
           writetimeout: 5000
+
 
 logging:
   level:
