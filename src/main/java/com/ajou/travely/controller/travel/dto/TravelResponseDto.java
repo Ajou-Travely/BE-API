@@ -3,16 +3,14 @@ package com.ajou.travely.controller.travel.dto;
 import com.ajou.travely.controller.schedule.dto.SimpleScheduleResponseDto;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.domain.Schedule;
+import com.ajou.travely.domain.UserTravel;
 import com.ajou.travely.domain.travel.Travel;
 import com.ajou.travely.domain.travel.TravelType;
+import lombok.Getter;
+
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import com.ajou.travely.domain.UserTravel;
-import lombok.Getter;
 
 @Getter
 public class TravelResponseDto {
@@ -45,14 +43,6 @@ public class TravelResponseDto {
                 .stream()
                 .map(SimpleScheduleResponseDto::new)
                 .collect(Collectors.toList());
-        if (entity.getScheduleOrder().isEmpty()) {
-            this.scheduleOrder = new ArrayList<>();
-        } else {
-            this.scheduleOrder = Arrays
-                    .stream(entity.getScheduleOrder().split(","))
-                    .map(Long::valueOf)
-                    .collect(Collectors.toList());
-        }
-
+        this.scheduleOrder = entity.getScheduleOrder();
     }
 }

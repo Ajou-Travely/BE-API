@@ -50,11 +50,7 @@ public class ScheduleService {
 
     @Transactional
     public Long createSchedule(Long travelId, ScheduleCreateRequestDto scheduleCreateRequestDto) {
-        Travel travel = travelRepository.findById(travelId)
-                .orElseThrow(() -> new RecordNotFoundException(
-                        "해당 ID의 Travel이 존재하지 않습니다."
-                        , ErrorCode.TRAVEL_NOT_FOUND
-                ));
+        Travel travel = checkTravelRecord(travelId);
         Place place = createOrFindPlace(scheduleCreateRequestDto.getPlace());
         Schedule schedule = scheduleRepository.save(
                 Schedule.builder()
@@ -64,13 +60,9 @@ public class ScheduleService {
                         .endTime(scheduleCreateRequestDto.getEndTime())
                         .build()
         );
+        travel.getScheduleOrder().add(schedule.getId());
         scheduleCreateRequestDto.getUserIds().forEach(id -> {
-            User user = userRepository.findById(id).orElseThrow(
-                    () -> new RecordNotFoundException(
-                            "해당 ID의 User가 존재하지 않습니다."
-                            , ErrorCode.USER_NOT_FOUND
-                    )
-            );
+            User user = checkUserRecord(id);
             schedule.addUser(branchRepository.save(new Branch(user, schedule)));
         });
         return schedule.getId();
@@ -78,11 +70,7 @@ public class ScheduleService {
 
     @Transactional
     public void updateSchedule(Long scheduleId, ScheduleUpdateRequestDto scheduleUpdateRequestDto) {
-        Schedule schedule = scheduleRepository.findById(scheduleId)
-                .orElseThrow(() -> new RecordNotFoundException(
-                        "해당 ID의 Schedule이 존재하지 않습니다."
-                        , ErrorCode.SCHEDULE_NOT_FOUND
-                ));
+        Schedule schedule = checkScheduleRecord(scheduleId);
         Map<Long, User> currentUsers = new HashMap<>();
         schedule.getTravel()
                 .getUserTravels()
@@ -106,12 +94,7 @@ public class ScheduleService {
         inUserIds.removeAll(outUserIds);
         outUserIds.removeAll(inUserIds);
         inUserIds.forEach(id -> {
-            User user = Optional.ofNullable(currentUsers.get(id)).orElseThrow(
-                    () -> new RecordNotFoundException(
-                            "해당 ID의 User가 존재하지 않습니다."
-                            , ErrorCode.USER_NOT_FOUND
-                    )
-            );
+            User user = checkUserRecord(id);
             branchRepository.save(new Branch(user, schedule));
         });
         outUserIds.forEach(id -> {
@@ -133,17 +116,42 @@ public class ScheduleService {
 
     @Transactional
     public ScheduleResponseDto getScheduleById(Long scheduleId) {
-        Schedule schedule = scheduleRepository.findScheduleWithPlaceByScheduleId(scheduleId)
-                .orElseThrow(() -> new RecordNotFoundException(
-                        "해당 ID의 Schedule이 존재하지 않습니다."
-                        , ErrorCode.SCHEDULE_NOT_FOUND
-                ));
+        Schedule schedule = checkScheduleRecord(scheduleId);
         return new ScheduleResponseDto(schedule);
     }
 
     @Transactional
     public void deleteAllSchedules() {
         scheduleRepository.deleteAll();
+    }
+
+    private Travel checkTravelRecord(Long travelId) {
+        return checkRecord(
+                travelRepository.findById(travelId),
+                "해당 ID의 Travel이 존재하지 않습니다.",
+                ErrorCode.TRAVEL_NOT_FOUND
+        );
+    }
+
+    private Schedule checkScheduleRecord(Long scheduleId) {
+        return checkRecord(
+                scheduleRepository.findById(scheduleId),
+                "해당 ID의 Schedule이 존재하지 않습니다.",
+                ErrorCode.SCHEDULE_NOT_FOUND
+        );
+    }
+
+    private User checkUserRecord(Long userId) {
+        return checkRecord(
+                userRepository.findById(userId),
+                "해당 ID의 User가 존재하지 않습니다.",
+                ErrorCode.USER_NOT_FOUND
+        );
+    }
+
+    private <T> T checkRecord(Optional<T> record, String message, ErrorCode code) {
+        return record.orElseThrow(() ->
+                new RecordNotFoundException(message, code));
     }
 
     private Place createOrFindPlace(PlaceCreateRequestDto request) {

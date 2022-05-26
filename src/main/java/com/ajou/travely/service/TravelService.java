@@ -199,7 +199,6 @@ public class TravelService {
     @Transactional(readOnly = true)
     public List<SimpleCostResponseDto> getCostsByTravelId(Long travelId) {
         List<Cost> costs = costRepository.findCostsByTravelId(travelId);
-
         return costs
             .stream()
             .map(SimpleCostResponseDto::new)
@@ -208,6 +207,7 @@ public class TravelService {
 
     @Transactional(readOnly = true)
     public List<SimpleScheduleResponseDto> getSchedulesByTravelId(Long travelId) {
+        Travel travel = checkTravelRecord(travelId);
         return travelRepository
             .findSchedulesWithPlaceByTravelId(travelId)
             .stream()
