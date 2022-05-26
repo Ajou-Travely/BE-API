@@ -88,10 +88,9 @@ public class TravelController {
     @GetMapping("/accept/{code}")
     public void acceptInvitation(
             @LoginUser SessionUser sessionUser,
-            @PathVariable Long travelId,
             @PathVariable UUID code,
             HttpServletResponse response) throws IOException {
-        String redirectUri = travelService.acceptInvitation(sessionUser.getUserId(), travelId, code);
+        String redirectUri = travelService.acceptInvitation(sessionUser.getUserId(), code);
         response.sendRedirect(redirectUri);
     }
 

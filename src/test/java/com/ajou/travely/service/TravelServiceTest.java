@@ -445,7 +445,7 @@ class TravelServiceTest {
                 new Invitation(invitedUser.getEmail(), travel, code)
         );
 
-        String redirectUri = travelService.acceptInvitation(invitedUser.getId(), travel.getId(), code);
+        String redirectUri = travelService.acceptInvitation(invitedUser.getId(), code);
         List<UserTravel> userTravelList = userTravelRepository.findAll();
         Optional<Invitation> deletedInvitation = invitationRepository.findById(invitation.getId());
 
