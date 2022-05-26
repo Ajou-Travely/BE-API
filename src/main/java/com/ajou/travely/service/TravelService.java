@@ -135,7 +135,7 @@ public class TravelService {
     }
 
     @Transactional
-    public void addUserToTravelWithValidation(Long userId, UUID code) {
+    public Long addUserToTravelWithValidation(Long userId, UUID code) {
         User user = checkUserRecord(userId);
         Invitation invitation = checkInvitationRecord(code, user.getEmail());
         Travel travel = checkTravelRecord(invitation.getTravel().getId());
@@ -146,6 +146,7 @@ public class TravelService {
             .travel(travel)
             .build();
         userTravelRepository.save(userTravel);
+        return travel.getId();
     }
 
     @Transactional
@@ -225,9 +226,9 @@ public class TravelService {
     }
 
     @Transactional
-    public String acceptInvitation(Long userId, Long travelId, UUID code) {
-        addUserToTravelWithValidation(userId, code);
-        return "https://dev.travely.guide/" + travelId;
+    public String acceptInvitation(Long userId, UUID code) {
+        Long travelId = addUserToTravelWithValidation(userId, code);
+        return baseUrl + travelId;
     }
 
     @Transactional
