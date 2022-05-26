@@ -44,13 +44,6 @@ public class TravelController {
 
     private final UserService userService;
 
-    //Travels
-
-//    @GetMapping()
-//    public List<SimpleTravelResponseDto> showAllTravels() {
-//        return travelService.getAllTravels();
-//    }
-
     @GetMapping()
     public ResponseEntity<Page<SimpleTravelResponseDto>> showTravelsByUser(
             @LoginUser SessionUser sessionUser,
@@ -68,15 +61,13 @@ public class TravelController {
 
     @PostMapping()
     public ResponseEntity<Long> createTravel(@LoginUser SessionUser sessionUser,
-                                             @Valid @RequestBody TravelCreateRequestDto travelCreateRequestDto) {
+                                             @Valid @RequestBody TravelCreateRequestDto requestDto) {
         System.out.println("sessionUser.getUserId() = " + sessionUser.getUserId());
         Travel travel = travelService.createTravel(
-                sessionUser.getUserId()
-                , travelCreateRequestDto
+            sessionUser.getUserId(),
+            requestDto
         );
-        travelCreateRequestDto.getUserEmails().forEach(
-                email -> travelService.inviteUserToTravelWithNoValidation(travel, email)
-        );
+        travelService.inviteUserToTravelWithNoValidation(travel, requestDto.getUserEmails());
         return ResponseEntity.ok(travel.getId());
     }
 
@@ -113,7 +104,7 @@ public class TravelController {
 
     @GetMapping("/{travelId}/users")
     public ResponseEntity<List<SimpleUserInfoDto>> showUsersByTravel(@PathVariable Long travelId) {
-        return ResponseEntity.ok(travelService.getSimpleUsersOfTravel(travelId));
+        return ResponseEntity.ok(travelService.getSimpleUsersInfoOfTravel(travelId));
     }
 
     // Schedules

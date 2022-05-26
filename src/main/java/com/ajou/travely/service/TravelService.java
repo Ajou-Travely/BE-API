@@ -3,13 +3,16 @@ package com.ajou.travely.service;
 import com.ajou.travely.controller.schedule.dto.SimpleScheduleResponseDto;
 import com.ajou.travely.controller.travel.dto.*;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
+import com.ajou.travely.controller.user.dto.UserResponseDto;
 import com.ajou.travely.domain.*;
 import com.ajou.travely.domain.travel.Travel;
 import com.ajou.travely.exception.ErrorCode;
 import com.ajou.travely.domain.user.User;
+import com.ajou.travely.exception.custom.DuplicatedRequestException;
 import com.ajou.travely.exception.custom.RecordNotFoundException;
 import com.ajou.travely.repository.*;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +23,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 public class TravelService {
+
     private final TravelRepository travelRepository;
 
     private final UserRepository userRepository;
@@ -32,8 +36,8 @@ public class TravelService {
 
     private final CustomMailSender customMailSender;
 
-    @Value("${domains.front-domain}")
-    private String frontDomain;
+    @Value("${domain.base-url}")
+    private String baseUrl;
 
     @Transactional
     public Travel insertTravel(Travel travel) {
@@ -42,21 +46,19 @@ public class TravelService {
 
     @Transactional
     public Travel createTravel(Long userId, TravelCreateRequestDto travelCreateRequestDto) {
-        User user = userRepository
-                .findById(userId)
-                .orElseThrow(() -> new RecordNotFoundException(
-                        "해당 ID의 User가 존재하지 않습니다."
-                        , ErrorCode.USER_NOT_FOUND
-                ));
+        User user = checkUserRecord(userId);
         Travel travel = travelRepository.save(
-                Travel.builder()
-                        .title(travelCreateRequestDto.getTitle())
-                        .startDate(travelCreateRequestDto.getStartDate())
-                        .endDate(travelCreateRequestDto.getEndDate())
-                        .managerId(userId)
-                        .travelType(travelCreateRequestDto.getTravelType())
-                        .build());
-        UserTravel userTravel = UserTravel.builder().user(user).travel(travel).build();
+            Travel.builder()
+                .title(travelCreateRequestDto.getTitle())
+                .startDate(travelCreateRequestDto.getStartDate())
+                .endDate(travelCreateRequestDto.getEndDate())
+                .managerId(userId)
+                .travelType(travelCreateRequestDto.getTravelType())
+                .build());
+        UserTravel userTravel = UserTravel.builder()
+            .user(user)
+            .travel(travel)
+            .build();
         userTravelRepository.save(userTravel);
         travel.addUserTravel(userTravel);
         travelRepository.save(travel);
@@ -65,141 +67,127 @@ public class TravelService {
 
     @Transactional
     public List<SimpleTravelResponseDto> getAllTravels() {
-        return travelRepository.
-                findAll().
-                stream().
-                map(SimpleTravelResponseDto::new).
-                collect(Collectors.toList());
+        return travelRepository
+            .findAll()
+            .stream()
+            .map(SimpleTravelResponseDto::new)
+            .collect(Collectors.toList());
     }
 
     @Transactional
-    public void inviteUserToTravel(Long travelId, TravelInviteRequestDto travelInviteRequestDto) {
-        Travel travel = travelRepository
-                .findById(travelId)
-                .orElseThrow(() -> new RecordNotFoundException(
-                        "해당 ID의 Travel이 존재하지 않습니다."
-                        , ErrorCode.TRAVEL_NOT_FOUND
-                ));
-        // TODO email 검증
+    public void inviteUserToTravel(Long travelId, TravelInviteRequestDto requestDto) {
+        Travel travel = checkTravelRecord(travelId);
+        checkAlreadyInvitedUsers(travelId, requestDto.getEmail());
+        checkAlreadyParticipatedUsers(travelId, requestDto.getEmail());
+
         UUID code = UUID.randomUUID();
-        String text = frontDomain + "invite/accept/" + code;
+        String text = baseUrl + "invite/accept/" + code;
         customMailSender.sendInvitationEmail(
-                travelInviteRequestDto.getEmail(),
-                text
+            requestDto.getEmail(),
+            text
         );
-        invitationRepository
-                .save(
-                        new Invitation(
-                                travelInviteRequestDto
-                                        .getEmail()
-                                , travel
-                                , code
-                        )
-                );
+        invitationRepository.save(
+            new Invitation(
+                requestDto.getEmail(),
+                travel,
+                code
+            )
+        );
+
+    }
+
+    private void checkAlreadyInvitedUsers(Long travelId, String userEmail) {
+        if (getUsersOfTravel(travelId).stream()
+            .map(User::getEmail)
+            .collect(Collectors.toList())
+            .contains(userEmail)
+        ) {
+            throw new DuplicatedRequestException(
+                "이미 여행에 초대된 사용자입니다.",
+                ErrorCode.ALREADY_REQUESTED
+            );
+        }
+    }
+
+    private void checkAlreadyParticipatedUsers(Long travelId, String userEmail) {
+        if (invitationRepository.findByTravelIdAndEmail(travelId, userEmail)
+            .isPresent()) {
+            throw new DuplicatedRequestException(
+                "이미 여행에 참가 중인 사용자입니다.",
+                ErrorCode.ALREADY_REQUESTED
+            );
+        }
     }
 
     @Transactional
-    public void inviteUserToTravelWithNoValidation(Travel travel, String email) {
-        // TODO email 검증
-        UUID code = UUID.randomUUID();
-        String text = frontDomain + "invite/accept/" + code;
-        customMailSender.sendInvitationEmail(
-                email,
-                text
-        );
-        invitationRepository
-                .save(
-                        new Invitation(
-                                email
-                                , travel
-                                , code
-                        )
-                );
+    public void inviteUserToTravelWithNoValidation(Travel travel, List<String> userEmails) {
+        List<String> validEmails = userEmails.stream()
+            .distinct()
+            .collect(Collectors.toList());
+        validEmails.forEach(email -> {
+            UUID code = UUID.randomUUID();
+            String text = baseUrl + "invite/accept/" + code;
+            customMailSender.sendInvitationEmail(email, text);
+            invitationRepository.save(
+                new Invitation(email, travel, code)
+            );
+        });
     }
 
     @Transactional
-    public Long addUserToTravelWithValidation(Long userId, UUID code) {
-        User user = userRepository
-                .findById(userId)
-                .orElseThrow(() -> new RecordNotFoundException(
-                        "해당 ID의 User 존재하지 않습니다."
-                        , ErrorCode.USER_NOT_FOUND
-                ));
-        Invitation invitation = invitationRepository
-                .findByCodeAndEmail(code, user.getEmail())
-                .orElseThrow(() -> new RecordNotFoundException(
-                        "잘못된 초대 링크입니다."
-                        , ErrorCode.INVALID_INVITATION
-                ));
-        Travel travel = travelRepository
-                .findById(invitation.getTravel().getId())
-                .orElseThrow(() -> new RecordNotFoundException(
-                        "해당 ID의 Travel이 존재하지 않습니다."
-                        , ErrorCode.TRAVEL_NOT_FOUND
-                ));
+    public void addUserToTravelWithValidation(Long userId, UUID code) {
+        User user = checkUserRecord(userId);
+        Invitation invitation = checkInvitationRecord(code, user.getEmail());
+        Travel travel = checkTravelRecord(invitation.getTravel().getId());
+
         invitationRepository.deleteById(invitation.getId());
-        UserTravel userTravel = UserTravel.builder().user(user).travel(travel).build();
+        UserTravel userTravel = UserTravel.builder()
+            .user(user)
+            .travel(travel)
+            .build();
         userTravelRepository.save(userTravel);
-        return travel.getId();
     }
 
     @Transactional
     public void addUserToTravel(Long travelId, Long userId) {
-        Travel travel = travelRepository
-                .findById(travelId)
-                .orElseThrow(() -> new RecordNotFoundException(
-                        "해당 ID의 Travel이 존재하지 않습니다."
-                        , ErrorCode.TRAVEL_NOT_FOUND
-                ));
-        User user = userRepository
-                .findById(userId)
-                .orElseThrow(() -> new RecordNotFoundException(
-                        "해당 ID의 User 존재하지 않습니다."
-                        , ErrorCode.USER_NOT_FOUND
-                ));
-        UserTravel userTravel = UserTravel.builder().user(user).travel(travel).build();
+        UserTravel userTravel = UserTravel.builder()
+            .user(checkUserRecord(userId))
+            .travel(checkTravelRecord(travelId))
+            .build();
         userTravelRepository.save(userTravel);
     }
 
     @Transactional
     public TravelResponseDto getTravelById(Long travelId) {
-        Travel travel = travelRepository
-                .findById(travelId)
-                .orElseThrow(() -> new RecordNotFoundException(
-                        "해당 ID의 Travel이 존재하지 않습니다."
-                        , ErrorCode.TRAVEL_NOT_FOUND
-                ));
-        List<Schedule> schedules = travelRepository.findSchedulesWithPlaceByTravelId(travel.getId());
+        Travel travel = checkTravelRecord(travelId);
+        List<Schedule> schedules = travelRepository
+            .findSchedulesWithPlaceByTravelId(travel.getId());
         return new TravelResponseDto(travel, schedules);
     }
 
-    @Transactional
-    public List<User> getUsersOfTravel(Long travelId) {
-        return travelRepository
-                .findById(travelId)
-                .orElseThrow(() -> new RecordNotFoundException(
-                        "해당 ID의 Travel이 존재하지 않습니다."
-                        , ErrorCode.TRAVEL_NOT_FOUND
-                ))
-                .getUserTravels()
-                .stream()
-                .map(UserTravel::getUser)
-                .collect(Collectors.toList());
+    private List<User> getUsersOfTravel(Long travelId) {
+        Travel travel = checkTravelRecord(travelId);
+        return travel
+            .getUserTravels()
+            .stream()
+            .map(UserTravel::getUser)
+            .collect(Collectors.toList());
     }
 
     @Transactional
-    public List<SimpleUserInfoDto> getSimpleUsersOfTravel(Long travelId) {
-        return travelRepository
-                .findById(travelId)
-                .orElseThrow(() -> new RecordNotFoundException(
-                        "해당 ID의 Travel이 존재하지 않습니다."
-                        , ErrorCode.TRAVEL_NOT_FOUND
-                ))
-                .getUserTravels()
-                .stream()
-                .map(UserTravel::getUser)
-                .map(SimpleUserInfoDto::new)
-                .collect(Collectors.toList());
+    public List<UserResponseDto> getUsersInfoOfTravel(Long travelId) {
+        return getUsersOfTravel(travelId)
+            .stream()
+            .map(UserResponseDto::new)
+            .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public List<SimpleUserInfoDto> getSimpleUsersInfoOfTravel(Long travelId) {
+        return getUsersOfTravel(travelId)
+            .stream()
+            .map(SimpleUserInfoDto::new)
+            .collect(Collectors.toList());
     }
 
     @Transactional
@@ -210,64 +198,72 @@ public class TravelService {
     @Transactional(readOnly = true)
     public List<SimpleCostResponseDto> getCostsByTravelId(Long travelId) {
         List<Cost> costs = costRepository.findCostsByTravelId(travelId);
-        List<User> usersByTravelId = userRepository.findUsersByTravelId(travelId);
-        List<SimpleCostResponseDto> costsResponseDtos = new ArrayList<>();
 
-        return costs.stream().map(SimpleCostResponseDto::new).collect(Collectors.toList());
+        return costs
+            .stream()
+            .map(SimpleCostResponseDto::new)
+            .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     public List<SimpleScheduleResponseDto> getSchedulesByTravelId(Long travelId) {
         return travelRepository
-                .findSchedulesWithPlaceByTravelId(travelId)
-                .stream()
-                .map(SimpleScheduleResponseDto::new)
-                .collect(Collectors.toList());
+            .findSchedulesWithPlaceByTravelId(travelId)
+            .stream()
+            .map(SimpleScheduleResponseDto::new)
+            .collect(Collectors.toList());
     }
 
     @Transactional
-    public void changeScheduleOrder(Long travelId,
-                                    ScheduleOrderUpdateRequestDto requestDto) {
-        Travel travel = travelRepository
-                .findById(travelId)
-                .orElseThrow(() -> new RecordNotFoundException(
-                        "해당 ID의 Travel이 존재하지 않습니다."
-                        , ErrorCode.TRAVEL_NOT_FOUND
-                ));
-        travel.setScheduleOrder(requestDto.getScheduleOrder());
+    public void changeScheduleOrder(Long travelId, ScheduleOrderUpdateRequestDto requestDto) {
+        checkTravelRecord(travelId).setScheduleOrder(requestDto.getScheduleOrder());
     }
 
     @Transactional
-    public void updateTravel(Long travelId,
-                             TravelUpdateRequestDto requestDto) {
-        Travel travel = travelRepository
-                .findById(travelId)
-                .orElseThrow(() -> new RecordNotFoundException(
-                        "해당 ID의 Travel이 존재하지 않습니다."
-                        , ErrorCode.TRAVEL_NOT_FOUND
-                ));
-        travel.updateTravel(requestDto);
+    public void updateTravel(Long travelId, TravelUpdateRequestDto requestDto) {
+        checkTravelRecord(travelId).updateTravel(requestDto);
     }
 
     @Transactional
-    public String acceptInvitation(Long userId,
-                                   Long travelId,
-                                   UUID code) {
+    public String acceptInvitation(Long userId, Long travelId, UUID code) {
         addUserToTravelWithValidation(userId, code);
         return "https://dev.travely.guide/" + travelId;
     }
 
     @Transactional
     public void rejectInvitation(Long userId, UUID code) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RecordNotFoundException(
-                        "해당 ID의 User가 존재하지 않습니다."
-                        , ErrorCode.USER_NOT_FOUND
-                ));
-        invitationRepository.delete(invitationRepository.findByCodeAndEmail(code, user.getEmail())
-                .orElseThrow(() -> new RecordNotFoundException(
-                        "해당 초대가 존재하지 않습니다.",
-                        ErrorCode.INVALID_INVITATION
-                )));
+        User user = checkUserRecord(userId);
+        Invitation invitation = checkInvitationRecord(code, user.getEmail());
+        invitationRepository.delete(invitation);
     }
+
+    private Travel checkTravelRecord(Long travelId) {
+        return checkRecord(
+            travelRepository.findById(travelId),
+            "해당 ID의 Travel이 존재하지 않습니다.",
+            ErrorCode.TRAVEL_NOT_FOUND
+            );
+    }
+
+    private User checkUserRecord(Long userId) {
+        return checkRecord(
+            userRepository.findById(userId),
+            "해당 ID의 User가 존재하지 않습니다.",
+            ErrorCode.USER_NOT_FOUND
+        );
+    }
+
+    private Invitation checkInvitationRecord(UUID code, String email) {
+        return checkRecord(
+            invitationRepository.findByCodeAndEmail(code, email),
+            "잘못된 초대 링크입니다.",
+            ErrorCode.INVALID_INVITATION
+        );
+    }
+
+    private <T> T checkRecord(Optional<T> record, String message, ErrorCode code) {
+        return record.orElseThrow(() ->
+            new RecordNotFoundException(message, code));
+    }
+
 }

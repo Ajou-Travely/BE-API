@@ -23,8 +23,6 @@ spring:
   profiles:
     include:
     - "auth"
-#    - "aws"
-    - "domain"
   jackson:
     serialization.WRITE_DATES_AS_TIMESTAMPS=false
   mail:
@@ -64,3 +62,6 @@ cloud:
       static: ap-northeast-2
     stack:
       auto: false
+
+domain:
+  base-url: https://dev.travely.guide

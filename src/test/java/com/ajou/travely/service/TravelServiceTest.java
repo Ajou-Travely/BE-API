@@ -8,7 +8,6 @@ import com.ajou.travely.controller.schedule.dto.SimpleScheduleResponseDto;
 import com.ajou.travely.controller.travel.dto.*;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.domain.Invitation;
-import com.ajou.travely.domain.Place;
 import com.ajou.travely.domain.UserTravel;
 import com.ajou.travely.domain.travel.Travel;
 import com.ajou.travely.domain.travel.TravelType;
@@ -172,7 +171,7 @@ class TravelServiceTest {
                 foundTravel.getId()
                 , newUser.getId()
         );
-        List<SimpleUserInfoDto> users = travelService.getSimpleUsersOfTravel(foundTravel.getId());
+        List<SimpleUserInfoDto> users = travelService.getSimpleUsersInfoOfTravel(foundTravel.getId());
         assertThat(users).hasSize(2);
         users.forEach(u -> System.out.println(u.toString()));
     }
