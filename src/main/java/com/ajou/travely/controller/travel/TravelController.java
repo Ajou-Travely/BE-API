@@ -85,7 +85,7 @@ public class TravelController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/{travelId}/accept/{code}")
+    @GetMapping("/accept/{code}")
     public void acceptInvitation(
             @LoginUser SessionUser sessionUser,
             @PathVariable Long travelId,
