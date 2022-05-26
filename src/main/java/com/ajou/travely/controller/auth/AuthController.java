@@ -1,6 +1,7 @@
 package com.ajou.travely.controller.auth;
 
 import com.ajou.travely.controller.auth.dto.EmailPasswordInputDto;
+import com.ajou.travely.controller.auth.dto.LoginSuccessResponseDto;
 import com.ajou.travely.service.AuthService;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -48,10 +49,8 @@ public class AuthController {
                             "}")
             ))
     })
-    public ResponseEntity<JSONObject> login(@Valid @RequestBody EmailPasswordInputDto emailPasswordInputDto) {
-        String token = authService.login(emailPasswordInputDto);
-        JSONObject result = new JSONObject();
-        result.put("token", token);
-        return ResponseEntity.ok(result);
+    public ResponseEntity<LoginSuccessResponseDto> login(@Valid @RequestBody EmailPasswordInputDto emailPasswordInputDto) {
+        LoginSuccessResponseDto responseDto = authService.login(emailPasswordInputDto);
+        return ResponseEntity.ok(responseDto);
     }
 }

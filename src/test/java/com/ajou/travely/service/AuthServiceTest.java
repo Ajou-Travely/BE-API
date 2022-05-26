@@ -1,6 +1,7 @@
 package com.ajou.travely.service;
 
 import com.ajou.travely.controller.auth.dto.EmailPasswordInputDto;
+import com.ajou.travely.controller.auth.dto.LoginSuccessResponseDto;
 import com.ajou.travely.domain.user.CustomUserDetails;
 import com.ajou.travely.domain.user.UserType;
 import com.ajou.travely.domain.user.User;
@@ -82,7 +83,8 @@ class AuthServiceTest {
                 .password(password)
                 .build());
 
-        String token = authService.login(new EmailPasswordInputDto(email, password));
+        LoginSuccessResponseDto responseDto = authService.login(new EmailPasswordInputDto(email, password));
+        String token = responseDto.getToken();
         UsernamePasswordAuthenticationToken authentication = (UsernamePasswordAuthenticationToken) jwtTokenProvider.getAuthentication(token);
         CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
 

@@ -1,6 +1,7 @@
 package com.ajou.travely.service;
 
 import com.ajou.travely.controller.auth.dto.EmailPasswordInputDto;
+import com.ajou.travely.controller.auth.dto.LoginSuccessResponseDto;
 import com.ajou.travely.domain.AuthorizationKakao;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.exception.ErrorCode;
@@ -35,7 +36,7 @@ public class AuthService {
         return user.getId();
     }
 
-    public String login(EmailPasswordInputDto emailPasswordInputDto) {
+    public LoginSuccessResponseDto login(EmailPasswordInputDto emailPasswordInputDto) {
         User user = userRepository.findByEmail(emailPasswordInputDto.getEmail())
                 .orElseThrow(() -> new RecordNotFoundException(
                         "해당 이메일을 가진 사용자를 찾을 수 없습니다",
@@ -48,7 +49,6 @@ public class AuthService {
             );
         }
         String token = jwtTokenProvider.createToken(user.getId());
-
-        return token;
+        return new LoginSuccessResponseDto(token);
     }
 }
