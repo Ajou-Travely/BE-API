@@ -113,7 +113,7 @@ public class TravelController {
 
     @GetMapping("/{travelId}/users")
     public ResponseEntity<List<SimpleUserInfoDto>> showUsersByTravel(@PathVariable Long travelId) {
-        return ResponseEntity.ok(travelService.getSimpleUsersOfTravel(travelId));
+        return ResponseEntity.ok(travelService.getSimpleUsersInfoOfTravel(travelId));
     }
 
     // Schedules

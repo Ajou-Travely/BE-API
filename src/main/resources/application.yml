@@ -39,7 +39,6 @@ spring:
   profiles:
     include:
       - "auth"
-#      - "aws"
       - "domain"
   jackson:
     serialization.WRITE_DATES_AS_TIMESTAMPS=false

@@ -1,2 +1,2 @@
 domains:
-  front-domain: http://localhost:3000/
+  base-url: https://dev.travely.guide
