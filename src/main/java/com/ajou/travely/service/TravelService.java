@@ -161,8 +161,12 @@ public class TravelService {
     @Transactional
     public TravelResponseDto getTravelById(Long travelId) {
         Travel travel = checkTravelRecord(travelId);
-        List<Schedule> schedules = travelRepository
-            .findSchedulesWithPlaceByTravelId(travel.getId());
+        Map<Long, Schedule> map = new HashMap<>();
+        travelRepository
+                .findSchedulesWithPlaceByTravelId(travelId)
+                .forEach(schedule -> map.put(schedule.getId(), schedule));
+        List<Schedule> schedules = new ArrayList<>();
+        travel.getScheduleOrder().forEach(id -> schedules.add(map.get(id)));
         return new TravelResponseDto(travel, schedules);
     }
 

@@ -23,7 +23,6 @@ public class TravelResponseDto {
     private final TravelType travelType;
     private final List<SimpleUserInfoDto> users;
     private final List<SimpleScheduleResponseDto> schedules;
-    private final List<Long> scheduleOrder;
 
     public TravelResponseDto(Travel entity, List<Schedule> schedules) {
         this.id = entity.getId();
@@ -43,6 +42,5 @@ public class TravelResponseDto {
                 .stream()
                 .map(SimpleScheduleResponseDto::new)
                 .collect(Collectors.toList());
-        this.scheduleOrder = entity.getScheduleOrder();
     }
 }
