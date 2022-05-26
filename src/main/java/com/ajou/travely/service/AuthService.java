@@ -4,6 +4,7 @@ import com.ajou.travely.controller.auth.dto.EmailPasswordInputDto;
 import com.ajou.travely.domain.AuthorizationKakao;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.exception.ErrorCode;
+import com.ajou.travely.exception.custom.InvalidPasswordException;
 import com.ajou.travely.exception.custom.RecordNotFoundException;
 import com.ajou.travely.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -34,27 +35,20 @@ public class AuthService {
         return user.getId();
     }
 
-    public JSONObject login(EmailPasswordInputDto emailPasswordInputDto) {
-        JSONObject result = new JSONObject();
-
-        Optional<User> res = userRepository.findByEmail(emailPasswordInputDto.getEmail());
-        if (res.isPresent()) {
-            User user = res.get();
-            if (!user.getPassword().equals(emailPasswordInputDto.getPassword())) {
-                result.put("status", 400);
-                result.put("message", "비밀번호가 틀렸습니다.");
-
-                return result;
-            }
-            String token = jwtTokenProvider.createToken(user.getId());
-            result.put("status", 200);
-            result.put("token", token);
-
-            return result;
+    public String login(EmailPasswordInputDto emailPasswordInputDto) {
+        User user = userRepository.findByEmail(emailPasswordInputDto.getEmail())
+                .orElseThrow(() -> new RecordNotFoundException(
+                        "해당 이메일을 가진 사용자를 찾을 수 없습니다",
+                        ErrorCode.USER_NOT_FOUND
+                        ));
+        if (!user.getPassword().equals(emailPasswordInputDto.getPassword())) {
+            throw new InvalidPasswordException(
+                    "잘못된 비밀번호 입니다.",
+                    ErrorCode.INVALID_PASSWORD
+            );
         }
-        result.put("status", 400);
-        result.put("message", "해당 이메일을 가진 사용자를 찾을 수 없습니다.");
+        String token = jwtTokenProvider.createToken(user.getId());
 
-        return result;
+        return token;
     }
 }

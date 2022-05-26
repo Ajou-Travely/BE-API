@@ -4,6 +4,7 @@ import com.ajou.travely.controller.auth.dto.EmailPasswordInputDto;
 import com.ajou.travely.domain.user.CustomUserDetails;
 import com.ajou.travely.domain.user.UserType;
 import com.ajou.travely.domain.user.User;
+import com.ajou.travely.exception.custom.InvalidPasswordException;
 import com.ajou.travely.exception.custom.RecordNotFoundException;
 import com.ajou.travely.repository.UserRepository;
 import org.assertj.core.api.Assertions;
@@ -81,18 +82,15 @@ class AuthServiceTest {
                 .password(password)
                 .build());
 
-        JSONObject result = authService.login(new EmailPasswordInputDto(email, password));
-        String token = (String) result.get("token");
+        String token = authService.login(new EmailPasswordInputDto(email, password));
         UsernamePasswordAuthenticationToken authentication = (UsernamePasswordAuthenticationToken) jwtTokenProvider.getAuthentication(token);
         CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
 
         Assertions.assertThat(token).isNotNull();
         Assertions.assertThat(principal.getUser().getId()).isEqualTo(user.getId());
-        Assertions.assertThat(
-                authService.login(new EmailPasswordInputDto("wrong@email.com", password)).get("status")
-        ).isEqualTo(400);
-        Assertions.assertThat(
-                authService.login(new EmailPasswordInputDto(email, "invalid_password")).get("status")
-        ).isEqualTo(400);
+        Assertions.assertThatThrownBy(() -> authService.login(new EmailPasswordInputDto("wrong@email.com", user.getPassword())))
+                .isInstanceOf(RecordNotFoundException.class);
+        Assertions.assertThatThrownBy(() -> authService.login(new EmailPasswordInputDto(user.getEmail(), "invalid_password")))
+                .isInstanceOf(InvalidPasswordException.class);
     }
 }
