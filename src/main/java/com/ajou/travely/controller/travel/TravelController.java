@@ -46,12 +46,12 @@ public class TravelController {
 
     //Travels
 
-    @GetMapping("")
-    public List<SimpleTravelResponseDto> showAllTravels() {
-        return travelService.getAllTravels();
-    }
+//    @GetMapping()
+//    public List<SimpleTravelResponseDto> showAllTravels() {
+//        return travelService.getAllTravels();
+//    }
 
-    @GetMapping("/travels")
+    @GetMapping()
     public ResponseEntity<Page<SimpleTravelResponseDto>> showTravelsByUser(
             @LoginUser SessionUser sessionUser,
             @PageableDefault(
@@ -66,7 +66,7 @@ public class TravelController {
         return ResponseEntity.ok(travelService.getTravelById(travelId));
     }
 
-    @PostMapping("")
+    @PostMapping()
     public ResponseEntity<Long> createTravel(@LoginUser SessionUser sessionUser,
                                              @Valid @RequestBody TravelCreateRequestDto travelCreateRequestDto) {
         System.out.println("sessionUser.getUserId() = " + sessionUser.getUserId());
@@ -123,16 +123,16 @@ public class TravelController {
         return ResponseEntity.ok(travelService.getSchedulesByTravelId(travelId));
     }
 
-    @PostMapping("/{travelId}/schedules")
-    public ResponseEntity<Long> createSchedule(@PathVariable Long travelId,
-                                               @RequestBody ScheduleCreateRequestDto scheduleCreateRequestDto) {
-        return ResponseEntity.ok(scheduleService.createSchedule(travelId, scheduleCreateRequestDto));
-    }
-
     @GetMapping("/{travelId}/schedules/{scheduleId}")
     public ResponseEntity<ScheduleResponseDto> getScheduleById(@PathVariable Long travelId,
                                                                @PathVariable Long scheduleId) {
         return ResponseEntity.ok(scheduleService.getScheduleById(scheduleId));
+    }
+
+    @PostMapping("/{travelId}/schedules")
+    public ResponseEntity<Long> createSchedule(@PathVariable Long travelId,
+                                               @RequestBody ScheduleCreateRequestDto scheduleCreateRequestDto) {
+        return ResponseEntity.ok(scheduleService.createSchedule(travelId, scheduleCreateRequestDto));
     }
 
     @PutMapping("/{travelId}/schedules/{scheduleId}")
@@ -168,13 +168,7 @@ public class TravelController {
     public CostCreateResponseDto createCost(@Valid @RequestBody CostCreateRequestDto costCreateRequestDto,
                                             @PathVariable Long travelId) {
         return costService.createCost(
-                costCreateRequestDto.getTotalAmount(),
-                costCreateRequestDto.getTravelId(),
-                costCreateRequestDto.getTitle(),
-                costCreateRequestDto.getContent(),
-                costCreateRequestDto.getIsEquallyDivided(),
-                costCreateRequestDto.getAmountsPerUser(),
-                costCreateRequestDto.getPayerId()
+                costCreateRequestDto, travelId
         );
     }
 

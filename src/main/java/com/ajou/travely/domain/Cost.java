@@ -32,21 +32,18 @@ public class Cost {
 
     private String title;
 
-    private Boolean isEquallyDivided;
-
     @OneToMany(mappedBy = "cost", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserCost> userCosts = new ArrayList<>();
 
     private Long payerId;
 
     @Builder
-    public Cost(@NonNull Travel travel, @NonNull Long totalAmount, String content, @NonNull String title, @NonNull Boolean isEquallyDivided, @NonNull Long payerId) {
+    public Cost(@NonNull Travel travel, @NonNull Long totalAmount, String content, @NonNull String title, @NonNull Long payerId) {
         this.travel = travel;
         this.payerId = payerId;
         this.totalAmount = totalAmount;
         this.content = content;
         this.title = title;
-        this.isEquallyDivided = isEquallyDivided;
     }
 
     public void addUserCost(UserCost userCost) {
@@ -66,9 +63,6 @@ public class Cost {
         }
         if (costUpdateDto.getTitle() != null) {
             this.title = costUpdateDto.getTitle();
-        }
-        if (costUpdateDto.getIsEquallyDivided() != null) {
-            this.isEquallyDivided = costUpdateDto.getIsEquallyDivided();
         }
         if (costUpdateDto.getPayerId() != null) {
             this.payerId = costUpdateDto.getPayerId();

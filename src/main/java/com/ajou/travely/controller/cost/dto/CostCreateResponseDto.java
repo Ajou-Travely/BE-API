@@ -15,7 +15,6 @@ public class CostCreateResponseDto {
     private Long totalAmount;
     private String content;
     private String title;
-    private Boolean isEquallyDivided;
     private List<UserCost> userCosts;
     private User payer;
 
@@ -25,7 +24,6 @@ public class CostCreateResponseDto {
         this.totalAmount = entity.getTotalAmount();
         this.content = entity.getContent();
         this.title = entity.getTitle();
-        this.isEquallyDivided = entity.getIsEquallyDivided();
         this.payer = payer;
         this.userCosts = entity.getUserCosts();
     }

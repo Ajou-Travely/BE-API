@@ -32,7 +32,7 @@ public class CostService {
     private final TravelRepository travelRepository;
 
     @Transactional
-    public CostCreateResponseDto createCost(Long totalAmount, Long travelId, String title, String content, Boolean isEquallyDivided, Map<Long, Long> amountsPerUser, Long payerId) {
+    public CostCreateResponseDto createCost(CostCreateRequestDto requestDto, Long travelId) {
         // 여행 객체 생성
         Travel travel = travelRepository.findById(travelId)
                 .orElseThrow(() -> new RecordNotFoundException(
@@ -40,22 +40,21 @@ public class CostService {
                 , ErrorCode.TRAVEL_NOT_FOUND
                 ));
         // 결제자 객체 생성
-        User payer = userRepository.findById(payerId)
+        User payer = userRepository.findById(requestDto.getPayerId())
                 .orElseThrow(() -> new RecordNotFoundException(
                         "해당 ID의 User가 존재하지 않습니다."
                         , ErrorCode.USER_NOT_FOUND
                 ));
         // 지출 객체 생성
         Cost cost = Cost.builder()
-                .totalAmount(totalAmount)
-                .content(content)
-                .title(title)
+                .totalAmount(requestDto.getTotalAmount())
+                .content(requestDto.getContent())
+                .title(requestDto.getTitle())
                 .travel(travel)
-                .payerId(payerId)
-                .isEquallyDivided(isEquallyDivided)
+                .payerId(requestDto.getPayerId())
                 .build();
         // 사용자_지출 객체 생성
-        for (Long userId : amountsPerUser.keySet()) {
+        for (Long userId : requestDto.getAmountsPerUser().keySet()) {
             UserCost userCost = UserCost.builder()
                     .cost(cost)
                     .user(userRepository.findById(userId)
@@ -63,7 +62,7 @@ public class CostService {
                                     "해당 ID의 User가 존재하지 않습니다."
                                     , ErrorCode.USER_NOT_FOUND
                             )))
-                    .amount(amountsPerUser.get(userId))
+                    .amount(requestDto.getAmountsPerUser().get(userId))
                     .build();
             cost.addUserCost(userCost);
         }
@@ -91,12 +90,10 @@ public class CostService {
         List<UserCost> userCosts = cost.getUserCosts();
         if (!costUpdateDto.getAmountsPerUser().keySet().isEmpty()) {
             Map<Long, UserCost> exAmountsPerUser = new HashMap<>();
-            userCosts.forEach(userCost -> {
-                exAmountsPerUser.put(
-                        userCost.getUser().getId(),
-                        userCost
-                );
-            });
+            userCosts.forEach(userCost -> exAmountsPerUser.put(
+                    userCost.getUser().getId(),
+                    userCost
+            ));
             Set<Long> userToDelete = new HashSet<>(exAmountsPerUser.keySet());
             Set<Long> userToAdd = new HashSet<>(costUpdateDto.getAmountsPerUser().keySet());
             Set<Long> userToStay = new HashSet<>(userToAdd);
@@ -105,28 +102,22 @@ public class CostService {
             userToAdd.removeAll(userToStay);
 
 
-            userToDelete.forEach(userId -> {
-                userCostRepository.deleteUserCostByCostIdAndUserId(costId, userId);
-            });
+            userToDelete.forEach(userId -> userCostRepository.deleteUserCostByCostIdAndUserId(costId, userId));
 
 
-            userToAdd.forEach(userId -> {
-                userCostRepository.save(new UserCost(
-                        cost,
-                        userRepository.findById(userId)
-                                .orElseThrow(() -> new RuntimeException("유저가 존재하지 않습니다.")),
-                        costUpdateDto.getAmountsPerUser().get(userId).getAmount(),
-                        costUpdateDto.getAmountsPerUser().get(userId).getIsRequested()
-                ));
-            });
+            userToAdd.forEach(userId -> userCostRepository.save(new UserCost(
+                    cost,
+                    userRepository.findById(userId)
+                            .orElseThrow(() -> new RuntimeException("유저가 존재하지 않습니다.")),
+                    costUpdateDto.getAmountsPerUser().get(userId).getAmount(),
+                    costUpdateDto.getAmountsPerUser().get(userId).getIsRequested()
+            )));
 
-            userToStay.forEach(userId -> {
-                userCostRepository.updateUserCostByUserCostId(
-                        costUpdateDto.getAmountsPerUser().get(userId).getAmount(),
-                        costUpdateDto.getAmountsPerUser().get(userId).getIsRequested(),
-                        exAmountsPerUser.get(userId).getId()
-                );
-            });
+            userToStay.forEach(userId -> userCostRepository.updateUserCostByUserCostId(
+                    costUpdateDto.getAmountsPerUser().get(userId).getAmount(),
+                    costUpdateDto.getAmountsPerUser().get(userId).getIsRequested(),
+                    exAmountsPerUser.get(userId).getId()
+            ));
         }
     }
 
