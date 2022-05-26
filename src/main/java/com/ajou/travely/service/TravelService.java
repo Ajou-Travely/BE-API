@@ -228,7 +228,7 @@ public class TravelService {
     @Transactional
     public String acceptInvitation(Long userId, UUID code) {
         Long travelId = addUserToTravelWithValidation(userId, code);
-        return "https://dev.travely.guide/" + travelId;
+        return baseUrl + travelId;
     }
 
     @Transactional

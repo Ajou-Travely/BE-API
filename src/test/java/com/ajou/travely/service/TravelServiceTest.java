@@ -19,6 +19,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -63,6 +64,9 @@ class TravelServiceTest {
 
     @Autowired
     UserTravelRepository userTravelRepository;
+
+    @Value("${domain.base-url}")
+    private String baseUrl;
 
     @Test
     @DisplayName("여행 객체를 만들 수 있다.")
@@ -449,7 +453,7 @@ class TravelServiceTest {
         List<UserTravel> userTravelList = userTravelRepository.findAll();
         Optional<Invitation> deletedInvitation = invitationRepository.findById(invitation.getId());
 
-        Assertions.assertThat(redirectUri).isEqualTo("https://dev.travely.guide/" + travel.getId());
+        Assertions.assertThat(redirectUri).isEqualTo(baseUrl + travel.getId());
         Assertions.assertThat(userTravelList.get(1).getUser().getId()).isEqualTo(invitedUser.getId());
         Assertions.assertThat(userTravelList.get(1).getTravel().getId()).isEqualTo(travel.getId());
         Assertions.assertThat(deletedInvitation.isEmpty()).isEqualTo(true);
