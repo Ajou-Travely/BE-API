@@ -114,7 +114,7 @@ public class TravelController {
     }
 
     @GetMapping("/{travelId}/schedules/{scheduleId}")
-    public ResponseEntity<ScheduleResponseDto> getScheduleById(@PathVariable Long travelId,
+    public ResponseEntity<ScheduleResponseDto> showSchedule(@PathVariable Long travelId,
                                                                @PathVariable Long scheduleId) {
         return ResponseEntity.ok(scheduleService.getScheduleById(scheduleId));
     }
