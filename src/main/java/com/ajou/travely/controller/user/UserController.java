@@ -52,8 +52,8 @@ public class UserController {
         return new UserResponseDto(user);
     }
 
-    @GetMapping("/check/email/{email}")
-    public ResponseEntity<Boolean> checkIfEmailDuplicated(@PathVariable String email) {
+    @GetMapping("/email")
+    public ResponseEntity<Boolean> checkIfEmailDuplicated(@RequestParam String email) {
         return ResponseEntity.ok(userService.checkIfEmailDuplicated(email));
     }
 
