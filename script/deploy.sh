@@ -4,6 +4,10 @@ export DATABASE_USERNAME=$(aws ssm get-parameters --region ap-northeast-2 --name
 export DATABASE_PASSWORD=$(aws ssm get-parameters --region ap-northeast-2 --names /travely/dev/DATABASE_PASSWORD --with-decryption --query Parameters[0].Value --output text)
 export DATABASE_NAME=$(aws ssm get-parameters --region ap-northeast-2 --names /travely/dev/DATABASE_NAME --with-decryption --query Parameters[0].Value --output text)
 
+export MAIL_SENDER_USERNAME=$(aws ssm get-parameters --region ap-northeast-2 --names /travely/dev/MAIL_SENDER_USERNAME --with-decryption --query Parameters[0].Value --output text)
+export MAIL_SENDER_PASSWORD=$(aws ssm get-parameters --region ap-northeast-2 --names /travely/dev/MAIL_SENDER_PASSWORD --with-decryption --query Parameters[0].Value --output text)
+
+
 REPOSITORY=/home/ec2-user/app
 cd $REPOSITORY
 

@@ -90,12 +90,10 @@ public class CostService {
         List<UserCost> userCosts = cost.getUserCosts();
         if (!costUpdateDto.getAmountsPerUser().keySet().isEmpty()) {
             Map<Long, UserCost> exAmountsPerUser = new HashMap<>();
-            userCosts.forEach(userCost -> {
-                exAmountsPerUser.put(
-                        userCost.getUser().getId(),
-                        userCost
-                );
-            });
+            userCosts.forEach(userCost -> exAmountsPerUser.put(
+                    userCost.getUser().getId(),
+                    userCost
+            ));
             Set<Long> userToDelete = new HashSet<>(exAmountsPerUser.keySet());
             Set<Long> userToAdd = new HashSet<>(costUpdateDto.getAmountsPerUser().keySet());
             Set<Long> userToStay = new HashSet<>(userToAdd);
@@ -104,28 +102,22 @@ public class CostService {
             userToAdd.removeAll(userToStay);
 
 
-            userToDelete.forEach(userId -> {
-                userCostRepository.deleteUserCostByCostIdAndUserId(costId, userId);
-            });
+            userToDelete.forEach(userId -> userCostRepository.deleteUserCostByCostIdAndUserId(costId, userId));
 
 
-            userToAdd.forEach(userId -> {
-                userCostRepository.save(new UserCost(
-                        cost,
-                        userRepository.findById(userId)
-                                .orElseThrow(() -> new RuntimeException("유저가 존재하지 않습니다.")),
-                        costUpdateDto.getAmountsPerUser().get(userId).getAmount(),
-                        costUpdateDto.getAmountsPerUser().get(userId).getIsRequested()
-                ));
-            });
+            userToAdd.forEach(userId -> userCostRepository.save(new UserCost(
+                    cost,
+                    userRepository.findById(userId)
+                            .orElseThrow(() -> new RuntimeException("유저가 존재하지 않습니다.")),
+                    costUpdateDto.getAmountsPerUser().get(userId).getAmount(),
+                    costUpdateDto.getAmountsPerUser().get(userId).getIsRequested()
+            )));
 
-            userToStay.forEach(userId -> {
-                userCostRepository.updateUserCostByUserCostId(
-                        costUpdateDto.getAmountsPerUser().get(userId).getAmount(),
-                        costUpdateDto.getAmountsPerUser().get(userId).getIsRequested(),
-                        exAmountsPerUser.get(userId).getId()
-                );
-            });
+            userToStay.forEach(userId -> userCostRepository.updateUserCostByUserCostId(
+                    costUpdateDto.getAmountsPerUser().get(userId).getAmount(),
+                    costUpdateDto.getAmountsPerUser().get(userId).getIsRequested(),
+                    exAmountsPerUser.get(userId).getId()
+            ));
         }
     }
 
