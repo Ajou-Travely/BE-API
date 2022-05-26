@@ -208,8 +208,13 @@ public class TravelService {
     @Transactional(readOnly = true)
     public List<SimpleScheduleResponseDto> getSchedulesByTravelId(Long travelId) {
         Travel travel = checkTravelRecord(travelId);
-        return travelRepository
-            .findSchedulesWithPlaceByTravelId(travelId)
+        Map<Long, Schedule> map = new HashMap<>();
+        travelRepository
+                .findSchedulesWithPlaceByTravelId(travelId)
+                .forEach(schedule -> map.put(schedule.getId(), schedule));
+        List<Schedule> schedules = new ArrayList<>();
+        travel.getScheduleOrder().forEach(id -> schedules.add(map.get(id)));
+        return schedules
             .stream()
             .map(SimpleScheduleResponseDto::new)
             .collect(Collectors.toList());
