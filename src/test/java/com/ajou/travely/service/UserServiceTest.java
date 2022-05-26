@@ -320,7 +320,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("이메일 중복 확인")
-    void testCheckIfEmailDuplicated() {
+    void testIsEmailDuplicated() {
         String duplicateEmail = "test@test.com";
         String validEmail = "test123@test.com";
         User user = userService.insertUser(
@@ -331,8 +331,8 @@ class UserServiceTest {
                         .userType(UserType.USER)
                         .build()
         );
-        Assertions.assertThat(userService.checkIfEmailDuplicated(duplicateEmail)).isEqualTo(false);
-        Assertions.assertThat(userService.checkIfEmailDuplicated(validEmail)).isEqualTo(true);
+        Assertions.assertThat(userService.isEmailDuplicated(duplicateEmail)).isEqualTo(false);
+        Assertions.assertThat(userService.isEmailDuplicated(validEmail)).isEqualTo(true);
     }
 }
 

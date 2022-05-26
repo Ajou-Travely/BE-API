@@ -141,7 +141,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public Boolean checkIfEmailDuplicated(String email) {
+    public Boolean isEmailDuplicated(String email) {
         Optional<User> user = userRepository.findByEmail(email);
         return user.isEmpty();
     }

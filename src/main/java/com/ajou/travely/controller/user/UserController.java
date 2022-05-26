@@ -53,8 +53,8 @@ public class UserController {
     }
 
     @GetMapping("/email")
-    public ResponseEntity<Boolean> checkIfEmailDuplicated(@RequestParam String email) {
-        return ResponseEntity.ok(userService.checkIfEmailDuplicated(email));
+    public ResponseEntity<Boolean> isEmailDuplicated(@RequestParam String email) {
+        return ResponseEntity.ok(userService.isEmailDuplicated(email));
     }
 
     @GetMapping("/my-info")
