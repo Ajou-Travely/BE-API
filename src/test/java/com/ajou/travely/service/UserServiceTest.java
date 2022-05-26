@@ -8,6 +8,8 @@ import com.ajou.travely.exception.custom.RecordNotFoundException;
 import com.ajou.travely.controller.user.dto.UserUpdateRequestDto;
 import com.ajou.travely.domain.user.Mbti;
 import com.ajou.travely.domain.user.Sex;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -40,13 +42,13 @@ class UserServiceTest {
         LocalDate birthday = LocalDate.of(1998, 6, 3);
         User user = userService.insertUser(
                 User.builder()
-                    .kakaoId(0L)
-                    .email(email)
-                    .phoneNumber(phoneNumber)
-                    .name(name)
-                    .userType(UserType.USER)
-                    .birthday(birthday)
-                    .build()
+                        .kakaoId(0L)
+                        .email(email)
+                        .phoneNumber(phoneNumber)
+                        .name(name)
+                        .userType(UserType.USER)
+                        .birthday(birthday)
+                        .build()
         );
 
         User findUser = userService.findUserById(user.getId());
@@ -288,13 +290,13 @@ class UserServiceTest {
         String name = "119";
         LocalDate birthday = LocalDate.of(1998, 6, 3);
         User user = userService.insertUser(
-            User.builder()
-                .userType(UserType.USER)
-                .phoneNumber(phoneNumber)
-                .email(email)
-                .name(name)
-                .kakaoId(0L)
-                .build()
+                User.builder()
+                        .userType(UserType.USER)
+                        .phoneNumber(phoneNumber)
+                        .email(email)
+                        .name(name)
+                        .kakaoId(0L)
+                        .build()
         );
 
         // when
@@ -302,12 +304,12 @@ class UserServiceTest {
         String updatePhoneNumber = "010-1111-1111";
         LocalDate updateBirthday = LocalDate.of(2020, 6, 3);
         UserUpdateRequestDto requestDto = UserUpdateRequestDto.builder()
-            .name(updateName)
-            .phoneNumber(updatePhoneNumber)
-            .mbti(Mbti.ENFP)
-            .sex(Sex.FEMALE)
-            .birthday(updateBirthday)
-            .build();
+                .name(updateName)
+                .phoneNumber(updatePhoneNumber)
+                .mbti(Mbti.ENFP)
+                .sex(Sex.FEMALE)
+                .birthday(updateBirthday)
+                .build();
 
         userService.updateUser(user.getId(), requestDto);
 
@@ -315,4 +317,22 @@ class UserServiceTest {
         User updateUser = userService.findUserById(user.getId());
         System.out.println(updateUser.toString());
     }
+
+    @Test
+    @DisplayName("이메일 중복 확인")
+    void testCheckIfEmailDuplicated() {
+        String duplicateEmail = "test@test.com";
+        String validEmail = "test123@test.com";
+        User user = userService.insertUser(
+                User.builder().kakaoId(0L)
+                        .email(duplicateEmail)
+                        .phoneNumber("111")
+                        .name("park")
+                        .userType(UserType.USER)
+                        .build()
+        );
+        Assertions.assertThat(userService.checkIfEmailDuplicated(duplicateEmail)).isEqualTo(false);
+        Assertions.assertThat(userService.checkIfEmailDuplicated(validEmail)).isEqualTo(true);
+    }
 }
+
