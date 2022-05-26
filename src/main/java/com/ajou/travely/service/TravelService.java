@@ -12,6 +12,7 @@ import com.ajou.travely.exception.custom.DuplicatedRequestException;
 import com.ajou.travely.exception.custom.RecordNotFoundException;
 import com.ajou.travely.repository.*;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,7 +36,7 @@ public class TravelService {
 
     private final CustomMailSender customMailSender;
 
-    @Value("${domains.base-url}")
+    @Value("${domain.base-url}")
     private String baseUrl;
 
     @Transactional
@@ -119,14 +120,18 @@ public class TravelService {
     }
 
     @Transactional
-    public void inviteUserToTravelWithNoValidation(Travel travel, String email) {
-        // TODO email 검증
-        UUID code = UUID.randomUUID();
-        String text = baseUrl + "invite/accept/" + code;
-        customMailSender.sendInvitationEmail(email, text);
-        invitationRepository.save(
-            new Invitation(email, travel, code)
-        );
+    public void inviteUserToTravelWithNoValidation(Travel travel, List<String> userEmails) {
+        List<String> validEmails = userEmails.stream()
+            .distinct()
+            .collect(Collectors.toList());
+        validEmails.forEach(email -> {
+            UUID code = UUID.randomUUID();
+            String text = baseUrl + "invite/accept/" + code;
+            customMailSender.sendInvitationEmail(email, text);
+            invitationRepository.save(
+                new Invitation(email, travel, code)
+            );
+        });
     }
 
     @Transactional
