@@ -143,7 +143,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public Boolean checkIfEmailDuplicated(String email) {
         Optional<User> user = userRepository.findByEmail(email);
-        return !user.isPresent();
+        return user.isEmpty();
     }
 
     private User checkRecord(Long userId) {
