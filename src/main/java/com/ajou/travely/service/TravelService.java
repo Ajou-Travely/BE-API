@@ -161,8 +161,7 @@ public class TravelService {
     @Transactional
     public TravelResponseDto getTravelById(Long travelId) {
         Travel travel = checkTravelRecord(travelId);
-        List<Schedule> schedules = travelRepository
-            .findSchedulesWithPlaceByTravelId(travel.getId());
+        List<Schedule> schedules = sortSchedule(travel);
         return new TravelResponseDto(travel, schedules);
     }
 
@@ -199,7 +198,6 @@ public class TravelService {
     @Transactional(readOnly = true)
     public List<SimpleCostResponseDto> getCostsByTravelId(Long travelId) {
         List<Cost> costs = costRepository.findCostsByTravelId(travelId);
-
         return costs
             .stream()
             .map(SimpleCostResponseDto::new)
@@ -208,8 +206,8 @@ public class TravelService {
 
     @Transactional(readOnly = true)
     public List<SimpleScheduleResponseDto> getSchedulesByTravelId(Long travelId) {
-        return travelRepository
-            .findSchedulesWithPlaceByTravelId(travelId)
+        Travel travel = checkTravelRecord(travelId);
+        return sortSchedule(travel)
             .stream()
             .map(SimpleScheduleResponseDto::new)
             .collect(Collectors.toList());
@@ -236,6 +234,16 @@ public class TravelService {
         User user = checkUserRecord(userId);
         Invitation invitation = checkInvitationRecord(code, user.getEmail());
         invitationRepository.delete(invitation);
+    }
+
+    private List<Schedule> sortSchedule(Travel travel) {
+        Map<Long, Schedule> map = new HashMap<>();
+        travelRepository
+                .findSchedulesWithPlaceByTravelId(travel.getId())
+                .forEach(schedule -> map.put(schedule.getId(), schedule));
+        List<Schedule> schedules = new ArrayList<>();
+        travel.getScheduleOrder().forEach(id -> schedules.add(map.get(id)));
+        return schedules;
     }
 
     private Travel checkTravelRecord(Long travelId) {
