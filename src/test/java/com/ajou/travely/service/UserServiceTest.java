@@ -67,7 +67,7 @@ class UserServiceTest {
                         .build()
         );
         User target = userService.insertUser(
-                User.builder().kakaoId(0L)
+                User.builder().kakaoId(1L)
                         .email("2@2")
                         .phoneNumber("222")
                         .name("kim")
@@ -94,7 +94,7 @@ class UserServiceTest {
                         .build()
         );
         User target = userService.insertUser(
-                User.builder().kakaoId(0L)
+                User.builder().kakaoId(1L)
                         .email("2@2")
                         .phoneNumber("222")
                         .name("kim")
@@ -129,7 +129,7 @@ class UserServiceTest {
                         .build()
         );
         User target = userService.insertUser(
-                User.builder().kakaoId(0L)
+                User.builder().kakaoId(1L)
                         .email("2@2")
                         .phoneNumber("222")
                         .name("kim")
@@ -157,7 +157,7 @@ class UserServiceTest {
                         .build()
         );
         User target = userService.insertUser(
-                User.builder().kakaoId(0L)
+                User.builder().kakaoId(1L)
                         .email("2@2")
                         .phoneNumber("222")
                         .name("kim")
@@ -183,7 +183,7 @@ class UserServiceTest {
                         .build()
         );
         User target = userService.insertUser(
-                User.builder().kakaoId(0L)
+                User.builder().kakaoId(1L)
                         .email("2@2")
                         .phoneNumber("222")
                         .name("kim")
@@ -211,7 +211,7 @@ class UserServiceTest {
                         .build()
         );
         User target = userService.insertUser(
-                User.builder().kakaoId(0L)
+                User.builder().kakaoId(1L)
                         .email("2@2")
                         .phoneNumber("222")
                         .name("kim")
@@ -241,7 +241,7 @@ class UserServiceTest {
                         .build()
         );
         User target = userService.insertUser(
-                User.builder().kakaoId(0L)
+                User.builder().kakaoId(1L)
                         .email("2@2")
                         .phoneNumber("222")
                         .name("kim")
@@ -265,7 +265,7 @@ class UserServiceTest {
                         .build()
         );
         User target = userService.insertUser(
-                User.builder().kakaoId(0L)
+                User.builder().kakaoId(1L)
                         .email("2@2")
                         .phoneNumber("222")
                         .name("kim")
