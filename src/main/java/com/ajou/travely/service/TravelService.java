@@ -227,4 +227,26 @@ public class TravelService {
         }
         return travel;
     }
+
+    @Transactional
+    public String acceptInvitation(Long userId,
+                                   Long travelId,
+                                   UUID code) {
+        addUserToTravelWithValidation(userId, code);
+        return "https://dev.travely.guide/" + travelId;
+    }
+
+    @Transactional
+    public void rejectInvitation(Long userId, UUID code) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RecordNotFoundException(
+                        "해당 ID의 User가 존재하지 않습니다."
+                        , ErrorCode.USER_NOT_FOUND
+                ));
+        invitationRepository.delete(invitationRepository.findByCodeAndEmail(code, user.getEmail())
+                .orElseThrow(() -> new RecordNotFoundException(
+                        "해당 초대가 존재하지 않습니다.",
+                        ErrorCode.INVALID_INVITATION
+                )));
+    }
 }

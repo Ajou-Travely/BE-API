@@ -1,19 +1,16 @@
 package com.ajou.travely.exception;
 
+import lombok.Getter;
+
+@Getter
 public class ErrorResponse {
     private final int status;
     private final String message;
+    private final String exceptionMessage;
 
-    public ErrorResponse(ErrorCode errorCode) {
+    public ErrorResponse(ErrorCode errorCode, String exceptionMessage) {
         this.status = errorCode.getStatus();
         this.message = errorCode.getMessage();
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public String getMessage() {
-        return message;
+        this.exceptionMessage = exceptionMessage;
     }
 }

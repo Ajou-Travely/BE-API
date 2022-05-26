@@ -4,12 +4,18 @@ import com.ajou.travely.config.auth.LoginUser;
 import com.ajou.travely.config.auth.SessionUser;
 import com.ajou.travely.controller.common.ResponseWithPagination;
 import com.ajou.travely.controller.travel.dto.SimpleTravelResponseDto;
+import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.controller.user.dto.UserCreateRequestDto;
 import com.ajou.travely.controller.user.dto.UserResponseDto;
+import com.ajou.travely.controller.user.dto.UserUpdateRequestDto;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +32,18 @@ public class UserController {
 
     @GetMapping("")
     public List<UserResponseDto> getAllUsers() {
-        return userService.getAllUsers().stream().map(UserResponseDto::new).collect(Collectors.toList());
+        return userService.getAllUsers().stream()
+            .map(UserResponseDto::new)
+            .collect(Collectors.toList());
+    }
+
+    @PutMapping(value = "", consumes = "multipart/form-data")
+    public ResponseEntity<Void> updateUser(
+            @LoginUser SessionUser sessionUser,
+            @Valid @ModelAttribute UserUpdateRequestDto requestDto
+    ) {
+        userService.updateUser(sessionUser.getUserId(), requestDto);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/signup")
@@ -41,17 +58,46 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    @GetMapping("/travels")
-    public ResponseEntity<ResponseWithPagination<SimpleTravelResponseDto>> showTravelsByUser(
-            @LoginUser SessionUser sessionUser,
-            @RequestParam(value = "page", required = false) Integer page,
-            @RequestParam(value = "size", required = false) Integer size
-            ) {
-        page = page == null ? 0 : page;
-        size = size == null ? 10 : size;
-        PageRequest pageRequest = PageRequest.of(page, size);
-        List<SimpleTravelResponseDto> travels =  userService.getTravelsByUser(sessionUser.getUserId(), pageRequest);
-        ResponseWithPagination<SimpleTravelResponseDto> paged = new ResponseWithPagination<>(page, size, travels);
-        return ResponseEntity.ok(paged);
+    @GetMapping("/friends")
+    public ResponseEntity<List<SimpleUserInfoDto>> showFriends(@LoginUser SessionUser sessionUser) {
+        return ResponseEntity.ok(userService.getFriends(sessionUser.getUserId()));
+    }
+
+    @GetMapping("/friends/giving-requests")
+    public ResponseEntity<List<SimpleUserInfoDto>> showGivingRequests(@LoginUser SessionUser sessionUser) {
+        return ResponseEntity.ok(userService.getGivingRequests(sessionUser.getUserId()));
+    }
+
+    @GetMapping("/friends/given-requests")
+    public ResponseEntity<List<SimpleUserInfoDto>> showGivenRequests(@LoginUser SessionUser sessionUser) {
+        return ResponseEntity.ok(userService.getGivenRequests(sessionUser.getUserId()));
+    }
+
+    @PostMapping("/friends/{targetId}")
+    public ResponseEntity<Void> sendFriendRequest(@PathVariable Long targetId,
+                                                    @LoginUser SessionUser sessionUser) {
+        userService.requestFollowing(sessionUser.getUserId(), targetId);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/friends/{targetId}")
+    public ResponseEntity<Void> cancelFriend(@PathVariable Long targetId,
+                                                  @LoginUser SessionUser sessionUser) {
+        userService.cancelFollowing(sessionUser.getUserId(), targetId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/friends/request/{targetId}")
+    public ResponseEntity<Void> acceptFriendRequest(@PathVariable Long targetId,
+                                                    @LoginUser SessionUser sessionUser) {
+        userService.acceptFriendRequest(sessionUser.getUserId(), targetId);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/friends/request/{targetId}")
+    public ResponseEntity<Void> rejectFriendRequest(@PathVariable Long targetId,
+                                                    @LoginUser SessionUser sessionUser) {
+        userService.rejectFriendRequest(sessionUser.getUserId(), targetId);
+        return ResponseEntity.ok().build();
     }
 }

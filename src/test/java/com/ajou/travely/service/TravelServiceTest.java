@@ -1,19 +1,27 @@
 package com.ajou.travely.service;
 
+import com.ajou.travely.controller.cost.dto.CostCreateRequestDto;
 import com.ajou.travely.controller.cost.dto.CostCreateResponseDto;
 import com.ajou.travely.controller.place.dto.PlaceCreateRequestDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleCreateRequestDto;
 import com.ajou.travely.controller.schedule.dto.SimpleScheduleResponseDto;
 import com.ajou.travely.controller.travel.dto.*;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
+import com.ajou.travely.domain.Invitation;
+import com.ajou.travely.domain.Place;
+import com.ajou.travely.domain.UserTravel;
 import com.ajou.travely.domain.travel.Travel;
 import com.ajou.travely.domain.travel.TravelType;
 import com.ajou.travely.domain.user.UserType;
 import com.ajou.travely.domain.user.User;
+import com.ajou.travely.repository.InvitationRepository;
+import com.ajou.travely.repository.UserTravelRepository;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.annotation.Rollback;
 
@@ -47,6 +55,15 @@ class TravelServiceTest {
 
     @Autowired
     PlaceService placeService;
+
+    @Autowired
+    InvitationRepository invitationRepository;
+
+    @Autowired
+    InvitationService invitationService;
+
+    @Autowired
+    UserTravelRepository userTravelRepository;
 
     @Test
     @DisplayName("여행 객체를 만들 수 있다.")
@@ -190,29 +207,29 @@ class TravelServiceTest {
         Map<Long, Long> amountPerUser1 = new HashMap<>();
         amountPerUser1.put(users.get(0).getId(), 1000L);
         amountPerUser1.put(users.get(1).getId(), 10000L);
-
+        CostCreateRequestDto requestDto1 = CostCreateRequestDto.builder()
+                .totalAmount(11000L)
+                .title("TestTitle")
+                .content("안녕난이거야")
+                .amountsPerUser(amountPerUser1)
+                .payerId(users.get(0).getId())
+                .build();
         CostCreateResponseDto createdCost1 = costService.createCost(
-                11000L,
-                travelId,
-                "TestTitle",
-                "안녕난이거야",
-                false,
-                amountPerUser1,
-                users.get(0).getId()
+                requestDto1, travelId
         );
 
         Map<Long, Long> amountPerUser2 = new HashMap<>();
         amountPerUser2.put(users.get(2).getId(), 10000L);
         amountPerUser2.put(users.get(3).getId(), 10000L);
-
+        CostCreateRequestDto requestDto2 = CostCreateRequestDto.builder()
+                .totalAmount(20000L)
+                .title("SecondTitle")
+                .content("안녕난그거야")
+                .amountsPerUser(amountPerUser2)
+                .payerId(users.get(2).getId())
+                .build();
         CostCreateResponseDto createdCost2 = costService.createCost(
-                20000L,
-                travelId,
-                "SecondTitle",
-                "안녕난그거야",
-                true,
-                amountPerUser2,
-                users.get(2).getId()
+                requestDto2, travelId
         );
         List<SimpleCostResponseDto> costsByTravelId = travelService.getCostsByTravelId(travelId, users.get(0).getId());
 
@@ -232,8 +249,8 @@ class TravelServiceTest {
     @Rollback
     public void testGetSchedulesByTravel() {
         PlaceCreateRequestDto ajouUniv = PlaceCreateRequestDto.builder()
-                .x(4.5)
-                .y(5.4)
+                .lat(4.5)
+                .lng(5.4)
                 .placeUrl("ajou.ac.kr")
                 .placeName("아주대학교")
                 .addressName("원천동")
@@ -241,8 +258,8 @@ class TravelServiceTest {
                 .kakaoMapId(1L)
                 .build();
         PlaceCreateRequestDto inhaUniv = PlaceCreateRequestDto.builder()
-                .x(3.7)
-                .y(7.3)
+                .lat(3.7)
+                .lng(7.3)
                 .placeUrl("inha.ac.kr")
                 .placeName("인하대학교")
                 .addressName("인천")
@@ -288,6 +305,7 @@ class TravelServiceTest {
 
     @Test
     void testPagination() {
+        // given
         User user = userService.insertUser(
                 User.builder()
                         .userType(UserType.USER)
@@ -307,15 +325,42 @@ class TravelServiceTest {
                     .build();
             travelService.createTravel(user.getId(), request);
         }
+
+        // when
         PageRequest pageRequest0 = PageRequest.of(0, 3);
         PageRequest pageRequest1 = PageRequest.of(1, 3);
         PageRequest pageRequest2 = PageRequest.of(2, 3);
-        List<SimpleTravelResponseDto> travels0 = userService.getTravelsByUser(user.getId(), pageRequest0);
-        List<SimpleTravelResponseDto> travels1 = userService.getTravelsByUser(user.getId(), pageRequest1);
-        List<SimpleTravelResponseDto> travels2 = userService.getTravelsByUser(user.getId(), pageRequest2);
-        assertThat(travels0).hasSize(3);
-        assertThat(travels1).hasSize(3);
-        assertThat(travels2).hasSize(1);
+        Page<SimpleTravelResponseDto> travels0 = userService.getTravelsByUser(user.getId(), pageRequest0);
+        Page<SimpleTravelResponseDto> travels1 = userService.getTravelsByUser(user.getId(), pageRequest1);
+        Page<SimpleTravelResponseDto> travels2 = userService.getTravelsByUser(user.getId(), pageRequest2);
+
+        // then
+        assertThat(travels0.getTotalElements()).isEqualTo(7);
+        assertThat(travels0.getTotalPages()).isEqualTo(3);
+
+        assertThat(travels0.isFirst()).isEqualTo(true);
+        assertThat(travels0.isLast()).isEqualTo(false);
+        assertThat(travels0.getSize()).isEqualTo(3);
+        assertThat(travels0.getNumberOfElements()).isEqualTo(3);
+        assertThat(travels0.getPageable().getPageNumber()).isEqualTo(0);
+
+        assertThat(travels1.getTotalElements()).isEqualTo(7);
+        assertThat(travels1.getTotalPages()).isEqualTo(3);
+
+        assertThat(travels1.isFirst()).isEqualTo(false);
+        assertThat(travels1.isLast()).isEqualTo(false);
+        assertThat(travels2.getSize()).isEqualTo(3);
+        assertThat(travels1.getNumberOfElements()).isEqualTo(3);
+        assertThat(travels1.getPageable().getPageNumber()).isEqualTo(1);
+
+        assertThat(travels2.getTotalElements()).isEqualTo(7);
+        assertThat(travels2.getTotalPages()).isEqualTo(3);
+
+        assertThat(travels2.isFirst()).isEqualTo(false);
+        assertThat(travels2.isLast()).isEqualTo(true);
+        assertThat(travels2.getSize()).isEqualTo(3);
+        assertThat(travels2.getNumberOfElements()).isEqualTo(1);
+        assertThat(travels2.getPageable().getPageNumber()).isEqualTo(2);
     }
 
     @Test
@@ -365,5 +410,89 @@ class TravelServiceTest {
             .build();
         Travel travel = travelService.createTravel(user.getId(), request);
         assertThat(travel.getTravelType()).isEqualTo(TravelType.PRIVATE);
+    }
+
+    @Test
+    @DisplayName("여행 초대를 승락할 수 있다.")
+    void testAcceptInvitation() {
+        User user = userService.insertUser(
+                User.builder()
+                        .userType(UserType.USER)
+                        .email("sophoca@ajou.ac.kr")
+                        .name("홍성빈")
+                        .phoneNumber("112")
+                        .kakaoId(0L)
+                        .build()
+        );
+        User invitedUser = userService.insertUser(
+                User.builder()
+                        .userType(UserType.USER)
+                        .email("hooo0503@ajou.ac.kr")
+                        .name("박상혁")
+                        .phoneNumber("113")
+                        .kakaoId(1L)
+                        .build()
+        );
+        TravelCreateRequestDto request = TravelCreateRequestDto
+                .builder()
+                .title("test")
+                .startDate(LocalDate.now())
+                .endDate(LocalDate.now().plusDays(1))
+                .userEmails(new ArrayList<>())
+                .build();
+        Travel travel = travelService.createTravel(user.getId(), request);
+        UUID code = UUID.randomUUID();
+        Invitation invitation = invitationService.insertInvitation(
+                new Invitation(invitedUser.getEmail(), travel, code)
+        );
+
+        String redirectUri = travelService.acceptInvitation(invitedUser.getId(), travel.getId(), code);
+        List<UserTravel> userTravelList = userTravelRepository.findAll();
+        Optional<Invitation> deletedInvitation = invitationRepository.findById(invitation.getId());
+
+        Assertions.assertThat(redirectUri).isEqualTo("https://dev.travely.guide/" + travel.getId());
+        Assertions.assertThat(userTravelList.get(1).getUser().getId()).isEqualTo(invitedUser.getId());
+        Assertions.assertThat(userTravelList.get(1).getTravel().getId()).isEqualTo(travel.getId());
+        Assertions.assertThat(deletedInvitation.isEmpty()).isEqualTo(true);
+    }
+
+    @Test
+    @DisplayName("여행 초대를 거절할 수 있다.")
+    void testRejectInvitaion() {
+        User user = userService.insertUser(
+                User.builder()
+                        .userType(UserType.USER)
+                        .email("sophoca@ajou.ac.kr")
+                        .name("홍성빈")
+                        .phoneNumber("112")
+                        .kakaoId(0L)
+                        .build()
+        );
+        User invitedUser = userService.insertUser(
+                User.builder()
+                        .userType(UserType.USER)
+                        .email("hooo0503@ajou.ac.kr")
+                        .name("박상혁")
+                        .phoneNumber("113")
+                        .kakaoId(1L)
+                        .build()
+        );
+        TravelCreateRequestDto request = TravelCreateRequestDto
+                .builder()
+                .title("test")
+                .startDate(LocalDate.now())
+                .endDate(LocalDate.now().plusDays(1))
+                .userEmails(new ArrayList<>())
+                .build();
+        Travel travel = travelService.createTravel(user.getId(), request);
+        UUID code = UUID.randomUUID();
+        Invitation invitation = invitationService.insertInvitation(
+                new Invitation(invitedUser.getEmail(), travel, code)
+        );
+
+        travelService.rejectInvitation(invitedUser.getId(), code);
+        Optional<Invitation> foundInvitation = invitationRepository.findById(invitation.getId());
+
+        Assertions.assertThat(foundInvitation.isEmpty()).isEqualTo(true);
     }
 }

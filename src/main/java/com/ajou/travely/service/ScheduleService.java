@@ -148,15 +148,15 @@ public class ScheduleService {
 
     private Place createOrFindPlace(PlaceCreateRequestDto request) {
         return placeRepository.findByKakaoMapId(request.getKakaoMapId())
-                .orElse(placeRepository.save(Place
+                .orElseGet(() -> placeRepository.save(Place
                         .builder()
                         .kakaoMapId(request.getKakaoMapId())
                         .placeUrl(request.getPlaceUrl())
                         .placeName(request.getPlaceName())
                         .addressRoadName(request.getAddressRoadName())
                         .addressName(request.getAddressName())
-                        .x(request.getX())
-                        .y(request.getY())
+                        .lat(request.getLat())
+                        .lng(request.getLng())
                         .build()));
     }
 }

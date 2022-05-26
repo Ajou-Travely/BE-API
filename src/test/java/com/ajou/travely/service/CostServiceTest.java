@@ -1,11 +1,7 @@
 package com.ajou.travely.service;
 
-import com.ajou.travely.controller.cost.dto.CostCreateResponseDto;
-import com.ajou.travely.controller.cost.dto.CostResponseDto;
-import com.ajou.travely.controller.cost.dto.CostUpdateDto;
-import com.ajou.travely.controller.cost.dto.CostUpdateInfoDto;
+import com.ajou.travely.controller.cost.dto.*;
 import com.ajou.travely.domain.Cost;
-import com.ajou.travely.controller.cost.dto.UserCostResponseDto;
 import com.ajou.travely.controller.travel.dto.TravelCreateRequestDto;
 import com.ajou.travely.domain.travel.Travel;
 import com.ajou.travely.domain.UserCost;
@@ -94,21 +90,20 @@ class CostServiceTest {
         amountPerUser.put(user1.getId(), 10000L);
         amountPerUser.put(user2.getId(), 10000L);
         amountPerUser.put(user3.getId(), 10000L);
+        CostCreateRequestDto requestDto = CostCreateRequestDto.builder()
+                .totalAmount(30000L)
+                .title("TestTitle")
+                .content("안녕난이거야")
+                .amountsPerUser(amountPerUser)
+                .payerId(user1.getId()).build();
         CostCreateResponseDto costCreateResponseDto = costService.createCost(
-            30000L,
-            travel.getId(),
-            "TestTitle",
-            "안녕난이거야",
-            false,
-            amountPerUser,
-            user1.getId()
+            requestDto, travel.getId()
         );
 
         Assertions.assertThat(costCreateResponseDto.getTotalAmount()).isEqualTo(30000L);
         Assertions.assertThat(costCreateResponseDto.getTravel().getId()).isEqualTo(travel.getId());
         Assertions.assertThat(costCreateResponseDto.getPayer().getId()).isEqualTo(user1.getId());
-        Assertions.assertThat(costCreateResponseDto.getUserCosts().get(0).getUser().getKakaoId())
-            .isEqualTo(0L);
+        Assertions.assertThat(costCreateResponseDto.getUserCosts().size()).isEqualTo(amountPerUser.keySet().size());
     }
 
     @Test
@@ -146,15 +141,15 @@ class CostServiceTest {
         amountPerUser.put(users.get(0).getId(), 1000L);
         amountPerUser.put(users.get(1).getId(), 10000L);
         amountPerUser.put(users.get(2).getId(), 100000L);
-
+        CostCreateRequestDto requestDto = CostCreateRequestDto.builder()
+                .totalAmount(111000L)
+                .title("TestTitle")
+                .content("안녕난이거야")
+                .amountsPerUser(amountPerUser)
+                .payerId(users.get(0).getId())
+                .build();
         CostCreateResponseDto createdCost = costService.createCost(
-            111000L,
-            travelId,
-            "TestTitle",
-            "안녕난이거야",
-            false,
-            amountPerUser,
-            users.get(0).getId()
+            requestDto, travelId
         );
         CostResponseDto costById = costService.getCostById(createdCost.getId());
 
@@ -221,15 +216,15 @@ class CostServiceTest {
         amountPerUser.put(users.get(1).getId(), 10000L);
         amountPerUser.put(users.get(2).getId(), 100000L);
         amountPerUser.put(users.get(3).getId(), 1000000L);
-
+        CostCreateRequestDto requestDto = CostCreateRequestDto.builder()
+                .totalAmount(1111000L)
+                .title("TestTitle")
+                .content("안녕난이거야")
+                .amountsPerUser(amountPerUser)
+                .payerId(users.get(0).getId())
+                .build();
         CostCreateResponseDto createdCost = costService.createCost(
-            1111000L,
-            travel.getId(),
-            "TestTitle",
-            "안녕난이거야",
-            false,
-            amountPerUser,
-            users.get(0).getId()
+            requestDto, travel.getId()
         );
 
         Cost cost = costRepository.findById(createdCost.getId())
@@ -245,7 +240,6 @@ class CostServiceTest {
             1122000L,
             changedTitle,
             changedContent,
-            false,
             amountsPerUser,
             users.get(2).getId()
         );
@@ -310,14 +304,15 @@ class CostServiceTest {
         amountPerUser.put(user1.getId(), 10000L);
         amountPerUser.put(user2.getId(), 10000L);
         amountPerUser.put(user3.getId(), 10000L);
+        CostCreateRequestDto requestDto = CostCreateRequestDto.builder()
+                .totalAmount(30000L)
+                .title("TestTitle")
+                .content("안녕난이거야")
+                .amountsPerUser(amountPerUser)
+                .payerId(user1.getId())
+                .build();
         CostCreateResponseDto costCreateResponseDto = costService.createCost(
-            30000L,
-            travel.getId(),
-            "TestTitle",
-            "안녕난이거야",
-            false,
-            amountPerUser,
-            user1.getId()
+            requestDto, travel.getId()
         );
         CostResponseDto foundCost = costService.getCostById(costCreateResponseDto.getId());
         Stream<Long> userCostIds = foundCost.getUserCosts().stream()

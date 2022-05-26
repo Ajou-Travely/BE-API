@@ -56,8 +56,8 @@ public class PostRepositoryTest {
                 .endDate(LocalDate.now())
                 .build());
         place = placeRepository.save(Place.builder()
-                .x(123.123)
-                .y(345.1354)
+                .lat(123.123)
+                .lng(345.1354)
                 .placeName("place name")
                 .addressName("주소1")
                 .addressRoadName("주소2")

@@ -14,7 +14,6 @@ public class CostResponseDto {
     private Long totalAmount;
     private String content;
     private String title;
-    private Boolean isEquallyDivided;
     private List<UserCostResponseDto> userCosts;
     private Long payerId;
 
@@ -23,15 +22,11 @@ public class CostResponseDto {
         this.totalAmount = entity.getTotalAmount();
         this.content = entity.getContent();
         this.title = entity.getTitle();
-        this.isEquallyDivided = entity.getIsEquallyDivided();
         this.userCosts = entity.getUserCosts().stream().map(userCost -> {
             return new UserCostResponseDto(
                     userCost.getId(),
                     userCost.getAmount(),
-                    new SimpleUserInfoDto(
-                            userCost.getUser().getId(),
-                            userCost.getUser().getName()
-                    ),
+                    new SimpleUserInfoDto(userCost.getUser()),
                     userCost.getIsRequested()
             );
         }).collect(Collectors.toList());
