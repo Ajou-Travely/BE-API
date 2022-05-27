@@ -52,6 +52,11 @@ public class UserController {
         return new UserResponseDto(user);
     }
 
+    @GetMapping("/email")
+    public ResponseEntity<Boolean> isEmailDuplicated(@RequestParam String email) {
+        return ResponseEntity.ok(userService.isEmailDuplicated(email));
+    }
+
     @GetMapping("/my-info")
     public ResponseEntity<UserResponseDto> showMyInfo(@LoginUser SessionUser sessionUser) {
         UserResponseDto user = userService.getUserById(sessionUser.getUserId());

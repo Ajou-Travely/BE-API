@@ -134,6 +134,12 @@ public class UserService {
         friendRepository.deleteByFolloweeIdAndFollowerId(target.getId(), user.getId());
     }
 
+    @Transactional(readOnly = true)
+    public Boolean isEmailDuplicated(String email) {
+        Optional<User> user = userRepository.findByEmail(email);
+        return user.isEmpty();
+    }
+
     private User checkRecord(Long userId) {
         return userRepository
                 .findById(userId)
