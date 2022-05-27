@@ -8,7 +8,6 @@ import com.ajou.travely.controller.schedule.dto.SimpleScheduleResponseDto;
 import com.ajou.travely.controller.travel.dto.*;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.domain.Invitation;
-import com.ajou.travely.domain.Place;
 import com.ajou.travely.domain.UserTravel;
 import com.ajou.travely.domain.travel.Travel;
 import com.ajou.travely.domain.travel.TravelType;
@@ -20,6 +19,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -64,6 +64,9 @@ class TravelServiceTest {
 
     @Autowired
     UserTravelRepository userTravelRepository;
+
+    @Value("${domain.base-url}")
+    private String baseUrl;
 
     @Test
     @DisplayName("여행 객체를 만들 수 있다.")
@@ -172,7 +175,7 @@ class TravelServiceTest {
                 foundTravel.getId()
                 , newUser.getId()
         );
-        List<SimpleUserInfoDto> users = travelService.getSimpleUsersOfTravel(foundTravel.getId(), user.getId());
+        List<SimpleUserInfoDto> users = travelService.getSimpleUsersInfoOfTravel(foundTravel.getId());
         assertThat(users).hasSize(2);
         users.forEach(u -> System.out.println(u.toString()));
     }
@@ -446,11 +449,11 @@ class TravelServiceTest {
                 new Invitation(invitedUser.getEmail(), travel, code)
         );
 
-        String redirectUri = travelService.acceptInvitation(invitedUser.getId(), travel.getId(), code);
+        String redirectUri = travelService.acceptInvitation(invitedUser.getId(), code);
         List<UserTravel> userTravelList = userTravelRepository.findAll();
         Optional<Invitation> deletedInvitation = invitationRepository.findById(invitation.getId());
 
-        Assertions.assertThat(redirectUri).isEqualTo("https://dev.travely.guide/" + travel.getId());
+        Assertions.assertThat(redirectUri).isEqualTo(baseUrl + travel.getId());
         Assertions.assertThat(userTravelList.get(1).getUser().getId()).isEqualTo(invitedUser.getId());
         Assertions.assertThat(userTravelList.get(1).getTravel().getId()).isEqualTo(travel.getId());
         Assertions.assertThat(deletedInvitation.isEmpty()).isEqualTo(true);

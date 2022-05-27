@@ -44,7 +44,7 @@ public class User implements Serializable {
     @NotNull
     private String name;
 
-    @Column(length = 30)
+    @Column(length = 30, unique = true)
     @NotNull
     private String phoneNumber;
 
@@ -54,6 +54,7 @@ public class User implements Serializable {
     @Enumerated(EnumType.STRING)
     private Mbti mbti;
 
+    @Column(unique = true)
     @Nullable
     private Long kakaoId;
 

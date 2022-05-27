@@ -1,8 +1,12 @@
 package com.ajou.travely.domain.travel;
 
 import com.ajou.travely.controller.travel.dto.TravelUpdateRequestDto;
+import com.ajou.travely.converter.ScheduleOrderConverter;
 import com.ajou.travely.domain.UserTravel;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -10,7 +14,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor
@@ -30,7 +33,8 @@ public class Travel {
 
     private LocalDate endDate;
 
-    private String scheduleOrder;
+    @Convert(converter = ScheduleOrderConverter.class)
+    private List<Long> scheduleOrder = new ArrayList<>();
 
     @Column(columnDefinition = "TEXT")
     private String memo;
@@ -64,12 +68,10 @@ public class Travel {
 
     public void setScheduleOrder(List<Long> scheduleOrder) {
         if (Objects.isNull(scheduleOrder)) {
-            scheduleOrder = new ArrayList<>();
+            this.scheduleOrder = new ArrayList<>();
+        } else {
+            this.scheduleOrder = scheduleOrder;
         }
-        this.scheduleOrder = scheduleOrder
-                .stream()
-                .map(String::valueOf)
-                .collect(Collectors.joining(","));
     }
 
     @PrePersist

@@ -15,10 +15,13 @@ public class Invitation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "invitation_id")
     private Long id;
+
     private String email;
+
     @ManyToOne
     @JoinColumn(name = "travel_id")
     private Travel travel;
+
     @Column(columnDefinition = "BINARY(16)")
     private UUID code;
 
