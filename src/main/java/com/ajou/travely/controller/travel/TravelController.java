@@ -118,10 +118,11 @@ public class TravelController {
         return ResponseEntity.ok(scheduleService.getScheduleById(scheduleId));
     }
 
-    @PostMapping("/{travelId}/schedules")
+    @PostMapping("/{travelId}/schedules/{travelDateId}")
     public ResponseEntity<Long> createSchedule(@PathVariable Long travelId,
+                                               @PathVariable Long travelDateId,
                                                @RequestBody ScheduleCreateRequestDto scheduleCreateRequestDto) {
-        return ResponseEntity.ok(scheduleService.createSchedule(travelId, scheduleCreateRequestDto));
+        return ResponseEntity.ok(scheduleService.createSchedule(travelId, travelDateId, scheduleCreateRequestDto));
     }
 
     @PutMapping("/{travelId}/schedules/{scheduleId}")

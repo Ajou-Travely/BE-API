@@ -17,8 +17,8 @@ import java.util.stream.Collectors;
 public class TravelResponseDto {
     private final Long id;
     private final String title;
-    private final LocalDate startDate;
-    private final LocalDate endDate;
+//    private final LocalDate startDate;
+//    private final LocalDate endDate;
     private final String memo;
     private final Long managerId;
     private final TravelType travelType;
@@ -48,8 +48,8 @@ public class TravelResponseDto {
     public TravelResponseDto(Travel entity, List<TravelDate> dates) {
         this.id = entity.getId();
         this.title = entity.getTitle();
-        this.startDate = entity.getStartDate();
-        this.endDate = entity.getEndDate();
+//        this.startDate = entity.getStartDate();
+//        this.endDate = entity.getEndDate();
         this.memo = entity.getMemo();
         this.managerId = entity.getManagerId();
         this.travelType = entity.getTravelType();
