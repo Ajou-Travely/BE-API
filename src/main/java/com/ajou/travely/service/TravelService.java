@@ -9,6 +9,7 @@ import com.ajou.travely.domain.Invitation;
 import com.ajou.travely.domain.Schedule;
 import com.ajou.travely.domain.UserTravel;
 import com.ajou.travely.domain.travel.Travel;
+import com.ajou.travely.domain.travel.TravelType;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.exception.ErrorCode;
 import com.ajou.travely.exception.custom.DuplicatedRequestException;
@@ -244,7 +245,8 @@ public class TravelService {
 
     private Travel checkAuthorization(Long travelId, Long userId) {
         Travel travel = checkTravelRecord(travelId);
-        if (!getUsersOfTravel(travelId).stream().map(User::getId).collect(Collectors.toList()).contains(userId)) {
+        if (travel.getTravelType().equals(TravelType.PRIVATE)
+                && !getUsersOfTravel(travelId).stream().map(User::getId).collect(Collectors.toList()).contains(userId)) {
             throw new UnauthorizedException("해당 Travel에 대해 접근 권한이 없습니다.", ErrorCode.UNAUTHORIZED_TRAVEL);
         }
         return travel;
