@@ -175,4 +175,17 @@ public class TravelController {
         this.costService.deleteCostById(costId);
         return ResponseEntity.ok().build();
     }
+
+    // TravelDates
+
+    @PostMapping("/{travelId}/travelDates")
+    public ResponseEntity<Long> createTravelDate(@PathVariable Long travelId,
+                                                 @RequestBody TravelDateCreateRequestDto requestDto) {
+        return ResponseEntity.ok(travelService.createTravelDate(travelId, requestDto));
+    }
+//    @PutMapping("/{travelId}/travelDates/{travelDateId}")
+
+//    schedule과 travelDate 간의 cascade 논의
+//    @DeleteMapping("/{travelId}/travelDates/{travelDateId")
+
 }

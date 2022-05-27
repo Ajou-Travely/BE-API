@@ -269,6 +269,15 @@ public class TravelService {
     }
     /*------------------------------------------------------*/
 
+    @Transactional
+    public Long createTravelDate(Long travelId, TravelDateCreateRequestDto requestDto) {
+        return travelDateRepository.save(TravelDate.builder()
+                .date(requestDto.getDate())
+                .title(requestDto.getTitle())
+                .travel(checkTravelRecord(travelId))
+                .build()).getId();
+    }
+
     private Travel checkTravelRecord(Long travelId) {
         return checkRecord(
             travelRepository.findById(travelId),

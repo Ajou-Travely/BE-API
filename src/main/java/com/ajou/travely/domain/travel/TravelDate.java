@@ -2,7 +2,9 @@ package com.ajou.travely.domain.travel;
 
 import com.ajou.travely.converter.OrderConverter;
 import com.ajou.travely.domain.Schedule;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NonNull;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -46,5 +48,16 @@ public class TravelDate {
         } else {
             this.scheduleOrder = scheduleOrder;
         }
+    }
+
+    @Builder
+    public TravelDate(
+            String title,
+            LocalDate date,
+            @NonNull Travel travel
+    ) {
+        this.title = title;
+        this.date = date;
+        this.travel = travel;
     }
 }
