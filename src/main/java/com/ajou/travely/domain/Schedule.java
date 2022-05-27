@@ -1,6 +1,7 @@
 package com.ajou.travely.domain;
 
 import com.ajou.travely.domain.travel.Travel;
+import com.ajou.travely.domain.travel.TravelDate;
 import lombok.*;
 
 import javax.persistence.*;
@@ -24,6 +25,10 @@ public class Schedule {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "place_id")
     private Place place;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "travel_date_id")
+    private TravelDate travelDate;
 
     @OneToMany(mappedBy = "schedule")
     private List<Branch> branches;

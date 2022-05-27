@@ -1,7 +1,7 @@
 package com.ajou.travely.domain.travel;
 
 import com.ajou.travely.controller.travel.dto.TravelUpdateRequestDto;
-import com.ajou.travely.converter.ScheduleOrderConverter;
+import com.ajou.travely.converter.OrderConverter;
 import com.ajou.travely.domain.UserTravel;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,8 +33,8 @@ public class Travel {
 
     private LocalDate endDate;
 
-    @Convert(converter = ScheduleOrderConverter.class)
-    private List<Long> scheduleOrder = new ArrayList<>();
+//    @Convert(converter = ScheduleOrderConverter.class)
+//    private List<Long> scheduleOrder = new ArrayList<>();
 
     @Column(columnDefinition = "TEXT")
     private String memo;
@@ -44,6 +44,9 @@ public class Travel {
 
     @OneToMany(mappedBy = "travel")
     private final List<UserTravel> userTravels = new ArrayList<>();
+
+    @Convert(converter = OrderConverter.class)
+    private List<Long> dateOrder = new ArrayList<>();
 
     @Builder
     public Travel(@NonNull String title,
@@ -59,18 +62,25 @@ public class Travel {
         this.startDate = startDate;
         this.endDate = endDate;
         this.travelType = travelType;
-        setScheduleOrder(scheduleOrder);
+//        setScheduleOrder(scheduleOrder);
     }
 
     public void addUserTravel(UserTravel userTravel) {
         userTravel.setTravel(this);
     }
 
-    public void setScheduleOrder(List<Long> scheduleOrder) {
-        if (Objects.isNull(scheduleOrder)) {
-            this.scheduleOrder = new ArrayList<>();
+//    public void setScheduleOrder(List<Long> scheduleOrder) {
+//        if (Objects.isNull(scheduleOrder)) {
+//            this.scheduleOrder = new ArrayList<>();
+//        } else {
+//            this.scheduleOrder = scheduleOrder;
+//        }
+//    }
+    public void setdateOrder(List<Long> dateOrder) {
+        if (Objects.isNull(dateOrder)) {
+            this.dateOrder = new ArrayList<>();
         } else {
-            this.scheduleOrder = scheduleOrder;
+            this.dateOrder = dateOrder;
         }
     }
 
