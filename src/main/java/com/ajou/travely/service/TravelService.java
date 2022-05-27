@@ -166,15 +166,6 @@ public class TravelService {
         return new TravelResponseDto(travel, schedules);
     }
 
-    private List<User> getUsersOfTravel(Long travelId) {
-        Travel travel = checkTravelRecord(travelId);
-        return travel
-                .getUserTravels()
-                .stream()
-                .map(UserTravel::getUser)
-                .collect(Collectors.toList());
-    }
-
     @Transactional
     public List<UserResponseDto> getUsersInfoOfTravel(Long travelId) {
         return getUsersOfTravel(travelId)
@@ -229,14 +220,6 @@ public class TravelService {
         travel.updateTravel(requestDto);
     }
 
-    private Travel checkAuthorization(Long travelId, Long userId) {
-        Travel travel = checkTravelRecord(travelId);
-        if (!travel.getUserTravels().stream().map(ut -> ut.getUser().getId()).collect(Collectors.toList()).contains(userId)) {
-            throw new UnauthorizedException("해당 Travel에 대해 접근 권한이 없습니다.", ErrorCode.UNAUTHORIZED_TRAVEL);
-        }
-        return travel;
-    }
-
     @Transactional
     public String acceptInvitation(Long userId, UUID code) {
         Long travelId = addUserToTravelWithValidation(userId, code);
@@ -248,6 +231,23 @@ public class TravelService {
         User user = checkUserRecord(userId);
         Invitation invitation = checkInvitationRecord(code, user.getEmail());
         invitationRepository.delete(invitation);
+    }
+
+    private List<User> getUsersOfTravel(Long travelId) {
+        Travel travel = checkTravelRecord(travelId);
+        return travel
+                .getUserTravels()
+                .stream()
+                .map(UserTravel::getUser)
+                .collect(Collectors.toList());
+    }
+
+    private Travel checkAuthorization(Long travelId, Long userId) {
+        Travel travel = checkTravelRecord(travelId);
+        if (!getUsersOfTravel(travelId).stream().map(User::getId).collect(Collectors.toList()).contains(userId)) {
+            throw new UnauthorizedException("해당 Travel에 대해 접근 권한이 없습니다.", ErrorCode.UNAUTHORIZED_TRAVEL);
+        }
+        return travel;
     }
 
     private List<Schedule> sortSchedule(Travel travel) {
