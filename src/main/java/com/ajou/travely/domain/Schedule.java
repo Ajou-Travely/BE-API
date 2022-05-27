@@ -18,9 +18,9 @@ public class Schedule {
     @Column(name = "schedule_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "travel_id")
-    private Travel travel;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "travel_id")
+//    private Travel travel;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "place_id")
@@ -38,8 +38,9 @@ public class Schedule {
     private LocalDateTime endTime;
 
     @Builder
-    public Schedule(@NonNull Travel travel, @NonNull Place place, LocalDateTime startTime, LocalDateTime endTime) {
-        this.travel = travel;
+    public Schedule(@NonNull TravelDate travelDate, @NonNull Place place, LocalDateTime startTime, LocalDateTime endTime) {
+//        this.travel = travel;
+        this.travelDate = travelDate;
         this.place = place;
         this.startTime = startTime;
         this.endTime = endTime;

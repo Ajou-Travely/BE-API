@@ -45,8 +45,11 @@ public class Travel {
     @OneToMany(mappedBy = "travel")
     private final List<UserTravel> userTravels = new ArrayList<>();
 
-    @Convert(converter = OrderConverter.class)
-    private List<Long> dateOrder = new ArrayList<>();
+//    @Convert(converter = OrderConverter.class)
+//    private List<Long> dateOrder = new ArrayList<>();
+
+    @OneToMany(mappedBy = "travel")
+    private List<TravelDate> travelDates = new ArrayList<>();
 
     @Builder
     public Travel(@NonNull String title,
@@ -54,7 +57,6 @@ public class Travel {
             @NonNull LocalDate startDate,
             @NonNull LocalDate endDate,
             String memo,
-            List<Long> scheduleOrder,
             TravelType travelType) {
         this.title = title;
         this.managerId = managerId;
@@ -76,13 +78,13 @@ public class Travel {
 //            this.scheduleOrder = scheduleOrder;
 //        }
 //    }
-    public void setdateOrder(List<Long> dateOrder) {
-        if (Objects.isNull(dateOrder)) {
-            this.dateOrder = new ArrayList<>();
-        } else {
-            this.dateOrder = dateOrder;
-        }
-    }
+//    public void setdateOrder(List<Long> dateOrder) {
+//        if (Objects.isNull(dateOrder)) {
+//            this.dateOrder = new ArrayList<>();
+//        } else {
+//            this.dateOrder = dateOrder;
+//        }
+//    }
 
     @PrePersist
     public void prePersist() {

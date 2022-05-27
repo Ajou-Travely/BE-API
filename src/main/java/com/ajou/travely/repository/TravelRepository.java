@@ -12,6 +12,6 @@ public interface TravelRepository extends JpaRepository<Travel, Long> {
     @Query("SELECT t FROM Travel t ORDER BY t.id DESC")
     List<Travel> findAllDesc();
 
-    @Query("select distinct s from Schedule s join fetch s.place where s.travel.id = :travelId")
-    List<Schedule> findSchedulesWithPlaceByTravelId(@Param("travelId") Long travelId);
+//    @Query("select distinct s from Schedule s join fetch s.place where s.travel.id = :travelId")
+//    List<Schedule> findSchedulesWithPlaceByTravelId(@Param("travelId") Long travelId);
 }

@@ -1,10 +1,11 @@
 package com.ajou.travely.domain.travel;
 
 import com.ajou.travely.converter.OrderConverter;
+import com.ajou.travely.domain.Schedule;
 import lombok.Getter;
-import org.joda.time.LocalDate;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -35,6 +36,9 @@ public class TravelDate {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "travel_id")
     private Travel travel;
+
+    @OneToMany(mappedBy = "travelDate")
+    private List<Schedule> schedules = new ArrayList<>();
 
     public void setScheduleOrder(List<Long> scheduleOrder) {
         if(Objects.isNull(scheduleOrder)) {

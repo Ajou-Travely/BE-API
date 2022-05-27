@@ -62,7 +62,6 @@ public class TravelController {
     @PostMapping()
     public ResponseEntity<Long> createTravel(@LoginUser SessionUser sessionUser,
                                              @Valid @RequestBody TravelCreateRequestDto requestDto) {
-        System.out.println("sessionUser.getUserId() = " + sessionUser.getUserId());
         Travel travel = travelService.createTravel(
             sessionUser.getUserId(),
             requestDto
@@ -108,10 +107,10 @@ public class TravelController {
 
     // Schedules
 
-    @GetMapping("/{travelId}/schedules")
-    public ResponseEntity<List<SimpleScheduleResponseDto>> showSchedulesByTravel(@PathVariable Long travelId) {
-        return ResponseEntity.ok(travelService.getSchedulesByTravelId(travelId));
-    }
+//    @GetMapping("/{travelId}/schedules")
+//    public ResponseEntity<List<SimpleScheduleResponseDto>> showSchedulesByTravel(@PathVariable Long travelId) {
+//        return ResponseEntity.ok(travelService.getSchedulesByTravelId(travelId));
+//    }
 
     @GetMapping("/{travelId}/schedules/{scheduleId}")
     public ResponseEntity<ScheduleResponseDto> showSchedule(@PathVariable Long travelId,
@@ -134,10 +133,10 @@ public class TravelController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/{travelId}/change")
-    public ResponseEntity<Void> changeScheduleOrder(@PathVariable Long travelId,
+    @PostMapping("/{travelDateId}/change")
+    public ResponseEntity<Void> changeScheduleOrder(@PathVariable Long travelDateId,
                                                     ScheduleOrderUpdateRequestDto requestDto) {
-        travelService.changeScheduleOrder(travelId, requestDto);
+        travelService.changeScheduleOrder(travelDateId, requestDto);
         return ResponseEntity.ok().build();
     }
 
