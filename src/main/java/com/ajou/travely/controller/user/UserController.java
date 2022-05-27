@@ -33,8 +33,8 @@ public class UserController {
     @GetMapping("")
     public List<UserResponseDto> getAllUsers() {
         return userService.getAllUsers().stream()
-            .map(UserResponseDto::new)
-            .collect(Collectors.toList());
+                .map(UserResponseDto::new)
+                .collect(Collectors.toList());
     }
 
     @PutMapping(value = "", consumes = "multipart/form-data")
@@ -59,30 +59,33 @@ public class UserController {
     }
 
     @GetMapping("/friends")
-    public ResponseEntity<List<SimpleUserInfoDto>> showFriends(@LoginUser SessionUser sessionUser) {
-        return ResponseEntity.ok(userService.getFriends(sessionUser.getUserId()));
+    public ResponseEntity<Page<SimpleUserInfoDto>> showFriends(@LoginUser SessionUser sessionUser,
+                                                               @PageableDefault Pageable pageable) {
+        return ResponseEntity.ok(userService.getFriends(sessionUser.getUserId(), pageable));
     }
 
     @GetMapping("/friends/giving-requests")
-    public ResponseEntity<List<SimpleUserInfoDto>> showGivingRequests(@LoginUser SessionUser sessionUser) {
-        return ResponseEntity.ok(userService.getGivingRequests(sessionUser.getUserId()));
+    public ResponseEntity<Page<SimpleUserInfoDto>> showGivingRequests(@LoginUser SessionUser sessionUser,
+                                                                      @PageableDefault Pageable pageable) {
+        return ResponseEntity.ok(userService.getGivingRequests(sessionUser.getUserId(), pageable));
     }
 
     @GetMapping("/friends/given-requests")
-    public ResponseEntity<List<SimpleUserInfoDto>> showGivenRequests(@LoginUser SessionUser sessionUser) {
-        return ResponseEntity.ok(userService.getGivenRequests(sessionUser.getUserId()));
+    public ResponseEntity<Page<SimpleUserInfoDto>> showGivenRequests(@LoginUser SessionUser sessionUser,
+                                                                     @PageableDefault Pageable pageable) {
+        return ResponseEntity.ok(userService.getGivenRequests(sessionUser.getUserId(), pageable));
     }
 
     @PostMapping("/friends/{targetId}")
     public ResponseEntity<Void> sendFriendRequest(@PathVariable Long targetId,
-                                                    @LoginUser SessionUser sessionUser) {
+                                                  @LoginUser SessionUser sessionUser) {
         userService.requestFollowing(sessionUser.getUserId(), targetId);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/friends/{targetId}")
     public ResponseEntity<Void> cancelFriend(@PathVariable Long targetId,
-                                                  @LoginUser SessionUser sessionUser) {
+                                             @LoginUser SessionUser sessionUser) {
         userService.cancelFollowing(sessionUser.getUserId(), targetId);
         return ResponseEntity.ok().build();
     }
