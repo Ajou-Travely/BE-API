@@ -130,12 +130,6 @@ public class TravelController {
         return ResponseEntity.ok(travelService.getSimpleUsersOfTravel(travelId, sessionUser.getUserId()));
     }
 
-    @GetMapping("/{travelId}/costs")
-    public ResponseEntity<List<SimpleCostResponseDto>> showCostsByTravelId(@PathVariable Long travelId,
-                                                                           @LoginUser SessionUser sessionUser) {
-        return ResponseEntity.ok(travelService.getCostsByTravelId(travelId, sessionUser.getUserId()));
-    }
-
     // Schedules
 
     @GetMapping("/{travelId}/schedules")
