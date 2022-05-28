@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NonNull;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,23 +24,21 @@ import java.util.Objects;
 )
 @Entity
 public class TravelDate {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "travel_date_id")
-    private Long id;
-
+// TODO: unique key 두 개를 통해 생성 삭제하는 것으로 변경.
     private String title;
 
-    private LocalDate date;
+    @EmbeddedId
+    private TravelDateIds travelDateIds;
 
-    @Convert(converter = OrderConverter.class)
-    private List<Long> scheduleOrder = new ArrayList<>();
-
+    @MapsId("travel")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "travel_id")
     private Travel travel;
 
-    @OneToMany(mappedBy = "travelDate")
+    @Convert(converter = OrderConverter.class)
+    private List<Long> scheduleOrder = new ArrayList<>();
+
+    @OneToMany(mappedBy = "travelDate", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<Schedule> schedules = new ArrayList<>();
 
     public void setScheduleOrder(List<Long> scheduleOrder) {
@@ -57,7 +56,7 @@ public class TravelDate {
             @NonNull Travel travel
     ) {
         this.title = title;
-        this.date = date;
-        this.travel = travel;
+        this.getTravelDateIds().setDate(date);
+        this.getTravelDateIds().setTravel(travel);
     }
 }
