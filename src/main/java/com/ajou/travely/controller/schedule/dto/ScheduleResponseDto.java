@@ -7,6 +7,7 @@ import com.ajou.travely.domain.Schedule;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class ScheduleResponseDto {
     private Long travelId;
+    private LocalDate date;
     private Long scheduleId;
     private PlaceResponseDto place;
     private LocalDateTime startTime;
@@ -22,7 +24,8 @@ public class ScheduleResponseDto {
     private List<SimpleUserInfoDto> users;
 
     public ScheduleResponseDto(Schedule entity) {
-        this.travelId = entity.getTravel().getId();
+        this.travelId = entity.getTravelDate().getTravelDateIds().getTravel().getId();
+        this.date = entity.getTravelDate().getTravelDateIds().getDate();
         this.scheduleId = entity.getId();
         this.place = new PlaceResponseDto(entity.getPlace());
         this.startTime = entity.getStartTime();
