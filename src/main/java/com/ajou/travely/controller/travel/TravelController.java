@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -180,13 +181,19 @@ public class TravelController {
     // TravelDates
 
     @PostMapping("/{travelId}/travelDates")
-    public ResponseEntity<Long> createTravelDate(@PathVariable Long travelId,
-                                                 @RequestBody TravelDateCreateRequestDto requestDto) {
+    public ResponseEntity<LocalDate> createTravelDate(@PathVariable Long travelId,
+                                                      @Valid @RequestBody TravelDateCreateRequestDto requestDto) {
         return ResponseEntity.ok(travelService.createTravelDate(travelId, requestDto));
     }
 //    @PutMapping("/{travelId}/travelDates/{travelDateId}")
 
 //    schedule과 travelDate 간의 cascade 논의
-//    @DeleteMapping("/{travelId}/travelDates/{travelDateId")
+    @DeleteMapping("/{travelId}/travelDates/{travelDateId}")
+    public ResponseEntity<Void> deleteTravelDate(@PathVariable Long travelId,
+                                                 @PathVariable Long travelDateId) {
+        travelService.deleteTravelDate(travelId, travelDateId);
+        return ResponseEntity.ok().build();
+    }
+
 
 }

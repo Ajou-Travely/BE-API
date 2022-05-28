@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -261,7 +262,7 @@ public class TravelService {
 //        return schedules;
         Map<Long, Schedule> map = new HashMap<>();
         travelDateRepository
-                .findSchedulesWithPlaceByTravelDateId(travelDate.getId())
+                .findSchedulesWithPlaceByDateAndTravelId(travelDate.getTravelDateIds().getDate(), travelDate.getTravelDateIds().getTravelId())
                 .forEach(schedule -> map.put(schedule.getId(), schedule));
         List<Schedule> schedules = new ArrayList<>();
         travelDate.getScheduleOrder().forEach(id -> schedules.add(map.get(id)));
@@ -270,12 +271,17 @@ public class TravelService {
     /*------------------------------------------------------*/
 
     @Transactional
-    public Long createTravelDate(Long travelId, TravelDateCreateRequestDto requestDto) {
+    public LocalDate createTravelDate(Long travelId, TravelDateCreateRequestDto requestDto) {
         return travelDateRepository.save(TravelDate.builder()
                 .date(requestDto.getDate())
                 .title(requestDto.getTitle())
                 .travel(checkTravelRecord(travelId))
-                .build()).getId();
+                .build()).getTravelDateIds().getDate();
+    }
+
+    @Transactional
+    public void deleteTravelDate(Long travelId, Long travelDateId) {
+        travelDateRepository.delete(checkTravelDateRecord(travelDateId));
     }
 
     private Travel checkTravelRecord(Long travelId) {

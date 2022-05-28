@@ -11,15 +11,15 @@ import java.util.stream.Collectors;
 
 @Getter
 public class SimpleTravelDateResponseDto {
-    private Long travelDateId;
-    private String title;
+    private Long travelId;
     private LocalDate date;
+    private String title;
     private List<SimpleScheduleResponseDto> schedules;
 
     public SimpleTravelDateResponseDto(TravelDate entity) {
-        this.travelDateId = entity.getId();
+        this.travelId = entity.getTravelDateIds().getTravelId();
         this.title = entity.getTitle();
-        this.date = entity.getDate();
+        this.date = entity.getTravelDateIds().getDate();;
         this.schedules = entity
                 .getSchedules()
                 .stream()
