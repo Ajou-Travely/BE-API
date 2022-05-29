@@ -353,7 +353,7 @@ class ScheduleServiceTest {
                 travel.getId(),
                 travelDate.getDate(),
                 new ScheduleOrderUpdateRequestDto(Arrays.asList(scheduleId3, scheduleId1, scheduleId2)));
-        List<SimpleScheduleResponseDto> schedulesByTravelId = travelService.getSchedulesByTravelId(travel.getId(), travelDate.getDate());
+        List<SimpleScheduleResponseDto> schedulesByTravelId = travelService.getSchedulesByTravelIdAndDate(travel.getId(), travelDate.getDate());
         List<Long> result = new ArrayList<>();
         schedulesByTravelId.stream().forEach(simpleScheduleResponseDto -> result.add(simpleScheduleResponseDto.getScheduleId()));
         assertThat(result).isEqualTo(Arrays.asList(scheduleId3, scheduleId1, scheduleId2));

@@ -200,7 +200,7 @@ public class TravelService {
     }
 
     @Transactional(readOnly = true)
-    public List<SimpleScheduleResponseDto> getSchedulesByTravelId(Long travelId, LocalDate date) {
+    public List<SimpleScheduleResponseDto> getSchedulesByTravelIdAndDate(Long travelId, LocalDate date) {
         TravelDate travelDate = checkTravelDateRecord(travelId, date);
         return sortSchedule(travelDate)
             .stream()
