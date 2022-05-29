@@ -13,6 +13,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -33,6 +36,8 @@ class UserServiceTest {
     UserService userService;
 
 //    EntityManager
+
+    PageRequest pageRequest = PageRequest.of(0, 10);
 
     @Test
     void testGetUserInfo() {
@@ -77,9 +82,9 @@ class UserServiceTest {
 
         userService.requestFollowing(user.getId(), target.getEmail());
 
-        List<SimpleUserInfoDto> givenRequests = userService.getGivenRequests(target.getId());
+        Page<SimpleUserInfoDto> givenRequests = userService.getGivenRequests(target.getId(), pageRequest);
         assertThat(givenRequests).hasSize(1);
-        List<SimpleUserInfoDto> givingRequests = userService.getGivingRequests(user.getId());
+        Page<SimpleUserInfoDto> givingRequests = userService.getGivingRequests(user.getId(), pageRequest);
         assertThat(givingRequests).hasSize(1);
     }
 
@@ -140,9 +145,9 @@ class UserServiceTest {
         userService.requestFollowing(user.getId(), target.getEmail());
         userService.cancelRequest(user.getId(), target.getId());
 
-        List<SimpleUserInfoDto> givenRequests = userService.getGivenRequests(target.getId());
+        Page<SimpleUserInfoDto> givenRequests = userService.getGivenRequests(target.getId(), pageRequest);
         assertThat(givenRequests).hasSize(0);
-        List<SimpleUserInfoDto> givingRequests = userService.getGivingRequests(user.getId());
+        Page<SimpleUserInfoDto> givingRequests = userService.getGivingRequests(user.getId(), pageRequest);
         assertThat(givingRequests).hasSize(0);
     }
 
@@ -219,9 +224,9 @@ class UserServiceTest {
         userService.requestFollowing(user.getId(), target.getEmail());
         userService.rejectFriendRequest(user.getId(), target.getId());
 
-        List<SimpleUserInfoDto> givenRequests = userService.getGivenRequests(target.getId());
+        Page<SimpleUserInfoDto> givenRequests = userService.getGivenRequests(target.getId(), pageRequest);
         assertThat(givenRequests).hasSize(0);
-        List<SimpleUserInfoDto> givingRequests = userService.getGivingRequests(user.getId());
+        Page<SimpleUserInfoDto> givingRequests = userService.getGivingRequests(user.getId(), pageRequest);
         assertThat(givingRequests).hasSize(0);
     }
 
@@ -273,9 +278,9 @@ class UserServiceTest {
         userService.requestFollowing(user.getId(), target.getEmail());
         userService.acceptFriendRequest(user.getId(), target.getId());
 
-        List<SimpleUserInfoDto> friends = userService.getFriends(user.getId());
+        Page<SimpleUserInfoDto> friends = userService.getFriends(user.getId(), pageRequest);
         assertThat(friends).hasSize(1);
-        List<SimpleUserInfoDto> targetFriends = userService.getFriends(target.getId());
+        Page<SimpleUserInfoDto> targetFriends = userService.getFriends(target.getId(), pageRequest);
         assertThat(targetFriends).hasSize(1);
     }
 
@@ -355,9 +360,9 @@ class UserServiceTest {
         userService.acceptFriendRequest(user.getId(), target.getId());
         userService.cancelFollowing(user.getId(), target.getId());
 
-        List<SimpleUserInfoDto> friends = userService.getFriends(user.getId());
+        Page<SimpleUserInfoDto> friends = userService.getFriends(user.getId(), pageRequest);
         assertThat(friends).hasSize(0);
-        List<SimpleUserInfoDto> targetFriends = userService.getFriends(target.getId());
+        Page<SimpleUserInfoDto> targetFriends = userService.getFriends(target.getId(), pageRequest);
         assertThat(targetFriends).hasSize(0);
     }
 

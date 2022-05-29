@@ -66,14 +66,12 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public List<SimpleUserInfoDto> getFriends(Long userId) {
+    public Page<SimpleUserInfoDto> getFriends(Long userId, Pageable pageable) {
         User user = checkUserRecord(userId);
         return friendRepository
-                .findAllFriendsByFollowee(user.getId())
-                .stream()
+                .findAllFriendsByFollowee(user.getId(), pageable)
                 .map(Friend::getFollower)
-                .map(SimpleUserInfoDto::new)
-                .collect(Collectors.toList());
+                .map(SimpleUserInfoDto::new);
     }
 
     @Transactional(readOnly = true)
@@ -83,25 +81,21 @@ public class UserService {
             .map(SimpleTravelResponseDto::new);
     }
 
-    public List<SimpleUserInfoDto> getGivenRequests(Long userId) {
+    public Page<SimpleUserInfoDto> getGivenRequests(Long userId, Pageable pageable) {
         User user = checkUserRecord(userId);
         return friendRepository
-                .findGivenRequestsByFollower(user.getId())
-                .stream()
+                .findGivenRequestsByFollower(user.getId(), pageable)
                 .map(Friend::getFollowee)
-                .map(SimpleUserInfoDto::new)
-                .collect(Collectors.toList());
+                .map(SimpleUserInfoDto::new);
     }
 
     @Transactional(readOnly = true)
-    public List<SimpleUserInfoDto> getGivingRequests(Long userId) {
+    public Page<SimpleUserInfoDto> getGivingRequests(Long userId, Pageable pageable) {
         User user = checkUserRecord(userId);
         return friendRepository
-                .findGivingRequestsByFollowee(user.getId())
-                .stream()
+                .findGivingRequestsByFollowee(user.getId(), pageable)
                 .map(Friend::getFollower)
-                .map(SimpleUserInfoDto::new)
-                .collect(Collectors.toList());
+                .map(SimpleUserInfoDto::new);
     }
 
     @Transactional
