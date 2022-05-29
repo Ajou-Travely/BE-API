@@ -17,9 +17,9 @@ public class SimpleTravelDateResponseDto {
     private List<SimpleScheduleResponseDto> schedules;
 
     public SimpleTravelDateResponseDto(TravelDate entity) {
-        this.travelId = entity.getTravelDateIds().getTravelId();
+        this.travelId = entity.getTravel().getId();
         this.title = entity.getTitle();
-        this.date = entity.getTravelDateIds().getDate();;
+        this.date = entity.getDate();;
         this.schedules = entity
                 .getSchedules()
                 .stream()

@@ -16,11 +16,11 @@ public interface TravelDateRepository extends JpaRepository<TravelDate, TravelDa
             "from Schedule s " +
             "join fetch s.place " +
             "where s.travelDate.travel.id = :travelId " +
-            "and s.travelDate.travelDateIds.date = :date")
+            "and s.travelDate.date = :date")
     List<Schedule> findSchedulesWithPlaceByDateAndTravelId(@Param("date") LocalDate date, @Param("travelId") Long travelId);
     @Query("select td " +
             "from TravelDate td " +
             "where td.travel.id = :travelId " +
-            "and td.travelDateIds.date = :date")
+            "and td.date = :date")
     Optional<TravelDate> findTravelDateByDateAndTravelId(@Param("date") LocalDate date, @Param("travelId") Long travelId);
 }

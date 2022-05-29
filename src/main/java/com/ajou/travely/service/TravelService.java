@@ -1,5 +1,6 @@
 package com.ajou.travely.service;
 
+import com.ajou.travely.controller.schedule.dto.SimpleScheduleResponseDto;
 import com.ajou.travely.controller.travel.dto.*;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.controller.user.dto.UserResponseDto;
@@ -53,8 +54,6 @@ public class TravelService {
         Travel travel = travelRepository.save(
             Travel.builder()
                 .title(travelCreateRequestDto.getTitle())
-//                .startDate(travelCreateRequestDto.getStartDate())
-//                .endDate(travelCreateRequestDto.getEndDate())
                 .managerId(userId)
                 .travelType(travelCreateRequestDto.getTravelType())
                 .build());
@@ -161,17 +160,12 @@ public class TravelService {
         userTravelRepository.save(userTravel);
     }
 
-    // 수정해야함.
-    /*------------------------------------------------------*/
     @Transactional
     public TravelResponseDto getTravelById(Long travelId) {
-//        Travel travel = checkTravelRecord(travelId);
-//        List<Schedule> schedules = sortSchedule(travel);
-//        return new TravelResponseDto(travel, schedules);
         Travel travel = checkTravelRecord(travelId);
         return new TravelResponseDto(travel, travel.getTravelDates());
     }
-    /*------------------------------------------------------*/
+
     private List<User> getUsersOfTravel(Long travelId) {
         Travel travel = checkTravelRecord(travelId);
         return travel
@@ -214,24 +208,20 @@ public class TravelService {
 
     // 수정 필요.
     /*------------------------------------------------------*/
-//    @Transactional(readOnly = true)
-//    public List<SimpleScheduleResponseDto> getSchedulesByTravelId(Long travelId) {
-//        Travel travel = checkTravelRecord(travelId);
-//        return sortSchedule(travel)
-//            .stream()
-//            .map(SimpleScheduleResponseDto::new)
-//            .collect(Collectors.toList());
-//    }
+    @Transactional(readOnly = true)
+    public List<SimpleScheduleResponseDto> getSchedulesByTravelId(Long travelId, LocalDate date) {
+        TravelDate travelDate = checkTravelDateRecord(travelId, date);
+        return sortSchedule(travelDate)
+            .stream()
+            .map(SimpleScheduleResponseDto::new)
+            .collect(Collectors.toList());
+    }
     /*------------------------------------------------------*/
 
-
-    // 수정 필요
-    /*------------------------------------------------------*/
     @Transactional
     public void changeScheduleOrder(Long travelId, LocalDate date, ScheduleOrderUpdateRequestDto requestDto) {
         checkTravelDateRecord(travelId, date).setScheduleOrder(requestDto.getScheduleOrder());
     }
-    /*------------------------------------------------------*/
 
     @Transactional
     public void updateTravel(Long travelId, TravelUpdateRequestDto requestDto) {
@@ -254,16 +244,9 @@ public class TravelService {
     // 수정 필요.
     /*------------------------------------------------------*/
     private List<Schedule> sortSchedule(TravelDate travelDate) {
-//        Map<Long, Schedule> map = new HashMap<>();
-//        travelRepository
-//                .findSchedulesWithPlaceByTravelId(travel.getId())
-//                .forEach(schedule -> map.put(schedule.getId(), schedule));
-//        List<Schedule> schedules = new ArrayList<>();
-//        travel.getScheduleOrder().forEach(id -> schedules.add(map.get(id)));
-//        return schedules;
         Map<Long, Schedule> map = new HashMap<>();
         travelDateRepository
-                .findSchedulesWithPlaceByDateAndTravelId(travelDate.getTravelDateIds().getDate(), travelDate.getTravelDateIds().getTravelId())
+                .findSchedulesWithPlaceByDateAndTravelId(travelDate.getDate(), travelDate.getTravel().getId())
                 .forEach(schedule -> map.put(schedule.getId(), schedule));
         List<Schedule> schedules = new ArrayList<>();
         travelDate.getScheduleOrder().forEach(id -> schedules.add(map.get(id)));
@@ -272,16 +255,12 @@ public class TravelService {
     /*------------------------------------------------------*/
 
     @Transactional
-    public LocalDate createTravelDate(Long travelId, TravelDateCreateRequestDto requestDto) {
+    public TravelDate createTravelDate(Long travelId, TravelDateCreateRequestDto requestDto) {
         return travelDateRepository.save(TravelDate.builder()
                 .title(requestDto.getTitle())
                 .travel(checkTravelRecord(travelId))
-                .travelDateIds(
-                        TravelDateIds.builder()
-                        .travelId(travelId)
-                        .date(requestDto.getDate())
-                        .build())
-                .build()).getTravelDateIds().getDate();
+                .date(LocalDate.now())
+                .build());
     }
 
     @Transactional

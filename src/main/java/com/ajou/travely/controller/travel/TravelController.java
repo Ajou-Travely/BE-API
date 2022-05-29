@@ -13,6 +13,7 @@ import com.ajou.travely.controller.schedule.dto.SimpleScheduleResponseDto;
 import com.ajou.travely.controller.travel.dto.*;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.domain.travel.Travel;
+import com.ajou.travely.domain.travel.TravelDate;
 import com.ajou.travely.service.CostService;
 import com.ajou.travely.service.ScheduleService;
 import com.ajou.travely.service.TravelService;
@@ -182,8 +183,8 @@ public class TravelController {
     // TravelDates
 
     @PostMapping("/{travelId}/travelDates")
-    public ResponseEntity<LocalDate> createTravelDate(@PathVariable Long travelId,
-                                                      @Valid @RequestBody TravelDateCreateRequestDto requestDto) {
+    public ResponseEntity<TravelDate> createTravelDate(@PathVariable Long travelId,
+                                                       @Valid @RequestBody TravelDateCreateRequestDto requestDto) {
         return ResponseEntity.ok(travelService.createTravelDate(travelId, requestDto));
     }
 //    @PutMapping("/{travelId}/travelDates/{travelDateId}")

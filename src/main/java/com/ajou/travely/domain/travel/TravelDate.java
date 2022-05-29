@@ -15,26 +15,16 @@ import java.util.List;
 import java.util.Objects;
 
 @Getter
-//@Table(
-//        uniqueConstraints = {
-//                @UniqueConstraint(
-//                        name = "uniqueConstraint",
-//                        columnNames = {"travel_id", "date"}
-//                )
-//        }
-//)
 @Entity
 @NoArgsConstructor
+@IdClass(TravelDateIds.class)
 public class TravelDate {
-// TODO: unique key 두 개를 통해 생성 삭제하는 것으로 변경.
     private String title;
-
-    @EmbeddedId
-    private TravelDateIds travelDateIds;
-
-    @MapsId("travelId")
+    @Id
+    private LocalDate date;
+    @Id
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "travel_id", referencedColumnName = "travel_id")
+    @JoinColumn(name = "travel_id")
     private Travel travel;
 
     @Convert(converter = OrderConverter.class)
@@ -54,11 +44,11 @@ public class TravelDate {
     @Builder
     public TravelDate(
             String title,
-//            LocalDate date,
-            @NonNull Travel travel,
-            @NonNull TravelDateIds travelDateIds
+            LocalDate date,
+            @NonNull Travel travel
     ) {
         this.title = title;
-        this.travelDateIds = travelDateIds;
+        this.travel = travel;
+        this.date = date;
     }
 }

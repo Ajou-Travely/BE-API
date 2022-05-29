@@ -55,24 +55,8 @@ public class ScheduleService {
 
     @Transactional
     public Long createSchedule(Long travelId, ScheduleCreateRequestDto scheduleCreateRequestDto) {
-//        Travel travel = checkTravelRecord(travelId);
-//        Place place = createOrFindPlace(scheduleCreateRequestDto.getPlace());
-//        Schedule schedule = scheduleRepository.save(
-//                Schedule.builder()
-//                        .travel(travel)
-//                        .place(place)
-//                        .startTime(scheduleCreateRequestDto.getStartTime())
-//                        .endTime(scheduleCreateRequestDto.getEndTime())
-//                        .build()
-//        );
-//        travel.getScheduleOrder().add(schedule.getId());
-//        scheduleCreateRequestDto.getUserIds().forEach(id -> {
-//            User user = checkUserRecord(id);
-//            schedule.addUser(branchRepository.save(new Branch(user, schedule)));
-//        });
-//        return schedule.getId();
         Travel travel = checkTravelRecord(travelId);
-        TravelDate travelDate = checkTravelDateRecord(travelId, scheduleCreateRequestDto.getDate());
+        TravelDate travelDate = checkTravelDateRecord(travelId, scheduleCreateRequestDto.getTravelDate().getDate());
         Place place = createOrFindPlace(scheduleCreateRequestDto.getPlace());
         Schedule schedule = scheduleRepository.save(
                 Schedule.builder()
@@ -83,6 +67,7 @@ public class ScheduleService {
                         .build()
         );
         travelDate.getScheduleOrder().add(schedule.getId());
+        System.out.println(travelDate.getScheduleOrder().size());
         scheduleCreateRequestDto.getUserIds().forEach(id -> {
             schedule.addUser(branchRepository.save(new Branch(checkUserRecord(id), schedule)));
         });

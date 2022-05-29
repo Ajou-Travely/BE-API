@@ -1,6 +1,7 @@
 package com.ajou.travely.controller.schedule.dto;
 
 import com.ajou.travely.controller.place.dto.PlaceCreateRequestDto;
+import com.ajou.travely.domain.travel.TravelDate;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
@@ -23,14 +24,14 @@ public class ScheduleCreateRequestDto {
     @NotNull
     private final List<Long> userIds;
     @NotNull
-    private final LocalDate date;
+    private final TravelDate travelDate;
 
     @Builder
-    public ScheduleCreateRequestDto(@NonNull PlaceCreateRequestDto place, @NonNull LocalDateTime startTime, @NonNull LocalDateTime endTime, List<Long> userIds, @NonNull LocalDate date) {
+    public ScheduleCreateRequestDto(@NonNull PlaceCreateRequestDto place, @NonNull LocalDateTime startTime, @NonNull LocalDateTime endTime, List<Long> userIds, @NonNull TravelDate travelDate) {
         this.place = place;
         this.startTime = startTime;
         this.endTime = endTime;
         this.userIds = userIds != null ? userIds : new ArrayList<>();
-        this.date = date;
+        this.travelDate = travelDate;
     }
 }

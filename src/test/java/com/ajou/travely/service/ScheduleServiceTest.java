@@ -6,8 +6,13 @@ import com.ajou.travely.controller.schedule.dto.ScheduleResponseDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleUpdateRequestDto;
 import com.ajou.travely.controller.travel.dto.TravelDateCreateRequestDto;
 import com.ajou.travely.domain.travel.Travel;
-import com.ajou.travely.domain.user.UserType;
+import com.ajou.travely.domain.travel.TravelDate;
 import com.ajou.travely.domain.user.User;
+import com.ajou.travely.domain.user.UserType;
+import com.ajou.travely.exception.ErrorCode;
+import com.ajou.travely.exception.custom.RecordNotFoundException;
+import com.ajou.travely.repository.TravelDateRepository;
+import com.ajou.travely.repository.TravelRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,11 +21,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -43,6 +52,15 @@ class ScheduleServiceTest {
 
     @Autowired
     TravelService travelService;
+
+    @Autowired
+    TravelDateRepository travelDateRepository;
+
+    @PersistenceContext
+    EntityManager em;
+
+    @Autowired
+    TravelRepository travelRepository;
 
     PlaceCreateRequestDto ajouUniv;
     PlaceCreateRequestDto inhaUniv;
@@ -109,13 +127,15 @@ class ScheduleServiceTest {
         );
         travelService.addUserToTravel(travel.getId(), user1.getId());
         travelService.addUserToTravel(travel.getId(), user2.getId());
-        LocalDate travelDate = travelService.createTravelDate(
+
+        TravelDate travelDate = travelService.createTravelDate(
                 travel.getId(),
                 TravelDateCreateRequestDto.builder()
                         .title("1일차 입니둥.")
                         .date(LocalDate.now())
                         .build());
-        Long scheduleId = scheduleService.createSchedule(
+
+        Long scheduleId1 = scheduleService.createSchedule(
                 travel.getId(),
                 ScheduleCreateRequestDto
                         .builder()
@@ -123,13 +143,34 @@ class ScheduleServiceTest {
                         .startTime(LocalDateTime.now())
                         .endTime(LocalDateTime.now().plusHours(2))
                         .userIds(new ArrayList<>(List.of(user.getId(), user1.getId(), user2.getId())))
-                        .date(travelDate)
+                        .travelDate(travelDate)
                         .build()
         );
-        ScheduleResponseDto schedule = scheduleService.getScheduleById(scheduleId);
+        Long scheduleId2 = scheduleService.createSchedule(
+                travel.getId(),
+                ScheduleCreateRequestDto
+                        .builder()
+                        .place(inhaUniv)
+                        .startTime(LocalDateTime.now())
+                        .endTime(LocalDateTime.now().plusHours(4))
+                        .userIds(new ArrayList<>(List.of(user.getId(), user1.getId(), user2.getId())))
+                        .travelDate(travelDate)
+                        .build()
+        );
+        em.flush();
+        em.clear();
+        Travel foundTravel = travelRepository.findById(travel.getId())
+                .orElseThrow(() -> new RecordNotFoundException(
+                        "해당 여행을 찾을 수 없습니다.",
+                        ErrorCode.TRAVEL_NOT_FOUND
+                ));
+        ScheduleResponseDto schedule = scheduleService.getScheduleById(scheduleId1);
         assertThat(schedule.getPlace().getPlaceName()).isEqualTo(ajouUniv.getPlaceName());
         assertThat(schedule.getUsers()).hasSize(3);
-        assertThat(travel.getTravelDates().get(0).getSchedules().get(0).getId()).isEqualTo(scheduleId);
+        assertThat(foundTravel.getTravelDates().size()).isEqualTo(1);
+        assertThat(foundTravel.getTravelDates().get(0).getSchedules().size()).isEqualTo(2);
+        assertThat(foundTravel.getTravelDates().get(0).getScheduleOrder().size()).isEqualTo(2);
+        assertThat(foundTravel.getTravelDates().get(0).getScheduleOrder()).containsAll(Arrays.asList(scheduleId1, scheduleId2));
     }
 
     @Test
@@ -138,6 +179,12 @@ class ScheduleServiceTest {
     public void testUpdateSchedule() {
         LocalDateTime startTime = LocalDateTime.now();
         LocalDateTime endTime = LocalDateTime.now().plusDays(1);
+        TravelDate travelDate = travelService.createTravelDate(
+                travel.getId(),
+                TravelDateCreateRequestDto.builder()
+                        .title("1일차 입니둥.")
+                        .date(LocalDate.now())
+                        .build());
         User user1 = userService.insertUser(
                 User.builder()
                         .userType(UserType.USER)
@@ -159,6 +206,8 @@ class ScheduleServiceTest {
         travelService.addUserToTravel(travel.getId(), user.getId());
         travelService.addUserToTravel(travel.getId(), user1.getId());
         travelService.addUserToTravel(travel.getId(), user2.getId());
+
+
         Long scheduleId = scheduleService.createSchedule(
                 travel.getId(),
                 ScheduleCreateRequestDto
@@ -166,6 +215,7 @@ class ScheduleServiceTest {
                         .place(ajouUniv)
                         .startTime(LocalDateTime.now())
                         .endTime(LocalDateTime.now().plusDays(1))
+                        .travelDate(travelDate)
                         .userIds(new ArrayList<>(List.of(user1.getId())))
                         .build()
         );
@@ -204,6 +254,12 @@ class ScheduleServiceTest {
                         .kakaoId(2L)
                         .build()
         );
+        TravelDate travelDate = travelService.createTravelDate(
+                travel.getId(),
+                TravelDateCreateRequestDto.builder()
+                        .title("1일차 입니둥.")
+                        .date(LocalDate.now())
+                        .build());
         travelService.addUserToTravel(travel.getId(), user1.getId());
         travelService.addUserToTravel(travel.getId(), user2.getId());
         Long scheduleId = scheduleService.createSchedule(
@@ -213,6 +269,7 @@ class ScheduleServiceTest {
                         .place(ajouUniv)
                         .startTime(LocalDateTime.now())
                         .endTime(LocalDateTime.now().plusDays(1))
+                        .travelDate(travelDate)
                         .userIds(new ArrayList<>(List.of(user.getId(), user1.getId(), user2.getId())))
                         .build()
         );

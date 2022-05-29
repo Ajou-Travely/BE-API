@@ -24,8 +24,8 @@ public class ScheduleResponseDto {
     private List<SimpleUserInfoDto> users;
 
     public ScheduleResponseDto(Schedule entity) {
-        this.travelId = entity.getTravelDate().getTravelDateIds().getTravelId();
-        this.date = entity.getTravelDate().getTravelDateIds().getDate();
+        this.travelId = entity.getTravelDate().getTravel().getId();
+        this.date = entity.getTravelDate().getDate();
         this.scheduleId = entity.getId();
         this.place = new PlaceResponseDto(entity.getPlace());
         this.startTime = entity.getStartTime();

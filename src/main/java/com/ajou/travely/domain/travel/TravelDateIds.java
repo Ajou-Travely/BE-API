@@ -10,15 +10,13 @@ import java.time.LocalDate;
 @EqualsAndHashCode
 @NoArgsConstructor
 @Getter
-@Setter
-@Embeddable
 public class TravelDateIds implements Serializable {
     private LocalDate date;
-    private Long travelId;
+    private Long travel;
 
     @Builder
     public TravelDateIds(LocalDate date, Long travelId) {
         this.date = date;
-        this.travelId = travelId;
+        this.travel = travelId;
     }
 }
