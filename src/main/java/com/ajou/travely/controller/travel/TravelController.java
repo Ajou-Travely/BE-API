@@ -123,7 +123,7 @@ public class TravelController {
     public ResponseEntity<Long> createSchedule(@PathVariable Long travelId,
                                                @PathVariable Long travelDateId,
                                                @RequestBody ScheduleCreateRequestDto scheduleCreateRequestDto) {
-        return ResponseEntity.ok(scheduleService.createSchedule(travelId, travelDateId, scheduleCreateRequestDto));
+        return ResponseEntity.ok(scheduleService.createSchedule(travelId, scheduleCreateRequestDto));
     }
 
     @PutMapping("/{travelId}/schedules/{scheduleId}")
@@ -135,10 +135,11 @@ public class TravelController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/{travelDateId}/change")
-    public ResponseEntity<Void> changeScheduleOrder(@PathVariable Long travelDateId,
+    @PostMapping("/{travelId}/change")
+    public ResponseEntity<Void> changeScheduleOrder(@PathVariable Long travelId,
+                                                    @RequestParam("date") LocalDate date,
                                                     ScheduleOrderUpdateRequestDto requestDto) {
-        travelService.changeScheduleOrder(travelDateId, requestDto);
+        travelService.changeScheduleOrder(travelId, date, requestDto);
         return ResponseEntity.ok().build();
     }
 
@@ -188,10 +189,10 @@ public class TravelController {
 //    @PutMapping("/{travelId}/travelDates/{travelDateId}")
 
 //    schedule과 travelDate 간의 cascade 논의
-    @DeleteMapping("/{travelId}/travelDates/{travelDateId}")
+    @DeleteMapping("/{travelId}/travelDates")
     public ResponseEntity<Void> deleteTravelDate(@PathVariable Long travelId,
-                                                 @PathVariable Long travelDateId) {
-        travelService.deleteTravelDate(travelId, travelDateId);
+                                                 @RequestParam("date") LocalDate date) {
+        travelService.deleteTravelDate(travelId, date);
         return ResponseEntity.ok().build();
     }
 

@@ -6,6 +6,7 @@ import com.ajou.travely.controller.user.dto.UserResponseDto;
 import com.ajou.travely.domain.*;
 import com.ajou.travely.domain.travel.Travel;
 import com.ajou.travely.domain.travel.TravelDate;
+import com.ajou.travely.domain.travel.TravelDateIds;
 import com.ajou.travely.exception.ErrorCode;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.exception.custom.DuplicatedRequestException;
@@ -227,8 +228,8 @@ public class TravelService {
     // 수정 필요
     /*------------------------------------------------------*/
     @Transactional
-    public void changeScheduleOrder(Long travelDateId, ScheduleOrderUpdateRequestDto requestDto) {
-        checkTravelDateRecord(travelDateId).setScheduleOrder(requestDto.getScheduleOrder());
+    public void changeScheduleOrder(Long travelId, LocalDate date, ScheduleOrderUpdateRequestDto requestDto) {
+        checkTravelDateRecord(travelId, date).setScheduleOrder(requestDto.getScheduleOrder());
     }
     /*------------------------------------------------------*/
 
@@ -273,15 +274,19 @@ public class TravelService {
     @Transactional
     public LocalDate createTravelDate(Long travelId, TravelDateCreateRequestDto requestDto) {
         return travelDateRepository.save(TravelDate.builder()
-                .date(requestDto.getDate())
                 .title(requestDto.getTitle())
                 .travel(checkTravelRecord(travelId))
+                .travelDateIds(
+                        TravelDateIds.builder()
+                        .travelId(travelId)
+                        .date(requestDto.getDate())
+                        .build())
                 .build()).getTravelDateIds().getDate();
     }
 
     @Transactional
-    public void deleteTravelDate(Long travelId, Long travelDateId) {
-        travelDateRepository.delete(checkTravelDateRecord(travelDateId));
+    public void deleteTravelDate(Long travelId, LocalDate date) {
+        travelDateRepository.delete(checkTravelDateRecord(travelId, date));
     }
 
     private Travel checkTravelRecord(Long travelId) {
@@ -308,9 +313,9 @@ public class TravelService {
         );
     }
 
-    private TravelDate checkTravelDateRecord(Long travelDateId) {
+    private TravelDate checkTravelDateRecord(Long travelId, LocalDate date) {
         return checkRecord(
-                travelDateRepository.findById(travelDateId),
+                travelDateRepository.findTravelDateByDateAndTravelId(date, travelId),
                 "해당 ID의 Date가 존재하지 않습니다.",
                 ErrorCode.DATE_NOT_FOUND
         );

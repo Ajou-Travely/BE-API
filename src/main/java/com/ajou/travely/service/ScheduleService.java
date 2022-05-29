@@ -16,6 +16,7 @@ import com.ajou.travely.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -53,7 +54,7 @@ public class ScheduleService {
     }
 
     @Transactional
-    public Long createSchedule(Long travelId, Long travelDateId, ScheduleCreateRequestDto scheduleCreateRequestDto) {
+    public Long createSchedule(Long travelId, ScheduleCreateRequestDto scheduleCreateRequestDto) {
 //        Travel travel = checkTravelRecord(travelId);
 //        Place place = createOrFindPlace(scheduleCreateRequestDto.getPlace());
 //        Schedule schedule = scheduleRepository.save(
@@ -71,7 +72,7 @@ public class ScheduleService {
 //        });
 //        return schedule.getId();
         Travel travel = checkTravelRecord(travelId);
-        TravelDate travelDate = checkTravelDateRecord(travelDateId);
+        TravelDate travelDate = checkTravelDateRecord(travelId, scheduleCreateRequestDto.getDate());
         Place place = createOrFindPlace(scheduleCreateRequestDto.getPlace());
         Schedule schedule = scheduleRepository.save(
                 Schedule.builder()
@@ -170,9 +171,9 @@ public class ScheduleService {
         );
     }
 
-    private TravelDate checkTravelDateRecord(Long travelDateId) {
+    private TravelDate checkTravelDateRecord(Long travelId, LocalDate date) {
         return checkRecord(
-                travelDateRepository.findById(travelDateId),
+                travelDateRepository.findTravelDateByDateAndTravelId(date, travelId),
                 "해당 ID의 Date가 존재하지 않습니다.",
                 ErrorCode.DATE_NOT_FOUND
         );

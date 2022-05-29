@@ -27,7 +27,10 @@ public class Schedule {
     private Place place;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "travel_date_id")
+    @JoinColumns({
+            @JoinColumn(name = "date"),
+            @JoinColumn(name = "travel_id")
+    })
     private TravelDate travelDate;
 
     @OneToMany(mappedBy = "schedule")

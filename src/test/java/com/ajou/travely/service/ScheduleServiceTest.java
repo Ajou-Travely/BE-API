@@ -4,6 +4,7 @@ import com.ajou.travely.controller.place.dto.PlaceCreateRequestDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleCreateRequestDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleResponseDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleUpdateRequestDto;
+import com.ajou.travely.controller.travel.dto.TravelDateCreateRequestDto;
 import com.ajou.travely.domain.travel.Travel;
 import com.ajou.travely.domain.user.UserType;
 import com.ajou.travely.domain.user.User;
@@ -80,8 +81,6 @@ class ScheduleServiceTest {
         travel = travelService.insertTravel(
                 Travel.builder()
                         .managerId(user.getId())
-                        .startDate(LocalDate.now())
-                        .endDate(LocalDate.now().plusDays(1))
                         .title("첫 여행")
                         .build());
     }
@@ -110,19 +109,27 @@ class ScheduleServiceTest {
         );
         travelService.addUserToTravel(travel.getId(), user1.getId());
         travelService.addUserToTravel(travel.getId(), user2.getId());
+        LocalDate travelDate = travelService.createTravelDate(
+                travel.getId(),
+                TravelDateCreateRequestDto.builder()
+                        .title("1일차 입니둥.")
+                        .date(LocalDate.now())
+                        .build());
         Long scheduleId = scheduleService.createSchedule(
                 travel.getId(),
                 ScheduleCreateRequestDto
                         .builder()
                         .place(ajouUniv)
                         .startTime(LocalDateTime.now())
-                        .endTime(LocalDateTime.now().plusDays(1))
+                        .endTime(LocalDateTime.now().plusHours(2))
                         .userIds(new ArrayList<>(List.of(user.getId(), user1.getId(), user2.getId())))
+                        .date(travelDate)
                         .build()
         );
         ScheduleResponseDto schedule = scheduleService.getScheduleById(scheduleId);
         assertThat(schedule.getPlace().getPlaceName()).isEqualTo(ajouUniv.getPlaceName());
         assertThat(schedule.getUsers()).hasSize(3);
+        assertThat(travel.getTravelDates().get(0).getSchedules().get(0).getId()).isEqualTo(scheduleId);
     }
 
     @Test

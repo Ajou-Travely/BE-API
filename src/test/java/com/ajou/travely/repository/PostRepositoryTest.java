@@ -46,38 +46,34 @@ public class PostRepositoryTest {
     public User user;
     public Schedule schedule;
 
-    @BeforeEach
-    public void setUp() {
-        travel = travelRepository.save(Travel.builder()
-                .title("place title")
-                .managerId(1L)
-                .memo("")
-                .startDate(LocalDate.now())
-                .endDate(LocalDate.now())
-                .build());
-        place = placeRepository.save(Place.builder()
-                .lat(123.123)
-                .lng(345.1354)
-                .placeName("place name")
-                .addressName("주소1")
-                .addressRoadName("주소2")
-                .placeUrl("urlurl")
-                .kakaoMapId(1L)
-                .build());
-        user = userRepository.save(User.builder()
-                .userType(UserType.USER)
-                .email("test@email.com")
-                .name("user name")
-                .phoneNumber("010-1111-1111")
-                .kakaoId(12345152L)
-                .build());
-        schedule = scheduleRepository.save(Schedule.builder()
-                .travel(travel)
-                .place(place)
-                .startTime(LocalDateTime.now())
-                .endTime(LocalDateTime.now())
-                .build());
-    }
+//    @BeforeEach
+//    public void setUp() {
+//        travel = travelRepository.save(Travel.builder()
+//                .title("place title")
+//                .managerId(1L)
+//                .memo("")
+//                .build());
+//        place = placeRepository.save(Place.builder()
+//                .lat(123.123)
+//                .lng(345.1354)
+//                .placeName("place name")
+//                .addressName("주소1")
+//                .addressRoadName("주소2")
+//                .placeUrl("urlurl")
+//                .kakaoMapId(1L)
+//                .build());
+//        user = userRepository.save(User.builder()
+//                .userType(UserType.USER)
+//                .email("test@email.com")
+//                .name("user name")
+//                .phoneNumber("010-1111-1111")
+//                .kakaoId(12345152L)
+//                .build());
+//        schedule = scheduleRepository.save(Schedule.builder()
+//                .travel(travel)
+//                .place(place)
+//                .build());
+//    }
 
     @Rollback
     @Test

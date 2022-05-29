@@ -1,4 +1,4 @@
-package com.ajou.travely.service;
+//package com.ajou.travely.service;
 //
 //import com.ajou.travely.controller.post.dto.PostCreateRequestDto;
 //import com.ajou.travely.controller.post.dto.PostResponseDto;
@@ -40,7 +40,7 @@ package com.ajou.travely.service;
 //    "auth.frontendRedirectUrl=test",
 //})
 //@Transactional
-public class PostServiceTest {
+//public class PostServiceTest {
 //    @Autowired
 //    TravelRepository travelRepository;
 //
@@ -149,4 +149,4 @@ public class PostServiceTest {
 //        assertThat(result.getTitle()).isEqualTo(updateTitle);
 //        assertThat(result.getPhotos()).hasSize(3);
 //    }
-}
+//}

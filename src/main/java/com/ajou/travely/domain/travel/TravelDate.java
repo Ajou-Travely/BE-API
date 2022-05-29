@@ -4,6 +4,7 @@ import com.ajou.travely.converter.OrderConverter;
 import com.ajou.travely.domain.Schedule;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 import javax.persistence.*;
@@ -14,15 +15,16 @@ import java.util.List;
 import java.util.Objects;
 
 @Getter
-@Table(
-        uniqueConstraints = {
-                @UniqueConstraint(
-                        name = "uniqueConstraint",
-                        columnNames = {"travel_id", "date"}
-                )
-        }
-)
+//@Table(
+//        uniqueConstraints = {
+//                @UniqueConstraint(
+//                        name = "uniqueConstraint",
+//                        columnNames = {"travel_id", "date"}
+//                )
+//        }
+//)
 @Entity
+@NoArgsConstructor
 public class TravelDate {
 // TODO: unique key 두 개를 통해 생성 삭제하는 것으로 변경.
     private String title;
@@ -30,9 +32,9 @@ public class TravelDate {
     @EmbeddedId
     private TravelDateIds travelDateIds;
 
-    @MapsId("travel")
+    @MapsId("travelId")
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "travel_id")
+    @JoinColumn(name = "travel_id", referencedColumnName = "travel_id")
     private Travel travel;
 
     @Convert(converter = OrderConverter.class)
@@ -52,11 +54,11 @@ public class TravelDate {
     @Builder
     public TravelDate(
             String title,
-            LocalDate date,
-            @NonNull Travel travel
+//            LocalDate date,
+            @NonNull Travel travel,
+            @NonNull TravelDateIds travelDateIds
     ) {
         this.title = title;
-        this.getTravelDateIds().setDate(date);
-        this.getTravelDateIds().setTravel(travel);
+        this.travelDateIds = travelDateIds;
     }
 }

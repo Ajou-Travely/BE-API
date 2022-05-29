@@ -29,13 +29,6 @@ public class Travel {
 
     private String title;
 
-//    private LocalDate startDate;
-//
-//    private LocalDate endDate;
-
-//    @Convert(converter = ScheduleOrderConverter.class)
-//    private List<Long> scheduleOrder = new ArrayList<>();
-
     @Column(columnDefinition = "TEXT")
     private String memo;
 
@@ -45,26 +38,18 @@ public class Travel {
     @OneToMany(mappedBy = "travel")
     private final List<UserTravel> userTravels = new ArrayList<>();
 
-//    @Convert(converter = OrderConverter.class)
-//    private List<Long> dateOrder = new ArrayList<>();
-
     @OneToMany(mappedBy = "travel")
     private List<TravelDate> travelDates = new ArrayList<>();
 
     @Builder
     public Travel(@NonNull String title,
             @NonNull Long managerId,
-//            @NonNull LocalDate startDate,
-//            @NonNull LocalDate endDate,
             String memo,
             TravelType travelType) {
         this.title = title;
         this.managerId = managerId;
         this.memo = memo;
-//        this.startDate = startDate;
-//        this.endDate = endDate;
         this.travelType = travelType;
-//        setScheduleOrder(scheduleOrder);
     }
 
     public void addUserTravel(UserTravel userTravel) {
@@ -97,8 +82,6 @@ public class Travel {
 
     public void updateTravel(TravelUpdateRequestDto requestDto) {
         this.title = requestDto.getTitle() != null ? requestDto.getTitle() : this.title;
-//        this.startDate = requestDto.getStartDate() != null ? requestDto.getStartDate() : this.startDate;
-//        this.endDate = requestDto.getEndDate() != null ? requestDto.getEndDate() : this.endDate;
         this.memo = requestDto.getMemo() != null ? requestDto.getMemo() : this.memo;
     }
 
