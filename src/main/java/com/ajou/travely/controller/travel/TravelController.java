@@ -16,6 +16,7 @@ import com.ajou.travely.domain.travel.Travel;
 import com.ajou.travely.domain.travel.TravelDate;
 import com.ajou.travely.service.CostService;
 import com.ajou.travely.service.ScheduleService;
+
 import com.ajou.travely.service.TravelService;
 import com.ajou.travely.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -52,13 +53,14 @@ public class TravelController {
             @PageableDefault(
                     sort = "id",
                     direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<SimpleTravelResponseDto> travels =  userService.getTravelsByUser(sessionUser.getUserId(), pageable);
+        Page<SimpleTravelResponseDto> travels = userService.getTravelsByUser(sessionUser.getUserId(), pageable);
         return ResponseEntity.ok(travels);
     }
 
     @GetMapping("/{travelId}")
-    public ResponseEntity<TravelResponseDto> showTravel(@PathVariable Long travelId) {
-        return ResponseEntity.ok(travelService.getTravelById(travelId));
+    public ResponseEntity<TravelResponseDto> showTravel(@PathVariable Long travelId,
+                                                        @LoginUser SessionUser sessionUser) {
+        return ResponseEntity.ok(travelService.getTravelById(travelId, sessionUser.getUserId()));
     }
 
     @PostMapping()
@@ -74,15 +76,27 @@ public class TravelController {
 
     @PatchMapping("/{travelId}")
     public ResponseEntity<Void> updateTravel(@PathVariable Long travelId,
+                                             @LoginUser SessionUser sessionUser,
                                              @RequestBody TravelUpdateRequestDto requestDto) {
-        travelService.updateTravel(travelId, requestDto);
+        travelService.updateTravel(travelId, sessionUser.getUserId(), requestDto);
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/accept/{code}")
+    public ResponseEntity<Long> addUserToTravel(@LoginUser SessionUser sessionUser,
+                                                @PathVariable UUID code) {
+        return ResponseEntity
+                .ok(
+                        travelService
+                                .addUserToTravelWithValidation(sessionUser.getUserId()
+                                        , code));
+    }
+
     @PostMapping("/{travelId}/invite")
-    public ResponseEntity<Void> inviteUserToTravel(@PathVariable Long travelId
-            , @RequestBody TravelInviteRequestDto travelInviteRequestDto) {
-        travelService.inviteUserToTravel(travelId, travelInviteRequestDto);
+    public ResponseEntity<Void> inviteUserToTravel(@PathVariable Long travelId,
+                                                   @LoginUser SessionUser sessionUser,
+                                                   @RequestBody TravelInviteRequestDto travelInviteRequestDto) {
+        travelService.inviteUserToTravel(travelId, sessionUser.getUserId(), travelInviteRequestDto);
         return ResponseEntity.ok().build();
     }
 
@@ -120,11 +134,11 @@ public class TravelController {
         return ResponseEntity.ok(scheduleService.getScheduleById(scheduleId));
     }
 
-    @PostMapping("/{travelId}/schedules/{travelDateId}")
+    @PostMapping("/{travelId}/schedules")
     public ResponseEntity<Long> createSchedule(@PathVariable Long travelId,
-                                               @PathVariable Long travelDateId,
+                                               @RequestParam LocalDate date,
                                                @RequestBody ScheduleCreateRequestDto scheduleCreateRequestDto) {
-        return ResponseEntity.ok(scheduleService.createSchedule(travelId, scheduleCreateRequestDto));
+        return ResponseEntity.ok(scheduleService.createSchedule(travelId, date, scheduleCreateRequestDto));
     }
 
     @PutMapping("/{travelId}/schedules/{scheduleId}")
@@ -147,8 +161,9 @@ public class TravelController {
     // Costs
 
     @GetMapping("/{travelId}/costs")
-    public ResponseEntity<List<SimpleCostResponseDto>> showCostsByTravel(@PathVariable Long travelId) {
-        return ResponseEntity.ok(travelService.getCostsByTravelId(travelId));
+    public ResponseEntity<List<SimpleCostResponseDto>> showCostsByTravel(@PathVariable Long travelId,
+                                                                         @LoginUser SessionUser sessionUser) {
+        return ResponseEntity.ok(travelService.getCostsByTravelId(travelId, sessionUser.getUserId()));
     }
 
     @GetMapping("/{travelId}/costs/{costId}")

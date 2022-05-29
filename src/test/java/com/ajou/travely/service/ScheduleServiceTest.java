@@ -141,24 +141,24 @@ class ScheduleServiceTest {
 
         Long scheduleId1 = scheduleService.createSchedule(
                 travel.getId(),
+                LocalDate.now(),
                 ScheduleCreateRequestDto
                         .builder()
                         .place(ajouUniv)
                         .startTime(LocalDateTime.now())
                         .endTime(LocalDateTime.now().plusHours(2))
                         .userIds(new ArrayList<>(List.of(user.getId(), user1.getId(), user2.getId())))
-                        .travelDate(travelDate)
                         .build()
         );
         Long scheduleId2 = scheduleService.createSchedule(
                 travel.getId(),
+                LocalDate.now(),
                 ScheduleCreateRequestDto
                         .builder()
                         .place(inhaUniv)
                         .startTime(LocalDateTime.now())
                         .endTime(LocalDateTime.now().plusHours(4))
                         .userIds(new ArrayList<>(List.of(user.getId(), user1.getId(), user2.getId())))
-                        .travelDate(travelDate)
                         .build()
         );
         em.flush();
@@ -214,12 +214,12 @@ class ScheduleServiceTest {
 
         Long scheduleId = scheduleService.createSchedule(
                 travel.getId(),
+                LocalDate.now(),
                 ScheduleCreateRequestDto
                         .builder()
                         .place(ajouUniv)
                         .startTime(LocalDateTime.now())
                         .endTime(LocalDateTime.now().plusDays(1))
-                        .travelDate(travelDate)
                         .userIds(new ArrayList<>(List.of(user1.getId())))
                         .build()
         );
@@ -268,12 +268,12 @@ class ScheduleServiceTest {
         travelService.addUserToTravel(travel.getId(), user2.getId());
         Long scheduleId = scheduleService.createSchedule(
                 travel.getId(),
+                LocalDate.now(),
                 ScheduleCreateRequestDto
                         .builder()
                         .place(ajouUniv)
                         .startTime(LocalDateTime.now())
                         .endTime(LocalDateTime.now().plusDays(1))
-                        .travelDate(travelDate)
                         .userIds(new ArrayList<>(List.of(user.getId(), user1.getId(), user2.getId())))
                         .build()
         );
@@ -315,35 +315,35 @@ class ScheduleServiceTest {
 
         Long scheduleId1 = scheduleService.createSchedule(
                 travel.getId(),
+                LocalDate.now(),
                 ScheduleCreateRequestDto
                         .builder()
                         .place(ajouUniv)
                         .startTime(LocalDateTime.now())
                         .endTime(LocalDateTime.now().plusHours(2))
                         .userIds(new ArrayList<>(List.of(user.getId(), user1.getId(), user2.getId())))
-                        .travelDate(travelDate)
                         .build()
         );
         Long scheduleId2 = scheduleService.createSchedule(
                 travel.getId(),
+                LocalDate.now(),
                 ScheduleCreateRequestDto
                         .builder()
                         .place(inhaUniv)
                         .startTime(LocalDateTime.now())
                         .endTime(LocalDateTime.now().plusHours(4))
                         .userIds(new ArrayList<>(List.of(user.getId(), user1.getId(), user2.getId())))
-                        .travelDate(travelDate)
                         .build()
         );
         Long scheduleId3 = scheduleService.createSchedule(
                 travel.getId(),
+                LocalDate.now(),
                 ScheduleCreateRequestDto
                         .builder()
                         .place(ajouUniv)
                         .startTime(LocalDateTime.now())
                         .endTime(LocalDateTime.now().plusHours(4))
                         .userIds(new ArrayList<>(List.of(user.getId(), user1.getId(), user2.getId())))
-                        .travelDate(travelDate)
                         .build()
         );
         em.flush();

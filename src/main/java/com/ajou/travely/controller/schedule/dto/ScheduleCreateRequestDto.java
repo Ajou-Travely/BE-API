@@ -23,15 +23,12 @@ public class ScheduleCreateRequestDto {
     private final LocalDateTime endTime;
     @NotNull
     private final List<Long> userIds;
-    @NotNull
-    private final TravelDate travelDate;
 
     @Builder
-    public ScheduleCreateRequestDto(@NonNull PlaceCreateRequestDto place, @NonNull LocalDateTime startTime, @NonNull LocalDateTime endTime, List<Long> userIds, @NonNull TravelDate travelDate) {
+    public ScheduleCreateRequestDto(@NonNull PlaceCreateRequestDto place, @NonNull LocalDateTime startTime, @NonNull LocalDateTime endTime, List<Long> userIds) {
         this.place = place;
         this.startTime = startTime;
         this.endTime = endTime;
         this.userIds = userIds != null ? userIds : new ArrayList<>();
-        this.travelDate = travelDate;
     }
 }

@@ -54,9 +54,9 @@ public class ScheduleService {
     }
 
     @Transactional
-    public Long createSchedule(Long travelId, ScheduleCreateRequestDto scheduleCreateRequestDto) {
+    public Long createSchedule(Long travelId, LocalDate date, ScheduleCreateRequestDto scheduleCreateRequestDto) {
         Travel travel = checkTravelRecord(travelId);
-        TravelDate travelDate = checkTravelDateRecord(travelId, scheduleCreateRequestDto.getTravelDate().getDate());
+        TravelDate travelDate = checkTravelDateRecord(travelId, date);
         Place place = createOrFindPlace(scheduleCreateRequestDto.getPlace());
         Schedule schedule = scheduleRepository.save(
                 Schedule.builder()
