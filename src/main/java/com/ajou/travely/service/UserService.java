@@ -53,7 +53,7 @@ public class UserService {
     }
 
     public User findUserById(Long userId) {
-        return checkRecord(userId);
+        return checkUserRecord(userId);
     }
 
     public void deleteAllUsers() {
@@ -62,12 +62,12 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public UserResponseDto getUserById(Long userId) {
-        return new UserResponseDto(checkRecord(userId));
+        return new UserResponseDto(checkUserRecord(userId));
     }
 
     @Transactional(readOnly = true)
     public Page<SimpleUserInfoDto> getFriends(Long userId, Pageable pageable) {
-        User user = checkRecord(userId);
+        User user = checkUserRecord(userId);
         return friendRepository
                 .findAllFriendsByFollowee(user.getId(), pageable)
                 .map(Friend::getFollower)
@@ -82,7 +82,7 @@ public class UserService {
     }
 
     public Page<SimpleUserInfoDto> getGivenRequests(Long userId, Pageable pageable) {
-        User user = checkRecord(userId);
+        User user = checkUserRecord(userId);
         return friendRepository
                 .findGivenRequestsByFollower(user.getId(), pageable)
                 .map(Friend::getFollowee)
@@ -91,7 +91,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public Page<SimpleUserInfoDto> getGivingRequests(Long userId, Pageable pageable) {
-        User user = checkRecord(userId);
+        User user = checkUserRecord(userId);
         return friendRepository
                 .findGivingRequestsByFollowee(user.getId(), pageable)
                 .map(Friend::getFollower)
@@ -100,36 +100,48 @@ public class UserService {
 
     @Transactional
     public void acceptFriendRequest(Long userId, Long targetId) {
-        User user = checkRecord(userId);
-        User target = checkRecord(targetId);
-        Friend friend = friendRepository.findByFolloweeAndFollower(user, target)
-                .orElseThrow(() -> new RecordNotFoundException("해당 친구 요청이 존재하지 않습니다.", ErrorCode.FRIEND_NOT_FOUND));
+        User user = checkUserRecord(userId);
+        User target = checkUserRecord(targetId);
+        Friend friend = checkFriendRecord(user, target);
         friend.acceptFriendRequest();
         friendRepository.save(new Friend(target, user, true));
     }
 
     @Transactional
     public void rejectFriendRequest(Long userId, Long targetId) {
-        User user = checkRecord(userId);
-        User target = checkRecord(targetId);
-        Friend friend = friendRepository.findByFolloweeAndFollower(user, target)
-                .orElseThrow(() -> new RecordNotFoundException("해당 친구 요청이 존재하지 않습니다.", ErrorCode.FRIEND_NOT_FOUND));
+        User user = checkUserRecord(userId);
+        User target = checkUserRecord(targetId);
+        Friend friend = checkFriendRecord(user, target);
         friendRepository.delete(friend);
     }
 
     @Transactional
-    public void requestFollowing(Long userId, Long targetId) {
-        User user = checkRecord(userId);
-        User target = checkRecord(targetId);
+    public void requestFollowing(Long userId, String targetEmail) {
+        User user = checkUserRecord(userId);
+        User target = checkUserRecordByEmail(targetEmail);
         checkDuplicatedRequest(user, target, false);
         checkDuplicatedRequest(target, user, true);
         friendRepository.save(new Friend(user, target));
     }
 
     @Transactional
+    public void cancelRequest(Long userId, Long targetId) {
+        User user = checkUserRecord(userId);
+        User target = checkUserRecord(targetId);
+        Friend friend = checkFriendRecord(user, target);
+        if (friend.getIsFriend()) {
+            throw new DuplicatedRequestException(
+                    "해당 user와 이미 친구 상태입니다.",
+                    ErrorCode.ALREADY_FRIEND
+            );
+        }
+        friendRepository.delete(friend);
+    }
+
+    @Transactional
     public void cancelFollowing(Long userId, Long targetId) {
-        User user = checkRecord(userId);
-        User target = checkRecord(targetId);
+        User user = checkUserRecord(userId);
+        User target = checkUserRecord(targetId);
         friendRepository.deleteByFolloweeIdAndFollowerId(user.getId(), target.getId());
         friendRepository.deleteByFolloweeIdAndFollowerId(target.getId(), user.getId());
     }
@@ -140,14 +152,29 @@ public class UserService {
         return user.isEmpty();
     }
 
-    private User checkRecord(Long userId) {
-        return userRepository
-                .findById(userId)
+    private User checkUserRecord(Long userId) {
+        return checkRecord(
+                userRepository.findById(userId),
+                "해당 ID의 User가 존재하지 않습니다.",
+                ErrorCode.USER_NOT_FOUND
+        );
+    }
+
+    private User checkUserRecordByEmail(String email) {
+        return userRepository.findByEmail(email)
                 .orElseThrow(() -> new RecordNotFoundException(
-                                "해당 ID의 User가 존재하지 않습니다."
-                                , ErrorCode.USER_NOT_FOUND
+                        "해당 Email의 User가 존재하지 않습니다.",
+                        ErrorCode.USER_NOT_FOUND
                         )
                 );
+    }
+
+    private Friend checkFriendRecord(User user, User target) {
+        return checkRecord(
+                friendRepository.findByFolloweeAndFollower(user,target),
+                "해당 친구 요청이 존재하지 않습니다.",
+                ErrorCode.FRIEND_NOT_FOUND
+        );
     }
 
     private void checkDuplicatedRequest(User user, User target, Boolean isReverse) {
@@ -168,5 +195,10 @@ public class UserService {
                 );
             }
         }
+    }
+
+    private <T> T checkRecord(Optional<T> record, String message, ErrorCode code) {
+        return record.orElseThrow(() ->
+                new RecordNotFoundException(message, code));
     }
 }
