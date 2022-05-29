@@ -198,7 +198,7 @@ public class TravelController {
     // TravelDates
 
     @PostMapping("/{travelId}/travelDates")
-    public ResponseEntity<TravelDate> createTravelDate(@PathVariable Long travelId,
+    public ResponseEntity<TravelDateCreateResponseDto> createTravelDate(@PathVariable Long travelId,
                                                        @Valid @RequestBody TravelDateCreateRequestDto requestDto) {
         return ResponseEntity.ok(travelService.createTravelDate(travelId, requestDto));
     }

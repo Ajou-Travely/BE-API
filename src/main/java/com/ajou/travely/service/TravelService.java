@@ -264,12 +264,12 @@ public class TravelService {
     /*------------------------------------------------------*/
 
     @Transactional
-    public TravelDate createTravelDate(Long travelId, TravelDateCreateRequestDto requestDto) {
-        return travelDateRepository.save(TravelDate.builder()
+    public TravelDateCreateResponseDto createTravelDate(Long travelId, TravelDateCreateRequestDto requestDto) {
+        return new TravelDateCreateResponseDto(travelDateRepository.save(TravelDate.builder()
                 .title(requestDto.getTitle())
                 .travel(checkTravelRecord(travelId))
                 .date(LocalDate.now())
-                .build());
+                .build()));
     }
 
     @Transactional
@@ -304,8 +304,8 @@ public class TravelService {
     private TravelDate checkTravelDateRecord(Long travelId, LocalDate date) {
         return checkRecord(
                 travelDateRepository.findTravelDateByDateAndTravelId(date, travelId),
-                "해당 ID의 Date가 존재하지 않습니다.",
-                ErrorCode.DATE_NOT_FOUND
+                "해당 여행과 날짜에 해당하는 TravelDate가 존재하지 않습니다.",
+                ErrorCode.TRAVEL_DATE_NOT_FOUND
         );
     }
 

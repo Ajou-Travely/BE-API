@@ -7,6 +7,7 @@ import com.ajou.travely.controller.schedule.dto.ScheduleUpdateRequestDto;
 import com.ajou.travely.controller.schedule.dto.SimpleScheduleResponseDto;
 import com.ajou.travely.controller.travel.dto.ScheduleOrderUpdateRequestDto;
 import com.ajou.travely.controller.travel.dto.TravelDateCreateRequestDto;
+import com.ajou.travely.controller.travel.dto.TravelDateCreateResponseDto;
 import com.ajou.travely.domain.Schedule;
 import com.ajou.travely.domain.travel.Travel;
 import com.ajou.travely.domain.travel.TravelDate;
@@ -132,7 +133,7 @@ class ScheduleServiceTest {
         travelService.addUserToTravel(travel.getId(), user1.getId());
         travelService.addUserToTravel(travel.getId(), user2.getId());
 
-        TravelDate travelDate = travelService.createTravelDate(
+        TravelDateCreateResponseDto travelDate = travelService.createTravelDate(
                 travel.getId(),
                 TravelDateCreateRequestDto.builder()
                         .title("1일차 입니둥.")
@@ -183,7 +184,7 @@ class ScheduleServiceTest {
     public void testUpdateSchedule() {
         LocalDateTime startTime = LocalDateTime.now();
         LocalDateTime endTime = LocalDateTime.now().plusDays(1);
-        TravelDate travelDate = travelService.createTravelDate(
+        TravelDateCreateResponseDto travelDate = travelService.createTravelDate(
                 travel.getId(),
                 TravelDateCreateRequestDto.builder()
                         .title("1일차 입니둥.")
@@ -258,7 +259,7 @@ class ScheduleServiceTest {
                         .kakaoId(2L)
                         .build()
         );
-        TravelDate travelDate = travelService.createTravelDate(
+        TravelDateCreateResponseDto travelDate = travelService.createTravelDate(
                 travel.getId(),
                 TravelDateCreateRequestDto.builder()
                         .title("1일차 입니둥.")
@@ -306,7 +307,7 @@ class ScheduleServiceTest {
         travelService.addUserToTravel(travel.getId(), user1.getId());
         travelService.addUserToTravel(travel.getId(), user2.getId());
 
-        TravelDate travelDate = travelService.createTravelDate(
+        TravelDateCreateResponseDto travelDate = travelService.createTravelDate(
                 travel.getId(),
                 TravelDateCreateRequestDto.builder()
                         .title("1일차 입니둥.")

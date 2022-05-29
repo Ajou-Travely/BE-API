@@ -160,7 +160,7 @@ public class ScheduleService {
         return checkRecord(
                 travelDateRepository.findTravelDateByDateAndTravelId(date, travelId),
                 "해당 ID의 Date가 존재하지 않습니다.",
-                ErrorCode.DATE_NOT_FOUND
+                ErrorCode.TRAVEL_DATE_NOT_FOUND
         );
     }
 
