@@ -14,9 +14,10 @@ import java.util.Optional;
 public interface TravelDateRepository extends JpaRepository<TravelDate, TravelDateIds> {
     @Query("select distinct s " +
             "from Schedule s " +
-            "join fetch s.place " +
-            "where s.travelDate.travel.id = :travelId " +
-            "and s.travelDate.date = :date")
+            "left join fetch s.place " +
+            "left join s.travelDate td " +
+            "where td.travel.id = :travelId " +
+            "and td.date = :date")
     List<Schedule> findSchedulesWithPlaceByDateAndTravelId(@Param("date") LocalDate date, @Param("travelId") Long travelId);
     @Query("select td " +
             "from TravelDate td " +

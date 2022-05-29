@@ -4,7 +4,10 @@ import com.ajou.travely.controller.place.dto.PlaceCreateRequestDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleCreateRequestDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleResponseDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleUpdateRequestDto;
+import com.ajou.travely.controller.schedule.dto.SimpleScheduleResponseDto;
+import com.ajou.travely.controller.travel.dto.ScheduleOrderUpdateRequestDto;
 import com.ajou.travely.controller.travel.dto.TravelDateCreateRequestDto;
+import com.ajou.travely.domain.Schedule;
 import com.ajou.travely.domain.travel.Travel;
 import com.ajou.travely.domain.travel.TravelDate;
 import com.ajou.travely.domain.user.User;
@@ -29,6 +32,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -277,4 +281,81 @@ class ScheduleServiceTest {
         assertThat(schedule.getPlace().getPlaceName()).isEqualTo(ajouUniv.getPlaceName());
         assertThat(schedule.getUsers()).hasSize(3);
     }
+
+    @Test
+    @DisplayName("생성한 schedule의 순서를 바꿀 수 있다.")
+    void testChangeScheduleOrder() {
+        User user1 = userService.insertUser(
+                User.builder()
+                        .userType(UserType.USER)
+                        .email("sophoca@ajou.ac.kr")
+                        .name("홍성빈")
+                        .phoneNumber("112")
+                        .kakaoId(1L)
+                        .build()
+        );
+        User user2 = userService.insertUser(
+                User.builder()
+                        .userType(UserType.USER)
+                        .email("errander@ajou.ac.kr")
+                        .name("이호용")
+                        .phoneNumber("119")
+                        .kakaoId(2L)
+                        .build()
+        );
+        travelService.addUserToTravel(travel.getId(), user1.getId());
+        travelService.addUserToTravel(travel.getId(), user2.getId());
+
+        TravelDate travelDate = travelService.createTravelDate(
+                travel.getId(),
+                TravelDateCreateRequestDto.builder()
+                        .title("1일차 입니둥.")
+                        .date(LocalDate.now())
+                        .build());
+
+        Long scheduleId1 = scheduleService.createSchedule(
+                travel.getId(),
+                ScheduleCreateRequestDto
+                        .builder()
+                        .place(ajouUniv)
+                        .startTime(LocalDateTime.now())
+                        .endTime(LocalDateTime.now().plusHours(2))
+                        .userIds(new ArrayList<>(List.of(user.getId(), user1.getId(), user2.getId())))
+                        .travelDate(travelDate)
+                        .build()
+        );
+        Long scheduleId2 = scheduleService.createSchedule(
+                travel.getId(),
+                ScheduleCreateRequestDto
+                        .builder()
+                        .place(inhaUniv)
+                        .startTime(LocalDateTime.now())
+                        .endTime(LocalDateTime.now().plusHours(4))
+                        .userIds(new ArrayList<>(List.of(user.getId(), user1.getId(), user2.getId())))
+                        .travelDate(travelDate)
+                        .build()
+        );
+        Long scheduleId3 = scheduleService.createSchedule(
+                travel.getId(),
+                ScheduleCreateRequestDto
+                        .builder()
+                        .place(ajouUniv)
+                        .startTime(LocalDateTime.now())
+                        .endTime(LocalDateTime.now().plusHours(4))
+                        .userIds(new ArrayList<>(List.of(user.getId(), user1.getId(), user2.getId())))
+                        .travelDate(travelDate)
+                        .build()
+        );
+        em.flush();
+        em.clear();
+        travelService.changeScheduleOrder(
+                travel.getId(),
+                travelDate.getDate(),
+                new ScheduleOrderUpdateRequestDto(Arrays.asList(scheduleId3, scheduleId1, scheduleId2)));
+        List<SimpleScheduleResponseDto> schedulesByTravelId = travelService.getSchedulesByTravelId(travel.getId(), travelDate.getDate());
+        List<Long> result = new ArrayList<>();
+        schedulesByTravelId.stream().forEach(simpleScheduleResponseDto -> result.add(simpleScheduleResponseDto.getScheduleId()));
+        assertThat(result).isEqualTo(Arrays.asList(scheduleId3, scheduleId1, scheduleId2));
+    }
+
 }
