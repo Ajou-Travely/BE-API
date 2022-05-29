@@ -290,5 +290,4 @@ public class TravelService {
         return record.orElseThrow(() ->
                 new RecordNotFoundException(message, code));
     }
-
 }

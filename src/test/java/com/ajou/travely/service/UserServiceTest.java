@@ -119,6 +119,85 @@ class UserServiceTest {
     }
 
     @Test
+    void testCancelRequest() {
+        User user = userService.insertUser(
+                User.builder().kakaoId(0L)
+                        .email("1@1")
+                        .phoneNumber("111")
+                        .name("park")
+                        .userType(UserType.USER)
+                        .build()
+        );
+        User target = userService.insertUser(
+                User.builder().kakaoId(1L)
+                        .email("2@2")
+                        .phoneNumber("222")
+                        .name("kim")
+                        .userType(UserType.USER)
+                        .build()
+        );
+
+        userService.requestFollowing(user.getId(), target.getId());
+        userService.cancelRequest(user.getId(), target.getId());
+
+        List<SimpleUserInfoDto> givenRequests = userService.getGivenRequests(target.getId());
+        assertThat(givenRequests).hasSize(0);
+        List<SimpleUserInfoDto> givingRequests = userService.getGivingRequests(user.getId());
+        assertThat(givingRequests).hasSize(0);
+    }
+
+    @Test
+    void testInvalidCancelRequest() {
+        User user = userService.insertUser(
+                User.builder().kakaoId(0L)
+                        .email("1@1")
+                        .phoneNumber("111")
+                        .name("park")
+                        .userType(UserType.USER)
+                        .build()
+        );
+        User target = userService.insertUser(
+                User.builder().kakaoId(1L)
+                        .email("2@2")
+                        .phoneNumber("222")
+                        .name("kim")
+                        .userType(UserType.USER)
+                        .build()
+        );
+
+        userService.requestFollowing(user.getId(), target.getId());
+        userService.cancelRequest(user.getId(), target.getId());
+        assertThatThrownBy(() -> userService.cancelRequest(user.getId(), target.getId()))
+                .isInstanceOf(RecordNotFoundException.class);
+    }
+
+    @Test
+    void testDuplicatedCancelRequest() {
+        User user = userService.insertUser(
+                User.builder().kakaoId(0L)
+                        .email("1@1")
+                        .phoneNumber("111")
+                        .name("park")
+                        .userType(UserType.USER)
+                        .build()
+        );
+        User target = userService.insertUser(
+                User.builder().kakaoId(1L)
+                        .email("2@2")
+                        .phoneNumber("222")
+                        .name("kim")
+                        .userType(UserType.USER)
+                        .build()
+        );
+
+        userService.requestFollowing(user.getId(), target.getId());
+        userService.acceptFriendRequest(user.getId(), target.getId());
+        assertThatThrownBy(() -> userService.cancelRequest(user.getId(), target.getId()))
+                .isInstanceOf(DuplicatedRequestException.class)
+                .hasMessage("해당 user와 이미 친구 상태입니다.");
+    }
+
+    @Test
     void testRejectRequest() {
         User user = userService.insertUser(
                 User.builder().kakaoId(0L)

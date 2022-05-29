@@ -461,7 +461,7 @@ class TravelServiceTest {
 
     @Test
     @DisplayName("여행 초대를 거절할 수 있다.")
-    void testRejectInvitaion() {
+    void testRejectInvitation() {
         User user = userService.insertUser(
                 User.builder()
                         .userType(UserType.USER)
