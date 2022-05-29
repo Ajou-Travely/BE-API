@@ -122,9 +122,9 @@ public class UserService {
     }
 
     @Transactional
-    public void requestFollowing(Long userId, Long targetId) {
+    public void requestFollowing(Long userId, String targetEmail) {
         User user = checkUserRecord(userId);
-        User target = checkUserRecord(targetId);
+        User target = checkUserRecordByEmail(targetEmail);
         checkDuplicatedRequest(user, target, false);
         checkDuplicatedRequest(target, user, true);
         friendRepository.save(new Friend(user, target));
@@ -164,6 +164,15 @@ public class UserService {
                 "해당 ID의 User가 존재하지 않습니다.",
                 ErrorCode.USER_NOT_FOUND
         );
+    }
+
+    private User checkUserRecordByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RecordNotFoundException(
+                        "해당 Email의 User가 존재하지 않습니다.",
+                        ErrorCode.USER_NOT_FOUND
+                        )
+                );
     }
 
     private Friend checkFriendRecord(User user, User target) {

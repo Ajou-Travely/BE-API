@@ -78,10 +78,10 @@ public class UserController {
         return ResponseEntity.ok(userService.getGivenRequests(sessionUser.getUserId()));
     }
 
-    @PostMapping("/friends/{targetId}")
-    public ResponseEntity<Void> sendFriendRequest(@PathVariable Long targetId,
+    @PostMapping("/friends/{targetEmail}")
+    public ResponseEntity<Void> sendFriendRequest(@PathVariable String targetEmail,
                                                     @LoginUser SessionUser sessionUser) {
-        userService.requestFollowing(sessionUser.getUserId(), targetId);
+        userService.requestFollowing(sessionUser.getUserId(), targetEmail);
         return ResponseEntity.ok().build();
     }
 
