@@ -371,7 +371,8 @@ class ScheduleServiceTest {
 
     @Test
     @DisplayName("스케줄 기준 사진 조회")
-    void testSchedulePhotoUpload() {
+    void testGetSchedulePhotos() {
+        // given
         User user1 = userService.insertUser(
             User.builder()
                 .userType(UserType.USER)
@@ -415,9 +416,10 @@ class ScheduleServiceTest {
         Schedule schedule = scheduleRepository.findById(scheduleId)
             .orElseThrow(() -> new IllegalArgumentException("no schedule"));
 
-        List<String> photoPaths =
-            new ArrayList<>(List.of("testUrl1", "testUrl2", "tesetUrl3"));
-        List<SchedulePhoto> schedulePhotos = photoPaths.stream()
+        // when
+        List<String> photoPaths1 =
+            new ArrayList<>(List.of("testUrl1", "testUrl2", "testUrl3"));
+        List<SchedulePhoto> schedulePhotos1 = photoPaths1.stream()
             .map(photoPath ->
                 SchedulePhoto.builder()
                     .user(user1)
@@ -425,19 +427,104 @@ class ScheduleServiceTest {
                     .photoPath(photoPath)
                     .build())
             .collect(Collectors.toList());
-        schedulePhotoRepository.saveAll(schedulePhotos);
-        schedule.addSchedulePhotos(schedulePhotos);
+        schedulePhotoRepository.saveAll(schedulePhotos1);
+        schedule.addSchedulePhotos(schedulePhotos1);
+
+        List<String> photoPaths2 =
+            new ArrayList<>(List.of("testUrl5", "testUrl6"));
+        List<SchedulePhoto> schedulePhotos2 = photoPaths2.stream()
+            .map(photoPath ->
+                SchedulePhoto.builder()
+                    .user(user1)
+                    .schedule(schedule)
+                    .photoPath(photoPath)
+                    .build())
+            .collect(Collectors.toList());
+        schedulePhotoRepository.saveAll(schedulePhotos2);
+        schedule.addSchedulePhotos(schedulePhotos2);
 
         em.flush();
         em.clear();
 
+        // then
         Schedule resultSchedule = scheduleRepository.findById(scheduleId)
             .orElseThrow(() -> new IllegalArgumentException("no schedule"));
-
         List<SchedulePhotoResponseDto> responseDtos =
             scheduleService.getSchedulePhotos(resultSchedule.getId());
 
-        assertThat(responseDtos).hasSize(photoPaths.size());
+        assertThat(responseDtos).hasSize(photoPaths1.size() + photoPaths2.size());
+    }
+
+    @Test
+    @DisplayName("스케줄 사진들 삭제")
+    void testDeleteSchedulePhotos() {
+        // given
+        User user1 = userService.insertUser(
+            User.builder()
+                .userType(UserType.USER)
+                .email("sophoca@ajou.ac.kr")
+                .name("홍성빈")
+                .phoneNumber("112")
+                .kakaoId(1L)
+                .build()
+        );
+        travelService.addUserToTravel(travel.getId(), user1.getId());
+
+        TravelDateCreateResponseDto travelDate = travelService.createTravelDate(
+            travel.getId(),
+            TravelDateCreateRequestDto.builder()
+                .title("1일차 입니둥.")
+                .date(LocalDate.now())
+                .build());
+
+        Long scheduleId = scheduleService.createSchedule(
+            travel.getId(),
+            LocalDate.now(),
+            ScheduleCreateRequestDto
+                .builder()
+                .place(ajouUniv)
+                .startTime(LocalDateTime.now())
+                .endTime(LocalDateTime.now().plusHours(2))
+                .userIds(new ArrayList<>(List.of(user.getId(), user1.getId())))
+                .build()
+        );
+
+        Schedule schedule = scheduleRepository.findById(scheduleId)
+            .orElseThrow(() -> new IllegalArgumentException("no schedule"));
+
+        List<String> photoPaths1 =
+            new ArrayList<>(List.of("testUrl1", "testUrl2", "testUrl3", "testUrl4", "testUrl5"));
+        List<SchedulePhoto> schedulePhotos1 = photoPaths1.stream()
+            .map(photoPath ->
+                SchedulePhoto.builder()
+                    .user(user1)
+                    .schedule(schedule)
+                    .photoPath(photoPath)
+                    .build())
+            .collect(Collectors.toList());
+        schedulePhotoRepository.saveAll(schedulePhotos1);
+        schedule.addSchedulePhotos(schedulePhotos1);
+
+        List<Long> schedulePhotoIds =
+            schedulePhotoRepository.findSchedulePhotosByScheduleIdInQuery(scheduleId)
+                .stream()
+                .map(SchedulePhoto::getId)
+                .collect(Collectors.toList());
+        System.out.println(schedulePhotoIds);
+
+        // when
+        List<Long> removeIds = List.of(schedulePhotoIds.get(0), schedulePhotoIds.get(1));
+        scheduleService.deleteSchedulePhotos(scheduleId, removeIds);
+        em.flush();
+        em.clear();
+
+        // then
+        Schedule resultSchedule = scheduleRepository.findById(scheduleId)
+            .orElseThrow(() -> new IllegalArgumentException("no schedule"));
+        List<SchedulePhotoResponseDto> responseDtos =
+            scheduleService.getSchedulePhotos(resultSchedule.getId());
+
+        assertThat(responseDtos).hasSize(photoPaths1.size() - removeIds.size());
     }
 
 }
