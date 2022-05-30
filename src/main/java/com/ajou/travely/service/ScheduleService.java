@@ -8,6 +8,7 @@ import com.ajou.travely.domain.Branch;
 import com.ajou.travely.domain.Place;
 import com.ajou.travely.domain.Schedule;
 import com.ajou.travely.domain.travel.Travel;
+import com.ajou.travely.domain.travel.TravelDate;
 import com.ajou.travely.exception.ErrorCode;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.exception.custom.RecordNotFoundException;
@@ -15,6 +16,7 @@ import com.ajou.travely.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -30,12 +32,15 @@ public class ScheduleService {
 
     private final UserRepository userRepository;
 
-    public ScheduleService(ScheduleRepository scheduleRepository, PlaceRepository placeRepository, TravelRepository travelRepository, BranchRepository branchRepository, UserRepository userRepository) {
+    private final TravelDateRepository travelDateRepository;
+
+    public ScheduleService(ScheduleRepository scheduleRepository, PlaceRepository placeRepository, TravelRepository travelRepository, BranchRepository branchRepository, UserRepository userRepository, TravelDateRepository travelDateRepository) {
         this.scheduleRepository = scheduleRepository;
         this.placeRepository = placeRepository;
         this.travelRepository = travelRepository;
         this.branchRepository = branchRepository;
         this.userRepository = userRepository;
+        this.travelDateRepository = travelDateRepository;
     }
 
     @Transactional
@@ -49,21 +54,22 @@ public class ScheduleService {
     }
 
     @Transactional
-    public Long createSchedule(Long travelId, ScheduleCreateRequestDto scheduleCreateRequestDto) {
+    public Long createSchedule(Long travelId, LocalDate date, ScheduleCreateRequestDto scheduleCreateRequestDto) {
         Travel travel = checkTravelRecord(travelId);
+        TravelDate travelDate = checkTravelDateRecord(travelId, date);
         Place place = createOrFindPlace(scheduleCreateRequestDto.getPlace());
         Schedule schedule = scheduleRepository.save(
                 Schedule.builder()
-                        .travel(travel)
+                        .travelDate(travelDate)
                         .place(place)
                         .startTime(scheduleCreateRequestDto.getStartTime())
                         .endTime(scheduleCreateRequestDto.getEndTime())
                         .build()
         );
-        travel.getScheduleOrder().add(schedule.getId());
+        travelDate.getScheduleOrder().add(schedule.getId());
+        System.out.println(travelDate.getScheduleOrder().size());
         scheduleCreateRequestDto.getUserIds().forEach(id -> {
-            User user = checkUserRecord(id);
-            schedule.addUser(branchRepository.save(new Branch(user, schedule)));
+            schedule.addUser(branchRepository.save(new Branch(checkUserRecord(id), schedule)));
         });
         return schedule.getId();
     }
@@ -72,7 +78,8 @@ public class ScheduleService {
     public void updateSchedule(Long scheduleId, ScheduleUpdateRequestDto scheduleUpdateRequestDto) {
         Schedule schedule = checkScheduleRecord(scheduleId);
         Map<Long, User> currentUsers = new HashMap<>();
-        schedule.getTravel()
+        schedule.getTravelDate()
+                .getTravel()
                 .getUserTravels()
                 .forEach(userTravel -> currentUsers.put(userTravel.getUser().getId(), userTravel.getUser()));
         if (!Objects.equals(schedule.getPlace().getKakaoMapId(), scheduleUpdateRequestDto.getPlace().getKakaoMapId())) {
@@ -146,6 +153,14 @@ public class ScheduleService {
                 userRepository.findById(userId),
                 "해당 ID의 User가 존재하지 않습니다.",
                 ErrorCode.USER_NOT_FOUND
+        );
+    }
+
+    private TravelDate checkTravelDateRecord(Long travelId, LocalDate date) {
+        return checkRecord(
+                travelDateRepository.findTravelDateByDateAndTravelId(date, travelId),
+                "해당 ID의 Date가 존재하지 않습니다.",
+                ErrorCode.TRAVEL_DATE_NOT_FOUND
         );
     }
 
