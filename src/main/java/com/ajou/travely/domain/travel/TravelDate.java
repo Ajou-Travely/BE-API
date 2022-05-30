@@ -48,7 +48,16 @@ public class TravelDate {
             @NonNull Travel travel
     ) {
         this.title = title;
-        this.travel = travel;
+        setTravel(travel);
         this.date = date;
+    }
+
+    public void updateTitle(String title) {
+        this.title = title;
+    }
+
+    private void setTravel(@NonNull Travel travel) {
+        this.travel = travel;
+        travel.getTravelDates().add(this);
     }
 }

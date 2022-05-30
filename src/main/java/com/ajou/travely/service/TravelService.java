@@ -69,16 +69,24 @@ public class TravelService {
         userTravelRepository.save(userTravel);
         travel.addUserTravel(userTravel);
         travelRepository.save(travel);
-        createTravelDate(travel, requestDto.getStartDate(), requestDto.getEndDate());
+        createTravelDates(travel, requestDto.getStartDate(), requestDto.getEndDate());
         return travel;
     }
 
-//    @Transactional
-//    public Travel updateTravelDate(Long userId, Long travelId, TravelDateUpdateRequestDto requestDto) {
-//        Travel travel = checkAuthorization(travelId, userId);
-//        travelDateRepository.deleteAllByTravel(travel);
-//
-//    }
+    @Transactional
+    public void updateTravelDates(Long userId, Long travelId, TravelDateUpdateRequestDto requestDto) {
+        Travel travel = checkAuthorization(travelId, userId);
+        travelDateRepository.deleteAllByTravel(travel);
+        travel.getTravelDates().clear();
+        createTravelDates(travel, requestDto.getStartDate(), requestDto.getEndDate());
+    }
+
+    @Transactional
+    public void updateTravelDateTitle(Long userId, Long travelId, TravelDateTitleUpdateRequestDto requestDto) {
+        Travel travel = checkAuthorization(travelId, userId);
+        TravelDate travelDate = checkTravelDateRecord(travel.getId(), requestDto.getDate());
+        travelDate.updateTitle(requestDto.getTitle());
+    }
 
     @Transactional
     public List<SimpleTravelResponseDto> getAllTravels() {
@@ -321,11 +329,12 @@ public class TravelService {
                 new RecordNotFoundException(message, code));
     }
 
-    private void createTravelDate(Travel travel, LocalDate startDate, LocalDate endDate) {
+    private void createTravelDates(Travel travel, LocalDate startDate, LocalDate endDate) {
         LocalDate currentDate = startDate;
         int day = 1;
         while (endDate.compareTo(currentDate) >= 0) {
-            travelDateRepository.save(
+            System.out.println(currentDate);
+            TravelDate save = travelDateRepository.save(
                     TravelDate
                             .builder()
                             .date(currentDate)
@@ -333,7 +342,9 @@ public class TravelService {
                             .travel(travel)
                             .build()
             );
+            System.out.println("save = " + save);
             currentDate = currentDate.plusDays(1);
+            day += 1;
         }
     }
 
