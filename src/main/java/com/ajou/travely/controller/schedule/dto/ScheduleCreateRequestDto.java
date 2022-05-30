@@ -1,12 +1,14 @@
 package com.ajou.travely.controller.schedule.dto;
 
 import com.ajou.travely.controller.place.dto.PlaceCreateRequestDto;
+import com.ajou.travely.domain.travel.TravelDate;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;

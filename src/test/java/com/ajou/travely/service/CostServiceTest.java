@@ -81,8 +81,6 @@ class CostServiceTest {
         Travel travel = travelRepository.save(
             Travel.builder()
                 .title("첫 여행")
-                .startDate(LocalDate.now())
-                .endDate(LocalDate.now())
                 .managerId(user1.getId())
                 .build()
         );
@@ -127,8 +125,6 @@ class CostServiceTest {
         Travel travel = travelService.createTravel(users.get(0).getId(),
             TravelCreateRequestDto.builder()
                 .title("첫 여행")
-                .startDate(LocalDate.now())
-                .endDate(LocalDate.now())
                 .userEmails(new ArrayList<>())
                 .build()
         );
@@ -202,8 +198,6 @@ class CostServiceTest {
         Travel travel = travelService.insertTravel(
             Travel.builder()
                 .title("첫 여행")
-                .startDate(LocalDate.now())
-                .endDate(LocalDate.now())
                 .managerId(users.get(0).getId())
                 .build()
         );
@@ -295,8 +289,6 @@ class CostServiceTest {
         Travel travel = travelService.insertTravel(
             Travel.builder()
                 .title("첫 여행")
-                .startDate(LocalDate.now())
-                .endDate(LocalDate.now())
                 .managerId(user1.getId())
                 .build()
         );

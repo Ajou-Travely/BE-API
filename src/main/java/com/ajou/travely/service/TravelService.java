@@ -9,9 +9,11 @@ import com.ajou.travely.domain.Invitation;
 import com.ajou.travely.domain.Schedule;
 import com.ajou.travely.domain.UserTravel;
 import com.ajou.travely.domain.travel.Travel;
+import com.ajou.travely.domain.travel.TravelDate;
+import com.ajou.travely.exception.ErrorCode;
 import com.ajou.travely.domain.travel.TravelType;
 import com.ajou.travely.domain.user.User;
-import com.ajou.travely.exception.ErrorCode;
+import com.ajou.travely.exception.custom.DuplicatedPrimaryKeyException;
 import com.ajou.travely.exception.custom.DuplicatedRequestException;
 import com.ajou.travely.exception.custom.RecordNotFoundException;
 import com.ajou.travely.exception.custom.UnauthorizedException;
@@ -21,6 +23,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -38,6 +41,8 @@ public class TravelService {
 
     private final InvitationRepository invitationRepository;
 
+    private final TravelDateRepository travelDateRepository;
+
     private final CustomMailSender customMailSender;
 
     @Value("${domain.base-url}")
@@ -52,13 +57,11 @@ public class TravelService {
     public Travel createTravel(Long userId, TravelCreateRequestDto travelCreateRequestDto) {
         User user = checkUserRecord(userId);
         Travel travel = travelRepository.save(
-                Travel.builder()
-                        .title(travelCreateRequestDto.getTitle())
-                        .startDate(travelCreateRequestDto.getStartDate())
-                        .endDate(travelCreateRequestDto.getEndDate())
-                        .managerId(userId)
-                        .travelType(travelCreateRequestDto.getTravelType())
-                        .build());
+            Travel.builder()
+                .title(travelCreateRequestDto.getTitle())
+                .managerId(userId)
+                .travelType(travelCreateRequestDto.getTravelType())
+                .build());
         UserTravel userTravel = UserTravel.builder()
                 .user(user)
                 .travel(travel)
@@ -163,8 +166,7 @@ public class TravelService {
     @Transactional
     public TravelResponseDto getTravelById(Long travelId, Long userId) {
         Travel travel = checkAuthorization(travelId, userId);
-        List<Schedule> schedules = sortSchedule(travel);
-        return new TravelResponseDto(travel, schedules);
+        return new TravelResponseDto(travel, travel.getTravelDates());
     }
 
     @Transactional
@@ -183,6 +185,7 @@ public class TravelService {
                 .collect(Collectors.toList());
     }
 
+    // TODO: Cascade 고려
     @Transactional
     public void deleteAllTravels() {
         travelRepository.deleteAll();
@@ -196,21 +199,17 @@ public class TravelService {
     }
 
     @Transactional(readOnly = true)
-    public List<SimpleScheduleResponseDto> getSchedulesByTravelId(Long travelId, Long userId) {
-        Travel travel = checkAuthorization(travelId, userId);
-        return travelRepository
-                .findSchedulesWithPlaceByTravelId(travelId)
-                .stream()
-                .map(SimpleScheduleResponseDto::new)
-                .collect(Collectors.toList());
+    public List<SimpleScheduleResponseDto> getSchedulesByTravelIdAndDate(Long travelId, LocalDate date) {
+        TravelDate travelDate = checkTravelDateRecord(travelId, date);
+        return sortSchedule(travelDate)
+            .stream()
+            .map(SimpleScheduleResponseDto::new)
+            .collect(Collectors.toList());
     }
 
     @Transactional
-    public void changeScheduleOrder(Long travelId,
-                                    Long userId,
-                                    ScheduleOrderUpdateRequestDto requestDto) {
-        Travel travel = checkAuthorization(travelId, userId);
-        travel.setScheduleOrder(requestDto.getScheduleOrder());
+    public void changeScheduleOrder(Long travelId, LocalDate date, ScheduleOrderUpdateRequestDto requestDto) {
+        checkTravelDateRecord(travelId, date).setScheduleOrder(requestDto.getScheduleOrder());
     }
 
     @Transactional
@@ -252,14 +251,35 @@ public class TravelService {
         return travel;
     }
 
-    private List<Schedule> sortSchedule(Travel travel) {
+    private List<Schedule> sortSchedule(TravelDate travelDate) {
         Map<Long, Schedule> map = new HashMap<>();
-        travelRepository
-                .findSchedulesWithPlaceByTravelId(travel.getId())
+        travelDateRepository
+                .findSchedulesWithPlaceByDateAndTravelId(travelDate.getDate(), travelDate.getTravel().getId())
                 .forEach(schedule -> map.put(schedule.getId(), schedule));
         List<Schedule> schedules = new ArrayList<>();
-        travel.getScheduleOrder().forEach(id -> schedules.add(map.get(id)));
+        travelDate.getScheduleOrder().forEach(id -> schedules.add(map.get(id)));
         return schedules;
+    }
+    /*------------------------------------------------------*/
+
+    @Transactional
+    public TravelDateCreateResponseDto createTravelDate(Long travelId, TravelDateCreateRequestDto requestDto) {
+        if (travelDateRepository.findTravelDateByDateAndTravelId(requestDto.getDate(), travelId).isPresent()) {
+            throw new DuplicatedPrimaryKeyException(
+                    "해당 travel Id와 date를 가진 travel date가 이미 존재합니다.",
+                    ErrorCode.DUPLICATED_PRIMARY_KEY
+            );
+        }
+        return new TravelDateCreateResponseDto(travelDateRepository.save(TravelDate.builder()
+                .title(requestDto.getTitle())
+                .travel(checkTravelRecord(travelId))
+                .date(LocalDate.now())
+                .build()));
+    }
+
+    @Transactional
+    public void deleteTravelDate(Long travelId, LocalDate date) {
+        travelDateRepository.delete(checkTravelDateRecord(travelId, date));
     }
 
     private Travel checkTravelRecord(Long travelId) {
@@ -283,6 +303,14 @@ public class TravelService {
                 invitationRepository.findByCodeAndEmail(code, email),
                 "잘못된 초대 링크입니다.",
                 ErrorCode.INVALID_INVITATION
+        );
+    }
+
+    private TravelDate checkTravelDateRecord(Long travelId, LocalDate date) {
+        return checkRecord(
+                travelDateRepository.findTravelDateByDateAndTravelId(date, travelId),
+                "해당 여행과 날짜에 해당하는 TravelDate가 존재하지 않습니다.",
+                ErrorCode.TRAVEL_DATE_NOT_FOUND
         );
     }
 

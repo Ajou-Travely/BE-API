@@ -19,13 +19,13 @@ public class TravelCreateRequestDto {
     @NotNull(message = "제목이 필요합니다.")
     private String title;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @NotNull(message = "시작 날짜가 필요합니다.")
-    private LocalDate startDate;
-
-    @NotNull(message = "종료 날짜가 필요합니다.")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate endDate;
+//    @DateTimeFormat(pattern = "yyyy-MM-dd")
+//    @NotNull(message = "시작 날짜가 필요합니다.")
+//    private LocalDate startDate;
+//
+//    @NotNull(message = "종료 날짜가 필요합니다.")
+//    @DateTimeFormat(pattern = "yyyy-MM-dd")
+//    private LocalDate endDate;
 
     @NotNull
     private List<String> userEmails;
@@ -35,14 +35,14 @@ public class TravelCreateRequestDto {
     @Builder
     public TravelCreateRequestDto(
         @NonNull String title,
-        @NonNull LocalDate startDate,
-        @NonNull LocalDate endDate,
+//        @NonNull LocalDate startDate,
+//        @NonNull LocalDate endDate,
         @NonNull List<String> userEmails,
         TravelType travelType
     ) {
         this.title = title;
-        this.startDate = startDate;
-        this.endDate = endDate;
+//        this.startDate = startDate;
+//        this.endDate = endDate;
         this.userEmails = userEmails;
         this.travelType = travelType;
     }
