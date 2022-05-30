@@ -10,6 +10,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,15 +18,15 @@ import java.util.List;
 public class ScheduleCreateRequestDto {
     @NotNull
     private final PlaceCreateRequestDto place;
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
-    private final LocalDateTime startTime;
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
-    private final LocalDateTime endTime;
+    @DateTimeFormat(pattern = "HH:mm:ss")
+    private final LocalTime startTime;
+    @DateTimeFormat(pattern = "HH:mm:ss")
+    private final LocalTime endTime;
     @NotNull
     private final List<Long> userIds;
 
     @Builder
-    public ScheduleCreateRequestDto(@NonNull PlaceCreateRequestDto place, @NonNull LocalDateTime startTime, @NonNull LocalDateTime endTime, List<Long> userIds) {
+    public ScheduleCreateRequestDto(@NonNull PlaceCreateRequestDto place, @NonNull LocalTime startTime, @NonNull LocalTime endTime, List<Long> userIds) {
         this.place = place;
         this.startTime = startTime;
         this.endTime = endTime;

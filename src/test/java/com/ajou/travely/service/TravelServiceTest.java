@@ -2,17 +2,14 @@ package com.ajou.travely.service;
 
 import com.ajou.travely.controller.cost.dto.CostCreateRequestDto;
 import com.ajou.travely.controller.cost.dto.CostCreateResponseDto;
-import com.ajou.travely.controller.place.dto.PlaceCreateRequestDto;
-import com.ajou.travely.controller.schedule.dto.ScheduleCreateRequestDto;
-import com.ajou.travely.controller.schedule.dto.SimpleScheduleResponseDto;
 import com.ajou.travely.controller.travel.dto.*;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.domain.Invitation;
 import com.ajou.travely.domain.UserTravel;
 import com.ajou.travely.domain.travel.Travel;
 import com.ajou.travely.domain.travel.TravelType;
-import com.ajou.travely.domain.user.UserType;
 import com.ajou.travely.domain.user.User;
+import com.ajou.travely.domain.user.UserType;
 import com.ajou.travely.repository.InvitationRepository;
 import com.ajou.travely.repository.UserTravelRepository;
 import org.assertj.core.api.Assertions;
@@ -27,7 +24,6 @@ import org.springframework.test.annotation.Rollback;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -84,6 +80,8 @@ class TravelServiceTest {
         TravelCreateRequestDto request = TravelCreateRequestDto
                 .builder()
                 .title("test")
+                .startDate(LocalDate.of(2022, 5, 10))
+                .endDate(LocalDate.of(2022, 5, 15))
                 .userEmails(new ArrayList<>())
                 .build();
 
@@ -93,6 +91,7 @@ class TravelServiceTest {
         TravelResponseDto foundTravel = travelService.getTravelById(travelId, user.getId());
         assertThat(travelService.getAllTravels()).hasSize(1);
         assertThat(foundTravel.getUsers()).hasSize(1);
+        assertThat(foundTravel.getDates()).hasSize(6);
     }
 
     @Test
@@ -112,6 +111,8 @@ class TravelServiceTest {
                 .builder()
                 .title("test")
                 .userEmails(new ArrayList<>())
+                .startDate(LocalDate.of(2022, 5, 10))
+                .endDate(LocalDate.of(2022, 5, 15))
                 .build();
         Travel travel = travelService.createTravel(user.getId(), request);
         Long travelId = travel.getId();
@@ -121,12 +122,44 @@ class TravelServiceTest {
         TravelUpdateRequestDto travelUpdateRequestDto = TravelUpdateRequestDto.builder()
                 .title(title)
                 .memo(memo)
+                .budget(5000)
                 .build();
         travelService.updateTravel(travelId, user.getId(), travelUpdateRequestDto);
 
         TravelResponseDto foundTravel = travelService.getTravelById(travelId, user.getId());
         assertThat(foundTravel.getTitle()).isEqualTo(title);
         assertThat(foundTravel.getMemo()).isEqualTo(memo);
+        assertThat(foundTravel.getBudget()).isEqualTo(5000);
+    }
+
+    @Test
+    @DisplayName("여행 일자를 수정할 수 있다.")
+    @Rollback
+    public void testUpdateTravelDates() {
+        User user = userService.insertUser(
+                User.builder()
+                        .userType(UserType.USER)
+                        .email("sophoca@ajou.ac.kr")
+                        .name("홍성빈")
+                        .phoneNumber("112")
+                        .kakaoId(0L)
+                        .build()
+        );
+        TravelCreateRequestDto request = TravelCreateRequestDto
+                .builder()
+                .title("test")
+                .startDate(LocalDate.of(2022, 5, 10))
+                .endDate(LocalDate.of(2022, 5, 15))
+                .userEmails(new ArrayList<>())
+                .build();
+        Travel travel = travelService.createTravel(user.getId(), request);
+        TravelDateUpdateRequestDto requestDate = TravelDateUpdateRequestDto
+                .builder()
+                .startDate(LocalDate.of(2022, 5, 20))
+                .endDate(LocalDate.of(2022, 5, 22))
+                .build();
+        travelService.updateTravelDates(user.getId(), travel.getId(), requestDate);
+        assertThat(travel.getTravelDates()).hasSize(3);
     }
 
     @Test
@@ -146,6 +179,8 @@ class TravelServiceTest {
                 .builder()
                 .title("test")
                 .userEmails(new ArrayList<>())
+                .startDate(LocalDate.of(2022, 5, 10))
+                .endDate(LocalDate.of(2022, 5, 15))
                 .build();
         Travel travel = travelService.createTravel(user.getId(), request);
         Long travelId = travel.getId();
@@ -186,6 +221,8 @@ class TravelServiceTest {
                 .builder()
                 .title("첫 여행")
                 .userEmails(new ArrayList<>())
+                .startDate(LocalDate.of(2022, 5, 10))
+                .endDate(LocalDate.of(2022, 5, 15))
                 .build();
         Travel travel = travelService.createTravel(users.get(0).getId(), request);
         Long travelId = travel.getId();
@@ -233,63 +270,6 @@ class TravelServiceTest {
         assertThat(costsByTravelId.get(1).getUserIds().toArray()).isEqualTo(Arrays.asList(users.get(2).getId(), users.get(3).getId()).toArray());
     }
 
-//    @Test
-//    @DisplayName("여행의 schedule들을 불러올 수 있다.")
-//    @Rollback
-//    public void testGetSchedulesByTravel() {
-//        PlaceCreateRequestDto ajouUniv = PlaceCreateRequestDto.builder()
-//                .lat(4.5)
-//                .lng(5.4)
-//                .placeUrl("ajou.ac.kr")
-//                .placeName("아주대학교")
-//                .addressName("원천동")
-//                .addressRoadName("원천로")
-//                .kakaoMapId(1L)
-//                .build();
-//        PlaceCreateRequestDto inhaUniv = PlaceCreateRequestDto.builder()
-//                .lat(3.7)
-//                .lng(7.3)
-//                .placeUrl("inha.ac.kr")
-//                .placeName("인하대학교")
-//                .addressName("인천")
-//                .addressRoadName("인천로")
-//                .phoneNumber("119")
-//                .kakaoMapId(2L)
-//                .build();
-//        User user = userService.insertUser(
-//                User.builder()
-//                        .userType(UserType.USER)
-//                        .email("sophoca@ajou.ac.kr")
-//                        .name("홍성빈")
-//                        .phoneNumber("112")
-//                        .kakaoId(0L)
-//                        .build()
-//        );
-//        TravelCreateRequestDto request = TravelCreateRequestDto
-//                .builder()
-//                .title("test")
-//                .userEmails(new ArrayList<>())
-//                .build();
-//        Travel travel = travelService.createTravel(user.getId(), request);
-//        Long travelId = travel.getId();
-//        Long schedule1Id = scheduleService.createSchedule(
-//                travelId,
-//                ScheduleCreateRequestDto.builder()
-//                        .place(ajouUniv)
-//                        .startTime(LocalDateTime.now())
-//                        .endTime(LocalDateTime.now().plusDays(1))
-//                        .build());
-//        Long schedule2Id = scheduleService.createSchedule(
-//                travelId,
-//                ScheduleCreateRequestDto.builder()
-//                        .place(inhaUniv)
-//                        .startTime(LocalDateTime.now().plusDays(1))
-//                        .endTime(LocalDateTime.now().plusDays(2))
-//                        .build());
-//        List<SimpleScheduleResponseDto> schedules = travelService.getSchedulesByTravelId(travelId);
-//        assertThat(schedules).hasSize(2);
-//    }
-
     @Test
     void testPagination() {
         // given
@@ -307,6 +287,8 @@ class TravelServiceTest {
                     .builder()
                     .title("test" + i)
                     .userEmails(new ArrayList<>())
+                    .startDate(LocalDate.of(2022, 5, 10))
+                    .endDate(LocalDate.of(2022, 5, 15))
                     .build();
             travelService.createTravel(user.getId(), request);
         }
@@ -353,21 +335,23 @@ class TravelServiceTest {
     @Rollback
     public void testTravelTypeDefault() {
         User user = userService.insertUser(
-            User.builder()
-                .userType(UserType.USER)
-                .email("sophoca@ajou.ac.kr")
-                .name("홍성빈")
-                .phoneNumber("112")
-                .kakaoId(0L)
-                .build()
+                User.builder()
+                        .userType(UserType.USER)
+                        .email("sophoca@ajou.ac.kr")
+                        .name("홍성빈")
+                        .phoneNumber("112")
+                        .kakaoId(0L)
+                        .build()
         );
         TravelCreateRequestDto request = TravelCreateRequestDto
-            .builder()
-            .title("test")
-            .userEmails(new ArrayList<>())
-            .build();
+                .builder()
+                .title("test")
+                .userEmails(new ArrayList<>())
+                .startDate(LocalDate.of(2022, 5, 10))
+                .endDate(LocalDate.of(2022, 5, 15))
+                .build();
         Travel travel = travelService.createTravel(user.getId(), request);
-        assertThat(travel.getTravelType()).isEqualTo(TravelType.PUBLIC);
+        assertThat(travel.getTravelType()).isEqualTo(TravelType.PRIVATE);
     }
 
     @Test
@@ -375,20 +359,22 @@ class TravelServiceTest {
     @Rollback
     public void testTravelTypePrivate() {
         User user = userService.insertUser(
-            User.builder()
-                .userType(UserType.USER)
-                .email("sophoca@ajou.ac.kr")
-                .name("홍성빈")
-                .phoneNumber("112")
-                .kakaoId(0L)
-                .build()
+                User.builder()
+                        .userType(UserType.USER)
+                        .email("sophoca@ajou.ac.kr")
+                        .name("홍성빈")
+                        .phoneNumber("112")
+                        .kakaoId(0L)
+                        .build()
         );
         TravelCreateRequestDto request = TravelCreateRequestDto
-            .builder()
-            .title("test")
-            .userEmails(new ArrayList<>())
-            .travelType(TravelType.PRIVATE)
-            .build();
+                .builder()
+                .title("test")
+                .userEmails(new ArrayList<>())
+                .travelType(TravelType.PRIVATE)
+                .startDate(LocalDate.of(2022, 5, 10))
+                .endDate(LocalDate.of(2022, 5, 15))
+                .build();
         Travel travel = travelService.createTravel(user.getId(), request);
         assertThat(travel.getTravelType()).isEqualTo(TravelType.PRIVATE);
     }
@@ -418,6 +404,8 @@ class TravelServiceTest {
                 .builder()
                 .title("test")
                 .userEmails(new ArrayList<>())
+                .startDate(LocalDate.of(2022, 5, 10))
+                .endDate(LocalDate.of(2022, 5, 15))
                 .build();
         Travel travel = travelService.createTravel(user.getId(), request);
         UUID code = UUID.randomUUID();
@@ -460,6 +448,8 @@ class TravelServiceTest {
                 .builder()
                 .title("test")
                 .userEmails(new ArrayList<>())
+                .startDate(LocalDate.of(2022, 5, 10))
+                .endDate(LocalDate.of(2022, 5, 15))
                 .build();
         Travel travel = travelService.createTravel(user.getId(), request);
         UUID code = UUID.randomUUID();

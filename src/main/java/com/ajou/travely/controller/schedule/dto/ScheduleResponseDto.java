@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,8 +19,8 @@ public class ScheduleResponseDto {
     private LocalDate date;
     private Long scheduleId;
     private PlaceResponseDto place;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+    private LocalTime startTime;
+    private LocalTime endTime;
     private List<SimpleUserInfoDto> users;
 
     public ScheduleResponseDto(Schedule entity) {

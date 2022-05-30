@@ -5,7 +5,7 @@ import com.ajou.travely.domain.travel.TravelDate;
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,12 +39,12 @@ public class Schedule {
     @OneToMany(mappedBy = "schedule")
     private final List<SchedulePhoto> photos = new ArrayList<>();
 
-    private LocalDateTime startTime;
+    private LocalTime startTime;
 
-    private LocalDateTime endTime;
+    private LocalTime endTime;
 
     @Builder
-    public Schedule(@NonNull TravelDate travelDate, @NonNull Place place, LocalDateTime startTime, LocalDateTime endTime) {
+    public Schedule(@NonNull TravelDate travelDate, @NonNull Place place, LocalTime startTime, LocalTime endTime) {
 //        this.travel = travel;
         this.travelDate = travelDate;
         this.place = place;
@@ -73,11 +73,11 @@ public class Schedule {
         this.place = place;
     }
 
-    public void setStartTime(LocalDateTime startTime) {
+    public void setStartTime(LocalTime startTime) {
         this.startTime = startTime;
     }
 
-    public void setEndTime(LocalDateTime endTime) {
+    public void setEndTime(LocalTime endTime) {
         this.endTime = endTime;
     }
 }

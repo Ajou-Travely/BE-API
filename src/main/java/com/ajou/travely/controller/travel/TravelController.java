@@ -9,14 +9,11 @@ import com.ajou.travely.controller.cost.dto.CostUpdateDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleCreateRequestDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleResponseDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleUpdateRequestDto;
-import com.ajou.travely.controller.schedule.dto.SimpleScheduleResponseDto;
 import com.ajou.travely.controller.travel.dto.*;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.domain.travel.Travel;
-import com.ajou.travely.domain.travel.TravelDate;
 import com.ajou.travely.service.CostService;
 import com.ajou.travely.service.ScheduleService;
-
 import com.ajou.travely.service.TravelService;
 import com.ajou.travely.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.web.multipart.MultipartFile;
@@ -120,12 +119,25 @@ public class TravelController {
         return ResponseEntity.ok(travelService.getSimpleUsersInfoOfTravel(travelId));
     }
 
-    // Schedules
+    // Travel Date
 
-//    @GetMapping("/{travelId}/schedules")
-//    public ResponseEntity<List<SimpleScheduleResponseDto>> showSchedulesByTravel(@PathVariable Long travelId) {
-//        return ResponseEntity.ok(travelService.getSchedulesByTravelId(travelId));
-//    }
+    @PutMapping("/{travelId}/dates")
+    public ResponseEntity<Void> updateTravelDates(@PathVariable Long travelId,
+                                                  @RequestBody TravelDateUpdateRequestDto requestDto,
+                                                  @LoginUser SessionUser sessionUser) {
+        travelService.updateTravelDates(sessionUser.getUserId(), travelId, requestDto);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/{travelId}/dates")
+    public ResponseEntity<Void> updateTravelDateTitle(@PathVariable Long travelId,
+                                                      @RequestBody TravelDateTitleUpdateRequestDto requestDto,
+                                                      @LoginUser SessionUser sessionUser) {
+        travelService.updateTravelDateTitle(sessionUser.getUserId(), travelId, requestDto);
+        return ResponseEntity.ok().build();
+    }
+
+    // Schedules
 
     @GetMapping("/{travelId}/schedules/{scheduleId}")
     public ResponseEntity<ScheduleResponseDto> showSchedule(@PathVariable Long travelId,
@@ -135,7 +147,7 @@ public class TravelController {
 
     @PostMapping("/{travelId}/schedules")
     public ResponseEntity<Long> createSchedule(@PathVariable Long travelId,
-                                               @RequestParam LocalDate date,
+                                               @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
                                                @RequestBody ScheduleCreateRequestDto scheduleCreateRequestDto) {
         return ResponseEntity.ok(scheduleService.createSchedule(travelId, date, scheduleCreateRequestDto));
     }
@@ -217,23 +229,6 @@ public class TravelController {
     public ResponseEntity<Void> deleteCost(@PathVariable Long travelId,
                                            @PathVariable Long costId) {
         this.costService.deleteCostById(costId);
-        return ResponseEntity.ok().build();
-    }
-
-    // TravelDates
-
-    @PostMapping("/{travelId}/travelDates")
-    public ResponseEntity<TravelDateCreateResponseDto> createTravelDate(@PathVariable Long travelId,
-                                                       @Valid @RequestBody TravelDateCreateRequestDto requestDto) {
-        return ResponseEntity.ok(travelService.createTravelDate(travelId, requestDto));
-    }
-//    @PutMapping("/{travelId}/travelDates/{travelDateId}")
-
-//    schedule과 travelDate 간의 cascade 논의
-    @DeleteMapping("/{travelId}/travelDates")
-    public ResponseEntity<Void> deleteTravelDate(@PathVariable Long travelId,
-                                                 @RequestParam("date") LocalDate date) {
-        travelService.deleteTravelDate(travelId, date);
         return ResponseEntity.ok().build();
     }
 

@@ -32,6 +32,8 @@ public class Travel {
     @Column(columnDefinition = "TEXT")
     private String memo;
 
+    private Integer budget;
+
     @Enumerated(EnumType.STRING)
     private TravelType travelType;
 
@@ -43,13 +45,15 @@ public class Travel {
 
     @Builder
     public Travel(@NonNull String title,
-            @NonNull Long managerId,
-            String memo,
-            TravelType travelType) {
+                  @NonNull Long managerId,
+                  String memo,
+                  TravelType travelType,
+                  Integer budget) {
         this.title = title;
         this.managerId = managerId;
         this.memo = memo;
         this.travelType = travelType;
+        this.budget = budget;
     }
 
     public void addUserTravel(UserTravel userTravel) {
@@ -73,7 +77,7 @@ public class Travel {
 
     @PrePersist
     public void prePersist() {
-        this.travelType = this.travelType == null ? TravelType.PUBLIC : this.travelType;
+        this.travelType = this.travelType == null ? TravelType.PRIVATE : this.travelType;
     }
 
     public void setTravelType(TravelType type) {
@@ -83,6 +87,7 @@ public class Travel {
     public void updateTravel(TravelUpdateRequestDto requestDto) {
         this.title = requestDto.getTitle() != null ? requestDto.getTitle() : this.title;
         this.memo = requestDto.getMemo() != null ? requestDto.getMemo() : this.memo;
+        this.budget = requestDto.getBudget() != null ? requestDto.getBudget() : this.budget;
     }
 
 }
