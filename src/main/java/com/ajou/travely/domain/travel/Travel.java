@@ -73,7 +73,7 @@ public class Travel {
 
     @PrePersist
     public void prePersist() {
-        this.travelType = this.travelType == null ? TravelType.PUBLIC : this.travelType;
+        this.travelType = this.travelType == null ? TravelType.PRIVATE : this.travelType;
     }
 
     public void setTravelType(TravelType type) {

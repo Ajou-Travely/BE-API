@@ -54,13 +54,13 @@ public class TravelService {
     }
 
     @Transactional
-    public Travel createTravel(Long userId, TravelCreateRequestDto travelCreateRequestDto) {
+    public Travel createTravel(Long userId, TravelCreateRequestDto requestDto) {
         User user = checkUserRecord(userId);
         Travel travel = travelRepository.save(
             Travel.builder()
-                .title(travelCreateRequestDto.getTitle())
+                .title(requestDto.getTitle())
                 .managerId(userId)
-                .travelType(travelCreateRequestDto.getTravelType())
+                .travelType(requestDto.getTravelType())
                 .build());
         UserTravel userTravel = UserTravel.builder()
                 .user(user)
@@ -69,8 +69,16 @@ public class TravelService {
         userTravelRepository.save(userTravel);
         travel.addUserTravel(userTravel);
         travelRepository.save(travel);
+        createTravelDate(travel, requestDto.getStartDate(), requestDto.getEndDate());
         return travel;
     }
+
+//    @Transactional
+//    public Travel updateTravelDate(Long userId, Long travelId, TravelDateUpdateRequestDto requestDto) {
+//        Travel travel = checkAuthorization(travelId, userId);
+//        travelDateRepository.deleteAllByTravel(travel);
+//
+//    }
 
     @Transactional
     public List<SimpleTravelResponseDto> getAllTravels() {
@@ -262,20 +270,14 @@ public class TravelService {
     }
     /*------------------------------------------------------*/
 
-    @Transactional
-    public TravelDateCreateResponseDto createTravelDate(Long travelId, TravelDateCreateRequestDto requestDto) {
-        if (travelDateRepository.findTravelDateByDateAndTravelId(requestDto.getDate(), travelId).isPresent()) {
-            throw new DuplicatedPrimaryKeyException(
-                    "해당 travel Id와 date를 가진 travel date가 이미 존재합니다.",
-                    ErrorCode.DUPLICATED_PRIMARY_KEY
-            );
-        }
-        return new TravelDateCreateResponseDto(travelDateRepository.save(TravelDate.builder()
-                .title(requestDto.getTitle())
-                .travel(checkTravelRecord(travelId))
-                .date(requestDto.getDate())
-                .build()));
-    }
+//    public void createTravelDate(Long travelId, String title, LocalDate date) {
+//        travelDateRepository.save(TravelDate.builder()
+//                .title(title)
+//                .travel(checkTravelRecord(travelId))
+//                .date(date)
+//                .build()
+//        );
+//    }
 
     @Transactional
     public void deleteTravelDate(Long travelId, LocalDate date) {
@@ -317,6 +319,22 @@ public class TravelService {
     private <T> T checkRecord(Optional<T> record, String message, ErrorCode code) {
         return record.orElseThrow(() ->
                 new RecordNotFoundException(message, code));
+    }
+
+    private void createTravelDate(Travel travel, LocalDate startDate, LocalDate endDate) {
+        LocalDate currentDate = startDate;
+        int day = 1;
+        while (endDate.compareTo(currentDate) >= 0) {
+            travelDateRepository.save(
+                    TravelDate
+                            .builder()
+                            .date(currentDate)
+                            .title("day" + day)
+                            .travel(travel)
+                            .build()
+            );
+            currentDate = currentDate.plusDays(1);
+        }
     }
 
 }
