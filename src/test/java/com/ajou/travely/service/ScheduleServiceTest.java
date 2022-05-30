@@ -5,16 +5,20 @@ import com.ajou.travely.controller.schedule.dto.ScheduleCreateRequestDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleResponseDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleUpdateRequestDto;
 import com.ajou.travely.controller.schedule.dto.SimpleScheduleResponseDto;
+import com.ajou.travely.controller.schedulePhoto.dto.SchedulePhotoResponseDto;
 import com.ajou.travely.controller.travel.dto.ScheduleOrderUpdateRequestDto;
 import com.ajou.travely.controller.travel.dto.TravelDateCreateRequestDto;
 import com.ajou.travely.controller.travel.dto.TravelDateCreateResponseDto;
 import com.ajou.travely.domain.Schedule;
+import com.ajou.travely.domain.SchedulePhoto;
 import com.ajou.travely.domain.travel.Travel;
 import com.ajou.travely.domain.travel.TravelDate;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.domain.user.UserType;
 import com.ajou.travely.exception.ErrorCode;
 import com.ajou.travely.exception.custom.RecordNotFoundException;
+import com.ajou.travely.repository.SchedulePhotoRepository;
+import com.ajou.travely.repository.ScheduleRepository;
 import com.ajou.travely.repository.TravelDateRepository;
 import com.ajou.travely.repository.TravelRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,6 +64,12 @@ class ScheduleServiceTest {
 
     @Autowired
     TravelDateRepository travelDateRepository;
+
+    @Autowired
+    ScheduleRepository scheduleRepository;
+
+    @Autowired
+    SchedulePhotoRepository schedulePhotoRepository;
 
     @PersistenceContext
     EntityManager em;
@@ -357,6 +367,77 @@ class ScheduleServiceTest {
         List<Long> result = new ArrayList<>();
         schedulesByTravelId.stream().forEach(simpleScheduleResponseDto -> result.add(simpleScheduleResponseDto.getScheduleId()));
         assertThat(result).isEqualTo(Arrays.asList(scheduleId3, scheduleId1, scheduleId2));
+    }
+
+    @Test
+    @DisplayName("스케줄 기준 사진 조회")
+    void testSchedulePhotoUpload() {
+        User user1 = userService.insertUser(
+            User.builder()
+                .userType(UserType.USER)
+                .email("sophoca@ajou.ac.kr")
+                .name("홍성빈")
+                .phoneNumber("112")
+                .kakaoId(1L)
+                .build()
+        );
+        User user2 = userService.insertUser(
+            User.builder()
+                .userType(UserType.USER)
+                .email("errander@ajou.ac.kr")
+                .name("이호용")
+                .phoneNumber("119")
+                .kakaoId(2L)
+                .build()
+        );
+        travelService.addUserToTravel(travel.getId(), user1.getId());
+        travelService.addUserToTravel(travel.getId(), user2.getId());
+
+        TravelDateCreateResponseDto travelDate = travelService.createTravelDate(
+            travel.getId(),
+            TravelDateCreateRequestDto.builder()
+                .title("1일차 입니둥.")
+                .date(LocalDate.now())
+                .build());
+
+        Long scheduleId = scheduleService.createSchedule(
+            travel.getId(),
+            LocalDate.now(),
+            ScheduleCreateRequestDto
+                .builder()
+                .place(ajouUniv)
+                .startTime(LocalDateTime.now())
+                .endTime(LocalDateTime.now().plusHours(2))
+                .userIds(new ArrayList<>(List.of(user.getId(), user1.getId(), user2.getId())))
+                .build()
+        );
+
+        Schedule schedule = scheduleRepository.findById(scheduleId)
+            .orElseThrow(() -> new IllegalArgumentException("no schedule"));
+
+        List<String> photoPaths =
+            new ArrayList<>(List.of("testUrl1", "testUrl2", "tesetUrl3"));
+        List<SchedulePhoto> schedulePhotos = photoPaths.stream()
+            .map(photoPath ->
+                SchedulePhoto.builder()
+                    .user(user1)
+                    .schedule(schedule)
+                    .photoPath(photoPath)
+                    .build())
+            .collect(Collectors.toList());
+        schedulePhotoRepository.saveAll(schedulePhotos);
+        schedule.addSchedulePhotos(schedulePhotos);
+
+        em.flush();
+        em.clear();
+
+        Schedule resultSchedule = scheduleRepository.findById(scheduleId)
+            .orElseThrow(() -> new IllegalArgumentException("no schedule"));
+
+        List<SchedulePhotoResponseDto> responseDtos =
+            scheduleService.getSchedulePhotos(resultSchedule.getId());
+
+        assertThat(responseDtos).hasSize(photoPaths.size());
     }
 
 }
