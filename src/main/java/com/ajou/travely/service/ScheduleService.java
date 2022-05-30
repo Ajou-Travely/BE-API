@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class ScheduleService {
@@ -114,6 +115,7 @@ public class ScheduleService {
         });
     }
 
+
     @Transactional
     public ScheduleResponseDto getScheduleById(Long scheduleId) {
         Schedule schedule = checkScheduleRecord(scheduleId);
@@ -123,6 +125,12 @@ public class ScheduleService {
     @Transactional
     public void deleteAllSchedules() {
         scheduleRepository.deleteAll();
+    }
+
+    public void uploadSchedulePhotos(Long userId, Long scheduleId, List<MultipartFile> photos) {
+        User user = checkUserRecord(userId);
+        Schedule schedule = checkScheduleRecord(scheduleId);
+
     }
 
     private Travel checkTravelRecord(Long travelId) {

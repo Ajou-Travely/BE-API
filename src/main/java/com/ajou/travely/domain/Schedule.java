@@ -28,6 +28,9 @@ public class Schedule {
     @OneToMany(mappedBy = "schedule")
     private List<Branch> branches;
 
+    @OneToMany(mappedBy = "schedule")
+    private final List<SchedulePhoto> photos = new ArrayList<>();
+
     private LocalDateTime startTime;
 
     private LocalDateTime endTime;
@@ -47,6 +50,14 @@ public class Schedule {
 
     public void removeUser(Branch branch) {
         this.branches.remove(branch);
+    }
+
+    public void addPhotos(SchedulePhoto photo) {
+        this.photos.add(photo);
+    }
+
+    public void removePhotos(SchedulePhoto photo) {
+        this.photos.remove(photo);
     }
 
     public void setPlace(Place place) {

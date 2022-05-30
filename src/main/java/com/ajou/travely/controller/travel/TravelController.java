@@ -30,6 +30,7 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.web.multipart.MultipartFile;
 
 @RequestMapping("/v1/travels")
 @RequiredArgsConstructor
@@ -145,6 +146,14 @@ public class TravelController {
                                                @RequestBody ScheduleUpdateRequestDto scheduleUpdateRequestDto
     ) {
         scheduleService.updateSchedule(scheduleId, scheduleUpdateRequestDto);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{travelId}/schedules/{scheduleId}/photos")
+    public ResponseEntity<Void> uploadSchedulePhotos(@LoginUser SessionUser sessionUser,
+                                                     @PathVariable Long scheduleId,
+                                                     @RequestPart List<MultipartFile> photos
+    ) {
         return ResponseEntity.ok().build();
     }
 
