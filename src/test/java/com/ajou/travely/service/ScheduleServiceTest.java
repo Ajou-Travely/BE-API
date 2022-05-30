@@ -31,7 +31,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -131,13 +130,7 @@ class ScheduleServiceTest {
         );
         travelService.addUserToTravel(travel.getId(), user1.getId());
         travelService.addUserToTravel(travel.getId(), user2.getId());
-
-        em.flush();
-        em.clear();
-
-        Optional<Travel> byId = travelRepository.findById(travel.getId());
-        List<TravelDate> travelDates = byId.get().getTravelDates();
-        System.out.println("travelDates.size() = " + travelDates.size());
+        List<TravelDate> travelDates = travel.getTravelDates();
 
         Long scheduleId1 = scheduleService.createSchedule(
                 travel.getId(),
@@ -171,7 +164,7 @@ class ScheduleServiceTest {
         ScheduleResponseDto schedule = scheduleService.getScheduleById(scheduleId1);
         assertThat(schedule.getPlace().getPlaceName()).isEqualTo(ajouUniv.getPlaceName());
         assertThat(schedule.getUsers()).hasSize(3);
-        assertThat(foundTravel.getTravelDates().size()).isEqualTo(1);
+        assertThat(foundTravel.getTravelDates().size()).isEqualTo(6);
         assertThat(foundTravel.getTravelDates().get(0).getSchedules().size()).isEqualTo(2);
         assertThat(foundTravel.getTravelDates().get(0).getScheduleOrder().size()).isEqualTo(2);
         assertThat(foundTravel.getTravelDates().get(0).getScheduleOrder()).containsAll(Arrays.asList(scheduleId1, scheduleId2));
@@ -338,7 +331,7 @@ class ScheduleServiceTest {
                 new ScheduleOrderUpdateRequestDto(Arrays.asList(scheduleId3, scheduleId1, scheduleId2)));
         List<SimpleScheduleResponseDto> schedulesByTravelId = travelService.getSchedulesByTravelIdAndDate(travel.getId(), travelDates.get(0).getDate());
         List<Long> result = new ArrayList<>();
-        schedulesByTravelId.stream().forEach(simpleScheduleResponseDto -> result.add(simpleScheduleResponseDto.getScheduleId()));
+        schedulesByTravelId.forEach(simpleScheduleResponseDto -> result.add(simpleScheduleResponseDto.getScheduleId()));
         assertThat(result).isEqualTo(Arrays.asList(scheduleId3, scheduleId1, scheduleId2));
     }
 

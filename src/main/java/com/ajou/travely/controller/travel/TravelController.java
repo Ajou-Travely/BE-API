@@ -124,7 +124,7 @@ public class TravelController {
     public ResponseEntity<Void> updateTravelDates(@PathVariable Long travelId,
                                                   @RequestBody TravelDateUpdateRequestDto requestDto,
                                                   @LoginUser SessionUser sessionUser) {
-        travelService.updateTravelDate(sessionUser.getUserId(), travelId, requestDto);
+        travelService.updateTravelDates(sessionUser.getUserId(), travelId, requestDto);
         return ResponseEntity.ok().build();
     }
 

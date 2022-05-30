@@ -74,9 +74,10 @@ public class TravelService {
     }
 
     @Transactional
-    public void updateTravelDate(Long userId, Long travelId, TravelDateUpdateRequestDto requestDto) {
+    public void updateTravelDates(Long userId, Long travelId, TravelDateUpdateRequestDto requestDto) {
         Travel travel = checkAuthorization(travelId, userId);
         travelDateRepository.deleteAllByTravel(travel);
+        travel.getTravelDates().clear();
         createTravelDates(travel, requestDto.getStartDate(), requestDto.getEndDate());
     }
 
