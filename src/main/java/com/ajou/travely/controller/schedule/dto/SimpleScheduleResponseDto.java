@@ -18,7 +18,7 @@ public class SimpleScheduleResponseDto {
     private final LocalTime endTime;
     private final PlaceResponseDto place;
     private final List<SimpleUserInfoDto> users;
-    private List<SchedulePhotoResponseDto> photos;
+    private final List<SchedulePhotoResponseDto> photos;
 
     public SimpleScheduleResponseDto(Schedule entity) {
         this.scheduleId = entity.getId();
