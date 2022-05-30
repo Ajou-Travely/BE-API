@@ -12,15 +12,18 @@ public class TravelUpdateRequestDto {
 //    private final LocalDate startDate;
 //    private final LocalDate endDate;
     private final String memo;
+    private final Integer budget;
 
     @Builder
     public TravelUpdateRequestDto(String title,
 //                                  LocalDate startDate,
 //                                  LocalDate endDate,
-                                  String memo) {
+                                  String memo,
+                                  Integer budget) {
         this.title = title;
 //        this.startDate = startDate;
 //        this.endDate = endDate;
         this.memo = memo;
+        this.budget = budget;
     }
 }

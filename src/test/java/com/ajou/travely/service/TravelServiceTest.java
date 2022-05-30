@@ -121,12 +121,14 @@
 //        TravelUpdateRequestDto travelUpdateRequestDto = TravelUpdateRequestDto.builder()
 //                .title(title)
 //                .memo(memo)
+//                .budget(5000)
 //                .build();
 //        travelService.updateTravel(travelId, user.getId(), travelUpdateRequestDto);
 //
 //        TravelResponseDto foundTravel = travelService.getTravelById(travelId, user.getId());
 //        assertThat(foundTravel.getTitle()).isEqualTo(title);
 //        assertThat(foundTravel.getMemo()).isEqualTo(memo);
+//        assertThat(foundTravel.getBudget()).isEqualTo(5000);
 //    }
 //
 //    @Test
@@ -353,19 +355,19 @@
 //    @Rollback
 //    public void testTravelTypeDefault() {
 //        User user = userService.insertUser(
-//            User.builder()
-//                .userType(UserType.USER)
-//                .email("sophoca@ajou.ac.kr")
-//                .name("홍성빈")
-//                .phoneNumber("112")
-//                .kakaoId(0L)
-//                .build()
+//                User.builder()
+//                        .userType(UserType.USER)
+//                        .email("sophoca@ajou.ac.kr")
+//                        .name("홍성빈")
+//                        .phoneNumber("112")
+//                        .kakaoId(0L)
+//                        .build()
 //        );
 //        TravelCreateRequestDto request = TravelCreateRequestDto
-//            .builder()
-//            .title("test")
-//            .userEmails(new ArrayList<>())
-//            .build();
+//                .builder()
+//                .title("test")
+//                .userEmails(new ArrayList<>())
+//                .build();
 //        Travel travel = travelService.createTravel(user.getId(), request);
 //        assertThat(travel.getTravelType()).isEqualTo(TravelType.PUBLIC);
 //    }
@@ -375,20 +377,20 @@
 //    @Rollback
 //    public void testTravelTypePrivate() {
 //        User user = userService.insertUser(
-//            User.builder()
-//                .userType(UserType.USER)
-//                .email("sophoca@ajou.ac.kr")
-//                .name("홍성빈")
-//                .phoneNumber("112")
-//                .kakaoId(0L)
-//                .build()
+//                User.builder()
+//                        .userType(UserType.USER)
+//                        .email("sophoca@ajou.ac.kr")
+//                        .name("홍성빈")
+//                        .phoneNumber("112")
+//                        .kakaoId(0L)
+//                        .build()
 //        );
 //        TravelCreateRequestDto request = TravelCreateRequestDto
-//            .builder()
-//            .title("test")
-//            .userEmails(new ArrayList<>())
-//            .travelType(TravelType.PRIVATE)
-//            .build();
+//                .builder()
+//                .title("test")
+//                .userEmails(new ArrayList<>())
+//                .travelType(TravelType.PRIVATE)
+//                .build();
 //        Travel travel = travelService.createTravel(user.getId(), request);
 //        assertThat(travel.getTravelType()).isEqualTo(TravelType.PRIVATE);
 //    }
