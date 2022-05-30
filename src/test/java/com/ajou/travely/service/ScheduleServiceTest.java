@@ -31,6 +31,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -130,8 +131,14 @@ class ScheduleServiceTest {
         );
         travelService.addUserToTravel(travel.getId(), user1.getId());
         travelService.addUserToTravel(travel.getId(), user2.getId());
-        List<TravelDate> travelDates = travel.getTravelDates();
-        System.out.println(travelDates.size());
+
+        em.flush();
+        em.clear();
+
+        Optional<Travel> byId = travelRepository.findById(travel.getId());
+        List<TravelDate> travelDates = byId.get().getTravelDates();
+        System.out.println("travelDates.size() = " + travelDates.size());
+
         Long scheduleId1 = scheduleService.createSchedule(
                 travel.getId(),
                 travelDates.get(0).getDate(),
