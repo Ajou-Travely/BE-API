@@ -9,14 +9,11 @@ import com.ajou.travely.controller.cost.dto.CostUpdateDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleCreateRequestDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleResponseDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleUpdateRequestDto;
-import com.ajou.travely.controller.schedule.dto.SimpleScheduleResponseDto;
 import com.ajou.travely.controller.travel.dto.*;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.domain.travel.Travel;
-import com.ajou.travely.domain.travel.TravelDate;
 import com.ajou.travely.service.CostService;
 import com.ajou.travely.service.ScheduleService;
-
 import com.ajou.travely.service.TravelService;
 import com.ajou.travely.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -121,12 +118,25 @@ public class TravelController {
         return ResponseEntity.ok(travelService.getSimpleUsersInfoOfTravel(travelId));
     }
 
-    // Schedules
+    // Travel Date
 
-//    @GetMapping("/{travelId}/schedules")
-//    public ResponseEntity<List<SimpleScheduleResponseDto>> showSchedulesByTravel(@PathVariable Long travelId) {
-//        return ResponseEntity.ok(travelService.getSchedulesByTravelId(travelId));
-//    }
+    @PutMapping("/{travelId}/dates")
+    public ResponseEntity<Void> updateTravelDates(@PathVariable Long travelId,
+                                                  @RequestBody TravelDateUpdateRequestDto requestDto,
+                                                  @LoginUser SessionUser sessionUser) {
+        travelService.updateTravelDate(sessionUser.getUserId(), travelId, requestDto);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/{travelId}/dates")
+    public ResponseEntity<Void> updateTravelDateTitle(@PathVariable Long travelId,
+                                                      @RequestBody TravelDateTitleUpdateRequestDto requestDto,
+                                                      @LoginUser SessionUser sessionUser) {
+        travelService.updateTravelDateTitle(sessionUser.getUserId(), travelId, requestDto);
+        return ResponseEntity.ok().build();
+    }
+
+    // Schedules
 
     @GetMapping("/{travelId}/schedules/{scheduleId}")
     public ResponseEntity<ScheduleResponseDto> showSchedule(@PathVariable Long travelId,

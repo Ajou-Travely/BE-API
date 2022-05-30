@@ -73,12 +73,19 @@ public class TravelService {
         return travel;
     }
 
-//    @Transactional
-//    public Travel updateTravelDate(Long userId, Long travelId, TravelDateUpdateRequestDto requestDto) {
-//        Travel travel = checkAuthorization(travelId, userId);
-//        travelDateRepository.deleteAllByTravel(travel);
-//
-//    }
+    @Transactional
+    public void updateTravelDate(Long userId, Long travelId, TravelDateUpdateRequestDto requestDto) {
+        Travel travel = checkAuthorization(travelId, userId);
+        travelDateRepository.deleteAllByTravel(travel);
+        createTravelDate(travel, requestDto.getStartDate(), requestDto.getEndDate());
+    }
+
+    @Transactional
+    public void updateTravelDateTitle(Long userId, Long travelId, TravelDateTitleUpdateRequestDto requestDto) {
+        Travel travel = checkAuthorization(travelId, userId);
+        TravelDate travelDate = checkTravelDateRecord(travel.getId(), requestDto.getDate());
+        travelDate.updateTitle(requestDto.getTitle());
+    }
 
     @Transactional
     public List<SimpleTravelResponseDto> getAllTravels() {

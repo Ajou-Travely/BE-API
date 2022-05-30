@@ -51,4 +51,8 @@ public class TravelDate {
         this.travel = travel;
         this.date = date;
     }
+
+    public void updateTitle(String title) {
+        this.title = title;
+    }
 }
