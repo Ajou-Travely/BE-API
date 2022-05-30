@@ -121,12 +121,14 @@ class TravelServiceTest {
         TravelUpdateRequestDto travelUpdateRequestDto = TravelUpdateRequestDto.builder()
                 .title(title)
                 .memo(memo)
+                .budget(5000)
                 .build();
         travelService.updateTravel(travelId, user.getId(), travelUpdateRequestDto);
 
         TravelResponseDto foundTravel = travelService.getTravelById(travelId, user.getId());
         assertThat(foundTravel.getTitle()).isEqualTo(title);
         assertThat(foundTravel.getMemo()).isEqualTo(memo);
+        assertThat(foundTravel.getBudget()).isEqualTo(5000);
     }
 
     @Test
