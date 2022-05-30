@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -164,7 +163,7 @@ public class TravelController {
 
     @PostMapping("/{travelId}/change")
     public ResponseEntity<Void> changeScheduleOrder(@PathVariable Long travelId,
-                                                    @RequestParam("date") LocalDate date,
+                                                    @RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
                                                     @RequestBody ScheduleOrderUpdateRequestDto requestDto) {
         travelService.changeScheduleOrder(travelId, date, requestDto);
         return ResponseEntity.ok().build();
