@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.web.multipart.MultipartFile;
 
 @RequestMapping("/v1/travels")
 @RequiredArgsConstructor
@@ -83,11 +84,9 @@ public class TravelController {
     @PostMapping("/accept/{code}")
     public ResponseEntity<Long> addUserToTravel(@LoginUser SessionUser sessionUser,
                                                 @PathVariable UUID code) {
-        return ResponseEntity
-                .ok(
-                        travelService
-                                .addUserToTravelWithValidation(sessionUser.getUserId()
-                                        , code));
+        Long travelId = travelService
+            .addUserToTravelWithValidation(sessionUser.getUserId(), code);
+        return ResponseEntity.ok(travelId);
     }
 
     @PostMapping("/{travelId}/invite")
@@ -141,7 +140,7 @@ public class TravelController {
 
     @GetMapping("/{travelId}/schedules/{scheduleId}")
     public ResponseEntity<ScheduleResponseDto> showSchedule(@PathVariable Long travelId,
-                                                               @PathVariable Long scheduleId) {
+                                                            @PathVariable Long scheduleId) {
         return ResponseEntity.ok(scheduleService.getScheduleById(scheduleId));
     }
 
@@ -158,6 +157,32 @@ public class TravelController {
                                                @RequestBody ScheduleUpdateRequestDto scheduleUpdateRequestDto
     ) {
         scheduleService.updateSchedule(scheduleId, scheduleUpdateRequestDto);
+        return ResponseEntity.ok().build();
+    }
+
+//    @GetMapping("/{travelId}/photos")
+//    public ResponseEntity<Void> showTravelPhotos(@LoginUser SessionUser sessionUser,
+//        @PathVariable Long travelId
+//        ) {
+//
+//        return ResponseEntity.ok().build();
+//    }
+
+    @GetMapping("/{travelId}/schedules/{scheduleId}/photos")
+    public ResponseEntity<Void> showSchedulePhotos(@LoginUser SessionUser sessionUser,
+        @PathVariable String travelId,
+        @PathVariable Long scheduleId,
+        @RequestPart List<MultipartFile> photos) {
+        scheduleService.uploadSchedulePhotos(sessionUser.getUserId(), scheduleId, photos);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{travelId}/schedules/{scheduleId}/photos")
+    public ResponseEntity<Void> uploadSchedulePhotos(@LoginUser SessionUser sessionUser,
+                                                     @PathVariable String travelId,
+                                                     @PathVariable Long scheduleId,
+                                                     @RequestPart List<MultipartFile> photos) {
+        scheduleService.uploadSchedulePhotos(sessionUser.getUserId(), scheduleId, photos);
         return ResponseEntity.ok().build();
     }
 
@@ -187,7 +212,7 @@ public class TravelController {
     public CostCreateResponseDto createCost(@Valid @RequestBody CostCreateRequestDto costCreateRequestDto,
                                             @PathVariable Long travelId) {
         return costService.createCost(
-                costCreateRequestDto, travelId
+            costCreateRequestDto, travelId
         );
     }
 
@@ -205,4 +230,5 @@ public class TravelController {
         this.costService.deleteCostById(costId);
         return ResponseEntity.ok().build();
     }
+
 }
