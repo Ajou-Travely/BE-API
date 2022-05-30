@@ -15,6 +15,7 @@ import com.ajou.travely.exception.ErrorCode;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.exception.custom.RecordNotFoundException;
 import com.ajou.travely.repository.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +24,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import org.springframework.web.multipart.MultipartFile;
 
+@RequiredArgsConstructor
 @Service
 public class ScheduleService {
     private final AwsS3Service s3Service;
@@ -40,21 +42,6 @@ public class ScheduleService {
     private final UserRepository userRepository;
 
     private final TravelDateRepository travelDateRepository;
-
-    public ScheduleService(AwsS3Service s3Service,
-        SchedulePhotoRepository schedulePhotoRepository,
-        ScheduleRepository scheduleRepository, PlaceRepository placeRepository,
-        TravelRepository travelRepository, BranchRepository branchRepository,
-        UserRepository userRepository, TravelDateRepository travelDateRepository) {
-        this.s3Service = s3Service;
-        this.schedulePhotoRepository = schedulePhotoRepository;
-        this.scheduleRepository = scheduleRepository;
-        this.placeRepository = placeRepository;
-        this.travelRepository = travelRepository;
-        this.branchRepository = branchRepository;
-        this.userRepository = userRepository;
-        this.travelDateRepository = travelDateRepository;
-    }
 
     @Transactional
     public Schedule insertSchedule(Schedule schedule) {
