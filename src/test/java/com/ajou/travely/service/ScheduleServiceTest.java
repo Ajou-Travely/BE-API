@@ -7,8 +7,6 @@ import com.ajou.travely.controller.schedule.dto.ScheduleUpdateRequestDto;
 import com.ajou.travely.controller.schedule.dto.SimpleScheduleResponseDto;
 import com.ajou.travely.controller.schedulePhoto.dto.SchedulePhotoResponseDto;
 import com.ajou.travely.controller.travel.dto.ScheduleOrderUpdateRequestDto;
-import com.ajou.travely.controller.travel.dto.TravelDateCreateRequestDto;
-import com.ajou.travely.controller.travel.dto.TravelDateCreateResponseDto;
 import com.ajou.travely.domain.Schedule;
 import com.ajou.travely.domain.SchedulePhoto;
 import com.ajou.travely.controller.travel.dto.TravelCreateRequestDto;

@@ -23,7 +23,7 @@ public class SimpleTravelDateResponseDto {
         this.schedules = entity
                 .getSchedules()
                 .stream()
-                .map(schedule -> new SimpleScheduleResponseDto(schedule))
+                .map(SimpleScheduleResponseDto::new)
                 .collect(Collectors.toList());
     }
 }

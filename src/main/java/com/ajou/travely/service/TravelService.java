@@ -13,7 +13,6 @@ import com.ajou.travely.domain.travel.TravelDate;
 import com.ajou.travely.exception.ErrorCode;
 import com.ajou.travely.domain.travel.TravelType;
 import com.ajou.travely.domain.user.User;
-import com.ajou.travely.exception.custom.DuplicatedPrimaryKeyException;
 import com.ajou.travely.exception.custom.DuplicatedRequestException;
 import com.ajou.travely.exception.custom.RecordNotFoundException;
 import com.ajou.travely.exception.custom.UnauthorizedException;
