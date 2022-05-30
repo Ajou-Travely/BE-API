@@ -1,8 +1,6 @@
 package com.ajou.travely.exception;
 
-import com.ajou.travely.exception.custom.InvalidPasswordException;
-import com.ajou.travely.exception.custom.RecordNotFoundException;
-import com.ajou.travely.exception.custom.UnauthorizedException;
+import com.ajou.travely.exception.custom.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -26,6 +24,24 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(InvalidPasswordException.class)
     public ResponseEntity<ErrorResponse> handleInvalidPasswordException(InvalidPasswordException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(ex.getErrorCode(), ex.getMessage());
+        return ResponseEntity.status(errorResponse.getStatus()).body(errorResponse);
+    }
+
+    @ExceptionHandler(DuplicatedRequestException.class)
+    public ResponseEntity<ErrorResponse> handleDuplicatedRequestException(DuplicatedRequestException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(ex.getErrorCode(), ex.getMessage());
+        return ResponseEntity.status(errorResponse.getStatus()).body(errorResponse);
+    }
+
+    @ExceptionHandler(DuplicatedPrimaryKeyException.class)
+    public ResponseEntity<ErrorResponse> handleDuplicatedPrimaryKeyException(DuplicatedPrimaryKeyException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(ex.getErrorCode(), ex.getMessage());
+        return ResponseEntity.status(errorResponse.getStatus()).body(errorResponse);
+    }
+
+    @ExceptionHandler(ImageTypeException.class)
+    public ResponseEntity<ErrorResponse> handleImageTypeException(ImageTypeException ex) {
         ErrorResponse errorResponse = new ErrorResponse(ex.getErrorCode(), ex.getMessage());
         return ResponseEntity.status(errorResponse.getStatus()).body(errorResponse);
     }

@@ -10,11 +10,10 @@ import com.ajou.travely.domain.Schedule;
 import com.ajou.travely.domain.UserTravel;
 import com.ajou.travely.domain.travel.Travel;
 import com.ajou.travely.domain.travel.TravelDate;
-import com.ajou.travely.domain.travel.TravelDateIds;
 import com.ajou.travely.exception.ErrorCode;
 import com.ajou.travely.domain.travel.TravelType;
 import com.ajou.travely.domain.user.User;
-import com.ajou.travely.exception.ErrorCode;
+import com.ajou.travely.exception.custom.DuplicatedPrimaryKeyException;
 import com.ajou.travely.exception.custom.DuplicatedRequestException;
 import com.ajou.travely.exception.custom.RecordNotFoundException;
 import com.ajou.travely.exception.custom.UnauthorizedException;
@@ -265,6 +264,12 @@ public class TravelService {
 
     @Transactional
     public TravelDateCreateResponseDto createTravelDate(Long travelId, TravelDateCreateRequestDto requestDto) {
+        if (travelDateRepository.findTravelDateByDateAndTravelId(requestDto.getDate(), travelId).isPresent()) {
+            throw new DuplicatedPrimaryKeyException(
+                    "해당 travel Id와 date를 가진 travel date가 이미 존재합니다.",
+                    ErrorCode.DUPLICATED_PRIMARY_KEY
+            );
+        }
         return new TravelDateCreateResponseDto(travelDateRepository.save(TravelDate.builder()
                 .title(requestDto.getTitle())
                 .travel(checkTravelRecord(travelId))
