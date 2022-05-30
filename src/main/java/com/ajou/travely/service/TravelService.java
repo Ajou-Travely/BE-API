@@ -273,7 +273,7 @@ public class TravelService {
         return new TravelDateCreateResponseDto(travelDateRepository.save(TravelDate.builder()
                 .title(requestDto.getTitle())
                 .travel(checkTravelRecord(travelId))
-                .date(LocalDate.now())
+                .date(requestDto.getDate())
                 .build()));
     }
 
