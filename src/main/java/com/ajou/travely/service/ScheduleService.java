@@ -169,6 +169,14 @@ public class ScheduleService {
                 .collect(Collectors.toList());
     }
 
+    public void deleteSchedulePhotos(Long scheduleId, List<Long> schedulePhotoIds) {
+        Schedule schedule = checkScheduleRecord(scheduleId);
+        List<SchedulePhoto> schedulePhotos =
+            schedulePhotoRepository.findAllById(schedulePhotoIds);
+        schedule.removeSchedulePhotos(schedulePhotos);
+        schedulePhotoRepository.deleteAll(schedulePhotos);
+    }
+
     private Travel checkTravelRecord(Long travelId) {
         return checkRecord(
                 travelRepository.findById(travelId),
