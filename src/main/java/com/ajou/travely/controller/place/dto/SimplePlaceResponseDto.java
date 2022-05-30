@@ -7,6 +7,8 @@ import lombok.Getter;
 public class SimplePlaceResponseDto {
     private final Long placeId;
     private final String placeName;
+    private final String addressName;
+    private final String addressRoadName;
     private final Double lat;
     private final Double lng;
 
@@ -15,5 +17,7 @@ public class SimplePlaceResponseDto {
         this.placeName = entity.getPlaceName();
         this.lat =entity.getLat();
         this.lng = entity.getLng();
+        this.addressName = entity.getAddressName();
+        this.addressRoadName = entity.getAddressRoadName();
     }
 }

@@ -190,7 +190,7 @@ public class TravelController {
     @PostMapping("/{travelId}/change")
     public ResponseEntity<Void> changeScheduleOrder(@PathVariable Long travelId,
                                                     @RequestParam("date") LocalDate date,
-                                                    ScheduleOrderUpdateRequestDto requestDto) {
+                                                    @RequestBody ScheduleOrderUpdateRequestDto requestDto) {
         travelService.changeScheduleOrder(travelId, date, requestDto);
         return ResponseEntity.ok().build();
     }
