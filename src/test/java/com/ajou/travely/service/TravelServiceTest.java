@@ -133,6 +133,36 @@ class TravelServiceTest {
     }
 
     @Test
+    @DisplayName("여행 일자를 수정할 수 있다.")
+    @Rollback
+    public void testUpdateTravelDates() {
+        User user = userService.insertUser(
+                User.builder()
+                        .userType(UserType.USER)
+                        .email("sophoca@ajou.ac.kr")
+                        .name("홍성빈")
+                        .phoneNumber("112")
+                        .kakaoId(0L)
+                        .build()
+        );
+        TravelCreateRequestDto request = TravelCreateRequestDto
+                .builder()
+                .title("test")
+                .startDate(LocalDate.of(2022, 5, 10))
+                .endDate(LocalDate.of(2022, 5, 15))
+                .userEmails(new ArrayList<>())
+                .build();
+        Travel travel = travelService.createTravel(user.getId(), request);
+        TravelDateUpdateRequestDto requestDate = TravelDateUpdateRequestDto
+                .builder()
+                .startDate(LocalDate.of(2022, 5, 20))
+                .endDate(LocalDate.of(2022, 5, 22))
+                .build();
+        travelService.updateTravelDates(user.getId(), travel.getId(), requestDate);
+        assertThat(travel.getTravelDates()).hasSize(3);
+    }
+
+    @Test
     @DisplayName("여행에 유저를 초대할 수 있다.")
     @Rollback
     public void testAddUserToTravel() {

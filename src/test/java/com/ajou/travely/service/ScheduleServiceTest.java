@@ -28,6 +28,7 @@ import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -138,8 +139,8 @@ class ScheduleServiceTest {
                 ScheduleCreateRequestDto
                         .builder()
                         .place(ajouUniv)
-                        .startTime(LocalDateTime.now())
-                        .endTime(LocalDateTime.now().plusHours(2))
+                        .startTime(LocalTime.now())
+                        .endTime(LocalTime.now().plusHours(2))
                         .userIds(new ArrayList<>(List.of(user.getId(), user1.getId(), user2.getId())))
                         .build()
         );
@@ -149,8 +150,8 @@ class ScheduleServiceTest {
                 ScheduleCreateRequestDto
                         .builder()
                         .place(inhaUniv)
-                        .startTime(LocalDateTime.now())
-                        .endTime(LocalDateTime.now().plusHours(4))
+                        .startTime(LocalTime.now())
+                        .endTime(LocalTime.now().plusHours(4))
                         .userIds(new ArrayList<>(List.of(user.getId(), user1.getId(), user2.getId())))
                         .build()
         );
@@ -174,8 +175,8 @@ class ScheduleServiceTest {
     @DisplayName("Schedule을 업데이트할 수 있다.")
     @Rollback
     public void testUpdateSchedule() {
-        LocalDateTime startTime = LocalDateTime.now();
-        LocalDateTime endTime = LocalDateTime.now().plusDays(1);
+        LocalTime startTime = LocalTime.now();
+        LocalTime endTime = LocalTime.now().plusHours(4);
         User user1 = userService.insertUser(
                 User.builder()
                         .userType(UserType.USER)
@@ -205,8 +206,8 @@ class ScheduleServiceTest {
                 ScheduleCreateRequestDto
                         .builder()
                         .place(ajouUniv)
-                        .startTime(LocalDateTime.now())
-                        .endTime(LocalDateTime.now().plusDays(1))
+                        .startTime(LocalTime.now())
+                        .endTime(LocalTime.now().plusHours(4))
                         .userIds(new ArrayList<>(List.of(user1.getId())))
                         .build()
         );
@@ -255,8 +256,8 @@ class ScheduleServiceTest {
                 ScheduleCreateRequestDto
                         .builder()
                         .place(ajouUniv)
-                        .startTime(LocalDateTime.now())
-                        .endTime(LocalDateTime.now().plusDays(1))
+                        .startTime(LocalTime.now())
+                        .endTime(LocalTime.now().plusHours(4))
                         .userIds(new ArrayList<>(List.of(user.getId(), user1.getId(), user2.getId())))
                         .build()
         );
@@ -296,8 +297,8 @@ class ScheduleServiceTest {
                 ScheduleCreateRequestDto
                         .builder()
                         .place(ajouUniv)
-                        .startTime(LocalDateTime.now())
-                        .endTime(LocalDateTime.now().plusHours(2))
+                        .startTime(LocalTime.now())
+                        .endTime(LocalTime.now().plusHours(2))
                         .userIds(new ArrayList<>(List.of(user.getId(), user1.getId(), user2.getId())))
                         .build()
         );
@@ -307,8 +308,8 @@ class ScheduleServiceTest {
                 ScheduleCreateRequestDto
                         .builder()
                         .place(inhaUniv)
-                        .startTime(LocalDateTime.now())
-                        .endTime(LocalDateTime.now().plusHours(4))
+                        .startTime(LocalTime.now())
+                        .endTime(LocalTime.now().plusHours(4))
                         .userIds(new ArrayList<>(List.of(user.getId(), user1.getId(), user2.getId())))
                         .build()
         );
@@ -318,8 +319,8 @@ class ScheduleServiceTest {
                 ScheduleCreateRequestDto
                         .builder()
                         .place(ajouUniv)
-                        .startTime(LocalDateTime.now())
-                        .endTime(LocalDateTime.now().plusHours(4))
+                        .startTime(LocalTime.now())
+                        .endTime(LocalTime.now().plusHours(4))
                         .userIds(new ArrayList<>(List.of(user.getId(), user1.getId(), user2.getId())))
                         .build()
         );
