@@ -61,12 +61,12 @@ public class Schedule {
         this.branches.remove(branch);
     }
 
-    public void addPhotos(SchedulePhoto photo) {
-        this.photos.add(photo);
+    public void addSchedulePhotos(List<SchedulePhoto> photo) {
+        this.photos.addAll(photo);
     }
 
-    public void removePhotos(SchedulePhoto photo) {
-        this.photos.remove(photo);
+    public void removeSchedulePhotos(List<SchedulePhoto> photo) {
+        this.photos.removeAll(photo);
     }
 
     public void setPlace(Place place) {
