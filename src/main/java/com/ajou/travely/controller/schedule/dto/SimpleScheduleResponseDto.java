@@ -1,6 +1,7 @@
 package com.ajou.travely.controller.schedule.dto;
 
 import com.ajou.travely.controller.place.dto.SimplePlaceResponseDto;
+import com.ajou.travely.controller.schedulePhoto.dto.SchedulePhotoResponseDto;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.domain.Schedule;
 import lombok.Getter;
@@ -16,16 +17,18 @@ public class SimpleScheduleResponseDto {
     private LocalTime endTime;
     private SimplePlaceResponseDto place;
     private List<SimpleUserInfoDto> users;
+    private List<SchedulePhotoResponseDto> photos;
 
     public SimpleScheduleResponseDto(Schedule entity) {
         this.scheduleId = entity.getId();
         this.startTime = entity.getStartTime();
         this.endTime = entity.getEndTime();
         this.place = new SimplePlaceResponseDto(entity.getPlace());
-        this.users = entity
-                .getBranches()
-                .stream()
-                .map(branch -> new SimpleUserInfoDto(branch.getUser()))
-                .collect(Collectors.toList());
+        this.users = entity.getBranches().stream()
+            .map(branch -> new SimpleUserInfoDto(branch.getUser()))
+            .collect(Collectors.toList());
+        this.photos = entity.getPhotos().stream()
+            .map(SchedulePhotoResponseDto::new)
+            .collect(Collectors.toList());
     }
 }

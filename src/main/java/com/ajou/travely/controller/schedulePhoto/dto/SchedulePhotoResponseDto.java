@@ -1,6 +1,5 @@
 package com.ajou.travely.controller.schedulePhoto.dto;
 
-import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.domain.SchedulePhoto;
 import lombok.Getter;
 
@@ -8,7 +7,7 @@ import lombok.Getter;
 public class SchedulePhotoResponseDto {
     private final Long schedulePhotoId;
 
-    private final SimpleUserInfoDto userInfoDto;
+    private final Long userId;
 
     private final Long scheduleId;
 
@@ -16,7 +15,7 @@ public class SchedulePhotoResponseDto {
 
     public SchedulePhotoResponseDto(SchedulePhoto entity) {
         this.schedulePhotoId = entity.getId();
-        this.userInfoDto = new SimpleUserInfoDto(entity.getUser());
+        this.userId = entity.getUser().getId();
         this.scheduleId = entity.getSchedule().getId();
         this.schedulePhotoPath = entity.getPhotoPath();
     }
