@@ -24,6 +24,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -136,7 +138,7 @@ public class TravelController {
 
     @PostMapping("/{travelId}/schedules")
     public ResponseEntity<Long> createSchedule(@PathVariable Long travelId,
-                                               @RequestParam LocalDate date,
+                                               @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
                                                @RequestBody ScheduleCreateRequestDto scheduleCreateRequestDto) {
         return ResponseEntity.ok(scheduleService.createSchedule(travelId, date, scheduleCreateRequestDto));
     }
