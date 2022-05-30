@@ -5,15 +5,15 @@ import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.domain.Schedule;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
 public class SimpleScheduleResponseDto {
     private Long scheduleId;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+    private LocalTime startTime;
+    private LocalTime endTime;
     private SimplePlaceResponseDto place;
     private List<SimpleUserInfoDto> users;
 
