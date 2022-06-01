@@ -4,7 +4,7 @@ import com.ajou.travely.controller.schedule.dto.SimpleScheduleResponseDto;
 import com.ajou.travely.controller.travel.dto.*;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.controller.user.dto.UserResponseDto;
-import com.ajou.travely.domain.Cost;
+import com.ajou.travely.domain.cost.Cost;
 import com.ajou.travely.domain.Invitation;
 import com.ajou.travely.domain.Schedule;
 import com.ajou.travely.domain.UserTravel;
