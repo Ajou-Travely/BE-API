@@ -25,6 +25,7 @@ import org.springframework.test.annotation.Rollback;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -203,72 +204,72 @@ class TravelServiceTest {
         users.forEach(u -> System.out.println(u.toString()));
     }
 
-    @Test
-    @DisplayName("여행에 해당하는 지출 내역을 반환한다.")
-    public void testGetCostsByTravelId() {
-        List<Long> numbers = new ArrayList<>(Arrays.asList(1L, 2L, 3L, 4L));
-        List<User> users = new ArrayList<>();
-        numbers.forEach(number -> users.add(userService.insertUser(
-                User.builder()
-                        .userType(UserType.USER)
-                        .email(String.format("test%d@ajou.ac.kr", number))
-                        .name(String.format("test%d", number))
-                        .phoneNumber(String.format("11%d", number))
-                        .kakaoId(number)
-                        .build()
-        )));
-        TravelCreateRequestDto request = TravelCreateRequestDto
-                .builder()
-                .title("첫 여행")
-                .userEmails(new ArrayList<>())
-                .startDate(LocalDate.of(2022, 5, 10))
-                .endDate(LocalDate.of(2022, 5, 15))
-                .build();
-        Travel travel = travelService.createTravel(users.get(0).getId(), request);
-        Long travelId = travel.getId();
-        for (User user : users) {
-            travelService.addUserToTravel(travelId, user.getId());
-        }
-
-        Map<Long, Long> amountPerUser1 = new HashMap<>();
-        amountPerUser1.put(users.get(0).getId(), 1000L);
-        amountPerUser1.put(users.get(1).getId(), 10000L);
-        CostCreateRequestDto requestDto1 = CostCreateRequestDto.builder()
-                .totalAmount(11000L)
-                .title("TestTitle")
-                .content("안녕난이거야")
-                .amountsPerUser(amountPerUser1)
-                .payerId(users.get(0).getId())
-                .build();
-        CostCreateResponseDto createdCost1 = costService.createCost(
-                requestDto1, travelId
-        );
-
-        Map<Long, Long> amountPerUser2 = new HashMap<>();
-        amountPerUser2.put(users.get(2).getId(), 10000L);
-        amountPerUser2.put(users.get(3).getId(), 10000L);
-        CostCreateRequestDto requestDto2 = CostCreateRequestDto.builder()
-                .totalAmount(20000L)
-                .title("SecondTitle")
-                .content("안녕난그거야")
-                .amountsPerUser(amountPerUser2)
-                .payerId(users.get(2).getId())
-                .build();
-        CostCreateResponseDto createdCost2 = costService.createCost(
-                requestDto2, travelId
-        );
-        List<SimpleCostResponseDto> costsByTravelId = travelService.getCostsByTravelId(travelId, users.get(0).getId());
-
-        assertThat(costsByTravelId).hasSize(2);
-
-        assertThat(costsByTravelId.get(0).getTitle()).isEqualTo("TestTitle");
-        assertThat(costsByTravelId.get(0).getTotalAmount()).isEqualTo(11000L);
-        assertThat(costsByTravelId.get(0).getUserIds().toArray()).isEqualTo(Arrays.asList(users.get(0).getId(), users.get(1).getId()).toArray());
-
-        assertThat(costsByTravelId.get(1).getTitle()).isEqualTo("SecondTitle");
-        assertThat(costsByTravelId.get(1).getTotalAmount()).isEqualTo(20000L);
-        assertThat(costsByTravelId.get(1).getUserIds().toArray()).isEqualTo(Arrays.asList(users.get(2).getId(), users.get(3).getId()).toArray());
-    }
+//    @Test
+//    @DisplayName("여행에 해당하는 지출 내역을 반환한다.")
+//    public void testGetCostsByTravelId() {
+//        List<Long> numbers = new ArrayList<>(Arrays.asList(1L, 2L, 3L, 4L));
+//        List<User> users = new ArrayList<>();
+//        numbers.forEach(number -> users.add(userService.insertUser(
+//                User.builder()
+//                        .userType(UserType.USER)
+//                        .email(String.format("test%d@ajou.ac.kr", number))
+//                        .name(String.format("test%d", number))
+//                        .phoneNumber(String.format("11%d", number))
+//                        .kakaoId(number)
+//                        .build()
+//        )));
+//        TravelCreateRequestDto request = TravelCreateRequestDto
+//                .builder()
+//                .title("첫 여행")
+//                .userEmails(new ArrayList<>())
+//                .startDate(LocalDate.of(2022, 5, 10))
+//                .endDate(LocalDate.of(2022, 5, 15))
+//                .build();
+//        Travel travel = travelService.createTravel(users.get(0).getId(), request);
+//        Long travelId = travel.getId();
+//        for (User user : users) {
+//            travelService.addUserToTravel(travelId, user.getId());
+//        }
+//
+//        Map<Long, Long> amountPerUser1 = new HashMap<>();
+//        amountPerUser1.put(users.get(0).getId(), 1000L);
+//        amountPerUser1.put(users.get(1).getId(), 10000L);
+//        CostCreateRequestDto requestDto1 = CostCreateRequestDto.builder()
+//                .totalAmount(11000L)
+//                .title("TestTitle")
+//                .content("안녕난이거야")
+//                .amountsPerUser(amountPerUser1)
+//                .payerId(users.get(0).getId())
+//                .build();
+//        CostCreateResponseDto createdCost1 = costService.createCost(
+//                requestDto1, travelId
+//        );
+//
+//        Map<Long, Long> amountPerUser2 = new HashMap<>();
+//        amountPerUser2.put(users.get(2).getId(), 10000L);
+//        amountPerUser2.put(users.get(3).getId(), 10000L);
+//        CostCreateRequestDto requestDto2 = CostCreateRequestDto.builder()
+//                .totalAmount(20000L)
+//                .title("SecondTitle")
+//                .content("안녕난그거야")
+//                .amountsPerUser(amountPerUser2)
+//                .payerId(users.get(2).getId())
+//                .build();
+//        CostCreateResponseDto createdCost2 = costService.createCost(
+//                requestDto2, travelId
+//        );
+//        List<SimpleCostResponseDto> costsByTravelId = travelService.getCostsByTravelId(travelId, users.get(0).getId());
+//
+//        assertThat(costsByTravelId).hasSize(2);
+//
+//        assertThat(costsByTravelId.get(0).getTitle()).isEqualTo("TestTitle");
+//        assertThat(costsByTravelId.get(0).getTotalAmount()).isEqualTo(11000L);
+//        assertThat(costsByTravelId.get(0).getUserIds().toArray()).isEqualTo(Arrays.asList(users.get(0).getId(), users.get(1).getId()).toArray());
+//
+//        assertThat(costsByTravelId.get(1).getTitle()).isEqualTo("SecondTitle");
+//        assertThat(costsByTravelId.get(1).getTotalAmount()).isEqualTo(20000L);
+//        assertThat(costsByTravelId.get(1).getUserIds().toArray()).isEqualTo(Arrays.asList(users.get(2).getId(), users.get(3).getId()).toArray());
+//    }
 
     @Test
     void testPagination() {
@@ -461,5 +462,87 @@ class TravelServiceTest {
         Optional<Invitation> foundInvitation = invitationRepository.findById(invitation.getId());
 
         Assertions.assertThat(foundInvitation.isEmpty()).isEqualTo(true);
+    }
+
+    @Test
+    @DisplayName("자신이 포함된 정산을 확인할 수 있다.")
+    void testGetAllTravelTransactions() {
+        User u1 = userService.insertUser(
+                User.builder()
+                        .userType(UserType.USER)
+                        .email("u1@ajou.ac.kr")
+                        .name("홍성빈")
+                        .phoneNumber("112")
+                        .kakaoId(0L)
+                        .build()
+        );
+        User u2 = userService.insertUser(
+                User.builder()
+                        .userType(UserType.USER)
+                        .email("u2@ajou.ac.kr")
+                        .name("홍성빈")
+                        .phoneNumber("113")
+                        .kakaoId(1L)
+                        .build()
+        );
+        User u3 = userService.insertUser(
+                User.builder()
+                        .userType(UserType.USER)
+                        .email("u3@ajou.ac.kr")
+                        .name("홍성빈")
+                        .phoneNumber("114")
+                        .kakaoId(2L)
+                        .build()
+        );
+
+        TravelCreateRequestDto request = TravelCreateRequestDto
+                .builder()
+                .title("test")
+                .userEmails(new ArrayList<>())
+                .startDate(LocalDate.of(2022, 5, 10))
+                .endDate(LocalDate.of(2022, 5, 15))
+                .build();
+
+        Travel travel = travelService.createTravel(u1.getId(), request);
+
+        // u1 -> u2
+        // u1 -> u3
+        // u2 -> u3
+
+        TravelTransactionCreateResponseDto travelTransaction1 = travelService.createTravelTransaction(travel.getId(), u1.getId(),
+                TravelTransactionCreateRequestDto.builder()
+                        .senderId(u1.getId())
+                        .receiverId(u2.getId())
+                        .amount(3000L)
+                        .build());
+
+        TravelTransactionCreateResponseDto travelTransaction2 = travelService.createTravelTransaction(travel.getId(), u1.getId(),
+                TravelTransactionCreateRequestDto.builder()
+                        .senderId(u1.getId())
+                        .receiverId(u3.getId())
+                        .amount(2000L)
+                        .build());
+
+        TravelTransactionCreateResponseDto travelTransaction3 = travelService.createTravelTransaction(travel.getId(), u1.getId(),
+                TravelTransactionCreateRequestDto.builder()
+                        .senderId(u2.getId())
+                        .receiverId(u3.getId())
+                        .amount(1000L)
+                        .build());
+
+        TravelTransactionResponseDto allTravelTransactionsByUserId = travelService.getAllTravelTransactionsByUserId(travel.getId(), u1.getId());
+
+        assertThat(allTravelTransactionsByUserId.getUsersToSend().stream().map(travelTransactionResponseToSendDto -> {
+            return travelTransactionResponseToSendDto.getUserToRecieve().getUserId();
+        }).collect(Collectors.toList()))
+                .isEqualTo(Arrays.asList(u2.getId(), u3.getId()));
+
+        TravelTransactionResponseDto allTravelTransactionsByUserId1 = travelService.getAllTravelTransactionsByUserId(travel.getId(), u3.getId());
+
+        assertThat(allTravelTransactionsByUserId1.getUsersToReceive().stream().map(travelTransactionResponseToReceiveDto -> {
+            return travelTransactionResponseToReceiveDto.getUserToSend().getUserId();
+        }).collect(Collectors.toList()))
+                .isEqualTo(Arrays.asList(u1.getId(), u2.getId()));
+
     }
 }

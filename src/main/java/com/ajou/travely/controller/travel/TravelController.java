@@ -231,4 +231,28 @@ public class TravelController {
         return ResponseEntity.ok().build();
     }
 
+    // TravelTransaction
+
+    @PostMapping("/{travelId}/travelTransaction")
+    public ResponseEntity<TravelTransactionCreateResponseDto> createTravelTransaction(@PathVariable Long travelId,
+                                        @LoginUser SessionUser sessionUser,
+                                        @Valid @RequestBody TravelTransactionCreateRequestDto travelTransactionCreateRequestDto) {
+        return ResponseEntity.ok(this.travelService.createTravelTransaction(travelId, sessionUser.getUserId(), travelTransactionCreateRequestDto));
+    }
+
+    @GetMapping("/{travelId}/travelTransaction")
+    public ResponseEntity<TravelTransactionResponseDto> getAllTravelTransactionsByUserId(@PathVariable Long travelId,
+                                              @LoginUser SessionUser sessionUser) {
+        return ResponseEntity.ok(this.travelService.getAllTravelTransactionsByUserId(travelId, sessionUser.getUserId()));
+    }
+
+    @PutMapping("/{travelId}/travelTransaction/{travelTransactionId}")
+    public void updateTravelTransaction() {
+
+    }
+
+    @DeleteMapping("/{travelId}/travelTransaction/{travelTransactionId")
+    public void deleteTravelTransaction() {
+
+    }
 }
