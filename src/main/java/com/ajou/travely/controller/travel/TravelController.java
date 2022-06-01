@@ -241,9 +241,9 @@ public class TravelController {
     }
 
     @GetMapping("/{travelId}/travelTransaction")
-    public ResponseEntity<TravelTransactionResponseDto> getAllTravelTransactionByUserId(@PathVariable Long travelId,
+    public ResponseEntity<TravelTransactionResponseDto> getAllTravelTransactionsByUserId(@PathVariable Long travelId,
                                               @LoginUser SessionUser sessionUser) {
-        return ResponseEntity.ok(this.travelService.getAllTravelTransactionByUserId(travelId, sessionUser.getUserId()));
+        return ResponseEntity.ok(this.travelService.getAllTravelTransactionsByUserId(travelId, sessionUser.getUserId()));
     }
 
     @PutMapping("/{travelId}/travelTransaction/{travelTransactionId}")

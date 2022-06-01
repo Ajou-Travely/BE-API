@@ -8,13 +8,13 @@ import java.util.List;
 
 @Getter
 public class TravelTransactionResponseDto {
-    List<TravelTransactionResponseToSendDto> travelTransactionResponseToSendDtos = new ArrayList<>();
-    List<TravelTransactionResponseToReceiveDto> travelTransactionResponseToReceiveDto = new ArrayList<>();
+    List<TravelTransactionResponseToSendDto> usersToSend = new ArrayList<>();
+    List<TravelTransactionResponseToReceiveDto> usersToReceive = new ArrayList<>();
 
     @Builder
-    public TravelTransactionResponseDto(List<TravelTransactionResponseToSendDto> travelTransactionResponseToSendDtos,
-                                        List<TravelTransactionResponseToReceiveDto> travelTransactionResponseToReceiveDto) {
-        this.travelTransactionResponseToSendDtos = travelTransactionResponseToSendDtos;
-        this.travelTransactionResponseToReceiveDto = travelTransactionResponseToReceiveDto;
+    public TravelTransactionResponseDto(List<TravelTransactionResponseToSendDto> usersToSend,
+                                        List<TravelTransactionResponseToReceiveDto> usersToReceive) {
+        this.usersToSend = usersToSend;
+        this.usersToReceive = usersToReceive;
     }
 }

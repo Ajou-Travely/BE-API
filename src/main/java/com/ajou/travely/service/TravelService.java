@@ -316,7 +316,7 @@ public class TravelService {
         return new TravelTransactionCreateResponseDto(travelTransaction);
     }
 
-    public TravelTransactionResponseDto getAllTravelTransactionByUserId(Long travelId,
+    public TravelTransactionResponseDto getAllTravelTransactionsByUserId(Long travelId,
                                                                         Long userId) {
         List<TravelTransaction> bySenderId = travelTransactionRepository.findBySenderId(userId);
         List<TravelTransaction> byReceiverId = travelTransactionRepository.findByReceiverId(userId);

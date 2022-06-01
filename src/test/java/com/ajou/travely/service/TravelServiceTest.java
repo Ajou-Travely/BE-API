@@ -25,6 +25,7 @@ import org.springframework.test.annotation.Rollback;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -461,5 +462,87 @@ class TravelServiceTest {
         Optional<Invitation> foundInvitation = invitationRepository.findById(invitation.getId());
 
         Assertions.assertThat(foundInvitation.isEmpty()).isEqualTo(true);
+    }
+
+    @Test
+    @DisplayName("자신이 포함된 정산을 확인할 수 있다.")
+    void testGetAllTravelTransactions() {
+        User u1 = userService.insertUser(
+                User.builder()
+                        .userType(UserType.USER)
+                        .email("u1@ajou.ac.kr")
+                        .name("홍성빈")
+                        .phoneNumber("112")
+                        .kakaoId(0L)
+                        .build()
+        );
+        User u2 = userService.insertUser(
+                User.builder()
+                        .userType(UserType.USER)
+                        .email("u2@ajou.ac.kr")
+                        .name("홍성빈")
+                        .phoneNumber("113")
+                        .kakaoId(1L)
+                        .build()
+        );
+        User u3 = userService.insertUser(
+                User.builder()
+                        .userType(UserType.USER)
+                        .email("u3@ajou.ac.kr")
+                        .name("홍성빈")
+                        .phoneNumber("114")
+                        .kakaoId(2L)
+                        .build()
+        );
+
+        TravelCreateRequestDto request = TravelCreateRequestDto
+                .builder()
+                .title("test")
+                .userEmails(new ArrayList<>())
+                .startDate(LocalDate.of(2022, 5, 10))
+                .endDate(LocalDate.of(2022, 5, 15))
+                .build();
+
+        Travel travel = travelService.createTravel(u1.getId(), request);
+
+        // u1 -> u2
+        // u1 -> u3
+        // u2 -> u3
+
+        TravelTransactionCreateResponseDto travelTransaction1 = travelService.createTravelTransaction(travel.getId(), u1.getId(),
+                TravelTransactionCreateRequestDto.builder()
+                        .senderId(u1.getId())
+                        .receiverId(u2.getId())
+                        .amount(3000L)
+                        .build());
+
+        TravelTransactionCreateResponseDto travelTransaction2 = travelService.createTravelTransaction(travel.getId(), u1.getId(),
+                TravelTransactionCreateRequestDto.builder()
+                        .senderId(u1.getId())
+                        .receiverId(u3.getId())
+                        .amount(2000L)
+                        .build());
+
+        TravelTransactionCreateResponseDto travelTransaction3 = travelService.createTravelTransaction(travel.getId(), u1.getId(),
+                TravelTransactionCreateRequestDto.builder()
+                        .senderId(u2.getId())
+                        .receiverId(u3.getId())
+                        .amount(1000L)
+                        .build());
+
+        TravelTransactionResponseDto allTravelTransactionsByUserId = travelService.getAllTravelTransactionsByUserId(travel.getId(), u1.getId());
+
+        assertThat(allTravelTransactionsByUserId.getUsersToSend().stream().map(travelTransactionResponseToSendDto -> {
+            return travelTransactionResponseToSendDto.getUserToRecieve().getUserId();
+        }).collect(Collectors.toList()))
+                .isEqualTo(Arrays.asList(u2.getId(), u3.getId()));
+
+        TravelTransactionResponseDto allTravelTransactionsByUserId1 = travelService.getAllTravelTransactionsByUserId(travel.getId(), u3.getId());
+
+        assertThat(allTravelTransactionsByUserId1.getUsersToReceive().stream().map(travelTransactionResponseToReceiveDto -> {
+            return travelTransactionResponseToReceiveDto.getUserToSend().getUserId();
+        }).collect(Collectors.toList()))
+                .isEqualTo(Arrays.asList(u1.getId(), u2.getId()));
+
     }
 }
