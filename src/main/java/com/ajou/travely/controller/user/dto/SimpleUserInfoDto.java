@@ -1,6 +1,7 @@
 package com.ajou.travely.controller.user.dto;
 
 import com.ajou.travely.domain.user.User;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
