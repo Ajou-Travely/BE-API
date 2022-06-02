@@ -13,16 +13,16 @@ import java.util.stream.Collectors;
 public class SimpleTravelResponseDto {
     private final Long id;
     private final String title;
-//    private final LocalDate startDate;
-//    private final LocalDate endDate;
+    private final LocalDate startDate;
+    private final LocalDate endDate;
     private final Long managerId;
     private final List<SimpleUserInfoDto> users;
 
     public SimpleTravelResponseDto(Travel entity) {
         this.id = entity.getId();
         this.title = entity.getTitle();
-//        this.startDate = entity.getStartDate();
-//        this.endDate = entity.getEndDate();
+        this.startDate = entity.getStartDate();
+        this.endDate = entity.getEndDate();
         this.managerId = entity.getManagerId();
         this.users = entity
                 .getUserTravels()
