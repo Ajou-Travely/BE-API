@@ -18,6 +18,9 @@ import com.ajou.travely.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.Map;
 import java.util.*;
 
@@ -34,6 +37,9 @@ public class CostService {
     private final TravelRepository travelRepository;
 
     private final KakaoApiService kakaoApiService;
+
+    @PersistenceContext
+    private final EntityManager em;
 
     @Transactional
     public CostCreateResponseDto createCost(CostCreateRequestDto requestDto, Long travelId) {
@@ -87,7 +93,7 @@ public class CostService {
     }
 
     @Transactional
-    public void updateCostById(Long costId, CostUpdateDto costUpdateDto) {
+    public CostResponseDto updateCostById(Long costId, CostUpdateDto costUpdateDto) {
         Cost cost = costRepository.findById(costId)
                 .orElseThrow(() -> new RuntimeException("해당 지출이 존재하지 않습니다."));
         cost.updateCost(costUpdateDto);
@@ -123,6 +129,13 @@ public class CostService {
                     exAmountsPerUser.get(userId).getId()
             ));
         }
+
+        em.flush();
+        em.clear();
+
+        Cost returnCost = costRepository.findById(costId)
+                .orElseThrow(() -> new RuntimeException("해당 지출이 존재하지 않습니다."));;
+        return new CostResponseDto(returnCost);
     }
     @Transactional
     public void deleteCostById(Long costId) {
