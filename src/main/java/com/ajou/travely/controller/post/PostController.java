@@ -23,10 +23,9 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping(value = "", consumes = "multipart/form-data")
-    public ResponseEntity<Long> createPost(Long userId,
+    public ResponseEntity<PostResponseDto> createPost(Long userId,
         @Valid @ModelAttribute PostCreateRequestDto requestDto) {
-        Long postId = postService.createPost(userId, requestDto);
-        return ResponseEntity.ok(postId);
+        return ResponseEntity.ok(postService.createPost(userId, requestDto));
     }
 
     @GetMapping("/{postId}")
@@ -36,11 +35,9 @@ public class PostController {
     }
 
     @PatchMapping(value = "/{postId}", consumes = "multipart/form-data")
-    public ResponseEntity<Void> updatePost(@PathVariable Long postId,
+    public ResponseEntity<PostResponseDto> updatePost(@PathVariable Long postId,
         @Valid @ModelAttribute PostUpdateRequestDto requestDto) {
-        postService.updatePost(postId, requestDto);
-        return ResponseEntity.ok()
-            .build();
+        return ResponseEntity.ok(postService.updatePost(postId, requestDto));
     }
 
     @DeleteMapping("/{postId}")

@@ -151,7 +151,8 @@ public class TravelService {
     }
 
     @Transactional
-    public void inviteUserToTravelWithNoValidation(Travel travel, List<String> userEmails) {
+    public void inviteUserToTravelWithNoValidation(Long travelId, List<String> userEmails) {
+        Travel travel = checkTravelRecord(travelId);
         List<String> validEmails = userEmails.stream()
                 .distinct()
                 .collect(Collectors.toList());
