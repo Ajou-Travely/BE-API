@@ -53,21 +53,13 @@ public class JwtTokenProvider {
     }
 
     public Long getUserId(String token) throws ParseException {
-        String subject = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token)
-                .getBody().get("userId", String.class);
-        JSONParser jsonParser = new JSONParser();
-        JSONObject parse = (JSONObject) jsonParser.parse(subject);
-
-        return (Long) parse.get("userId");
+        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token)
+                .getBody().get("userId", Long.class);
     }
 
     public String getAccessToken(String token) throws ParseException {
-        String subject = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token)
+        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token)
                 .getBody().get("accessToken", String.class);
-        JSONParser jsonParser = new JSONParser();
-        JSONObject parse = (JSONObject) jsonParser.parse(subject);
-
-        return (String) parse.get("accessToken");
     }
 
     public String resolveToken(HttpServletRequest request) {
