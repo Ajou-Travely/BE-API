@@ -15,6 +15,7 @@ import com.ajou.travely.controller.travel.dto.*;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.domain.travel.Travel;
 import com.ajou.travely.service.CostService;
+import com.ajou.travely.service.MaterialService;
 import com.ajou.travely.service.ScheduleService;
 import com.ajou.travely.service.TravelService;
 import com.ajou.travely.service.UserService;
@@ -44,6 +45,8 @@ public class TravelController {
     private final CostService costService;
 
     private final UserService userService;
+
+    private final MaterialService materialService;
 
     @GetMapping()
     public ResponseEntity<Page<SimpleTravelResponseDto>> showTravelsByUser(
@@ -199,5 +202,6 @@ public class TravelController {
     @GetMapping("/{travelId}/materials")
     public ResponseEntity<List<MaterialResponseDto>> getMaterials(@PathVariable Long travelId) {
 
+        return ResponseEntity.ok().build();
     }
 }

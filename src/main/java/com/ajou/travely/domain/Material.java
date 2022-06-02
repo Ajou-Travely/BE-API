@@ -1,5 +1,6 @@
 package com.ajou.travely.domain;
 
+import com.ajou.travely.domain.travel.Travel;
 import com.ajou.travely.domain.user.User;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,6 +26,11 @@ public class Material {
     @Column(name = "material_id")
     private Long id;
 
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "travel_id")
+    private Travel travel;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
@@ -31,7 +38,8 @@ public class Material {
     private String material;
 
     @Builder
-    public Material(User user, @NonNull String material) {
+    public Material(Travel travel, User user, String material) {
+        this.travel = travel;
         this.user = user;
         this.material = material;
     }
