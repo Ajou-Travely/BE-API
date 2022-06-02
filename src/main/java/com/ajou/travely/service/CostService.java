@@ -1,5 +1,6 @@
 package com.ajou.travely.service;
 
+import com.ajou.travely.config.auth.SessionUser;
 import com.ajou.travely.controller.cost.dto.CostCreateResponseDto;
 import com.ajou.travely.controller.cost.dto.CostResponseDto;
 import com.ajou.travely.controller.cost.dto.*;
@@ -30,6 +31,8 @@ public class CostService {
     private final UserCostRepository userCostRepository;
 
     private final TravelRepository travelRepository;
+
+    private final KakaoApiService kakaoApiService;
 
     @Transactional
     public CostCreateResponseDto createCost(CostCreateRequestDto requestDto, Long travelId) {
@@ -126,7 +129,21 @@ public class CostService {
     }
 
     @Transactional
-    public void calculateCost(Long costId, Long targetId) {
-
+    public void calculateCost(Long userCostId, SessionUser sessionUser, CostCalculateRequestDto requestDto) {
+        UserCost userCost = userCostRepository.findById(userCostId)
+                .orElseThrow(() -> new RecordNotFoundException(
+                        "해당 정산 사항이 존재하지 않습니다.",
+                        ErrorCode.USER_COST_NOT_FOUND
+                ));
+        User user = userRepository.findById(sessionUser.getUserId())
+                .orElseThrow(() -> new RecordNotFoundException(
+                        "해당 ID의 유저가 존재하지 않습니다.",
+                        ErrorCode.USER_NOT_FOUND
+                ));
+        String msg = "Travely\n" +
+                "안녕하세요 " + userCost.getUser().getName() + "님!\n" +
+                 user.getName() + " 님으로 부터\n" +
+                 userCost.getAmount() + "원 정산이 요청되었습니다!";
+        kakaoApiService.sendTextMessage(requestDto.getReceiverUuids(), msg, sessionUser.getAccessToken());
     }
 }
