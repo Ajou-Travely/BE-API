@@ -269,10 +269,10 @@ public class TravelController {
 
     @DeleteMapping("/{travelId}/materials/{materialId}")
     public ResponseEntity<Long> deleteMaterial(
-        @PathVariable String travelId,
+        @PathVariable Long travelId,
         @PathVariable Long materialId
     ) {
-        materialService.deleteMaterial(materialId);
+        materialService.deleteMaterial(travelId, materialId);
         return ResponseEntity.ok(materialId);
     }
 

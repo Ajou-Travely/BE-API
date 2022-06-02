@@ -9,7 +9,7 @@ public class MaterialResponseDto {
     private final Long id;
     private final SimpleUserInfoDto userInfo;
     private final String material;
-    private final boolean checked;
+    private final Boolean checked;
 
     public MaterialResponseDto(Material entity) {
         this.id = entity.getId();
@@ -17,4 +17,5 @@ public class MaterialResponseDto {
         this.material = entity.getMaterial();
         this.checked = entity.getChecked();
     }
+
 }

@@ -61,6 +61,10 @@ public class Travel {
         userTravel.setTravel(this);
     }
 
+    public void addMaterial(Material material) { this.materials.add(material); }
+
+    public void removeMaterial(Material material) { this.materials.remove(material); }
+
 //    public void setScheduleOrder(List<Long> scheduleOrder) {
 //        if (Objects.isNull(scheduleOrder)) {
 //            this.scheduleOrder = new ArrayList<>();

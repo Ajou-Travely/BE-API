@@ -37,8 +37,10 @@ public class MaterialService {
                 .travel(travel)
                 .user(user)
                 .material(requestDto.getMaterial())
+                .checked(false)
                 .build()
         );
+        travel.addMaterial(material);
         return new MaterialResponseDto(material);
     }
 
@@ -51,8 +53,10 @@ public class MaterialService {
         return new MaterialResponseDto(material);
     }
 
-    public Long deleteMaterial(Long materialId) {
+    public Long deleteMaterial(Long travelId, Long materialId) {
+        Travel travel = checkTravelRecord(travelId);
         Material material = checkMaterialRecord(materialId);
+        travel.removeMaterial(material);
         materialRepository.delete(material);
         return materialId;
     }
