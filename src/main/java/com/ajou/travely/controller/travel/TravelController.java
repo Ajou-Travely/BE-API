@@ -2,16 +2,16 @@ package com.ajou.travely.controller.travel;
 
 import com.ajou.travely.config.auth.LoginUser;
 import com.ajou.travely.config.auth.SessionUser;
-import com.ajou.travely.controller.cost.dto.CostCreateRequestDto;
-import com.ajou.travely.controller.cost.dto.CostCreateResponseDto;
-import com.ajou.travely.controller.cost.dto.CostResponseDto;
-import com.ajou.travely.controller.cost.dto.CostUpdateDto;
+import com.ajou.travely.controller.cost.dto.*;
 import com.ajou.travely.controller.schedule.dto.ScheduleCreateRequestDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleResponseDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleUpdateRequestDto;
 import com.ajou.travely.controller.travel.dto.*;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
+import com.ajou.travely.domain.kakao.KakaoMessageResponse;
 import com.ajou.travely.domain.travel.Travel;
+import com.ajou.travely.exception.ErrorCode;
+import com.ajou.travely.exception.custom.KakaoNotAuthenticationExcpetion;
 import com.ajou.travely.service.CostService;
 import com.ajou.travely.service.ScheduleService;
 import com.ajou.travely.service.TravelService;
@@ -30,6 +30,7 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -222,6 +223,18 @@ public class TravelController {
                                            CostUpdateDto costUpdateDto) {
         this.costService.updateCostById(costId, costUpdateDto);
         return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/{travelId}/costs/{costId}/userCosts/{userCostId}")
+    public ResponseEntity<KakaoMessageResponse> calculateUserCost(@PathVariable Long travelId,
+                                                                  @PathVariable Long costId,
+                                                                  @PathVariable Long userCostId,
+                                                                  @LoginUser SessionUser sessionUser,
+                                                                  @RequestBody CostCalculateRequestDto requestDto) {
+        if (Objects.nonNull(sessionUser.getAccessToken())) {
+            throw new KakaoNotAuthenticationExcpetion("카카오 계정 인증이 필요합니다.", ErrorCode.KAKAO_NOT_AUTHENTICATION);
+        }
+        return ResponseEntity.ok(costService.calculateCost(userCostId, sessionUser, requestDto));
     }
 
     @DeleteMapping("/{travelId}/costs/{costId}")

@@ -61,10 +61,10 @@ class Oauth2ServiceTest {
 
         userRepository.save(user);
 
-        JSONObject s1 = oauth2Service.setSessionOrRedirectToSignUp(userInfoFromKakao);
+        JSONObject s1 = oauth2Service.setSessionOrRedirectToSignUp(userInfoFromKakao, null);
         //User kakaoIdInAuthenticationDetail = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
-        JSONObject s2 = oauth2Service.setSessionOrRedirectToSignUp(notSignedUpUserInfo);
-        JSONObject s3 = oauth2Service.setSessionOrRedirectToSignUp(userInfoWithoutEmail);
+        JSONObject s2 = oauth2Service.setSessionOrRedirectToSignUp(notSignedUpUserInfo, null);
+        JSONObject s3 = oauth2Service.setSessionOrRedirectToSignUp(userInfoWithoutEmail, null);
 
 //        System.out.println("SecurityContextHolder.getContext().getAuthentication().getDetails() = " + SecurityContextHolder.getContext().getAuthentication().getDetails());
 //        SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().forEach(grantedAuthority -> {

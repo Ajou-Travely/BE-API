@@ -27,7 +27,7 @@ public class AuthService {
     public JSONObject kakaoAuthentication(String origin, String code) {
         AuthorizationKakao authorizationKakao = oauth2Service.callTokenApi(origin, code);
         JSONObject userInfoFromKakao = oauth2Service.callGetUserByAccessToken(authorizationKakao.getAccess_token());
-        return oauth2Service.setSessionOrRedirectToSignUp(userInfoFromKakao);
+        return oauth2Service.setSessionOrRedirectToSignUp(userInfoFromKakao, authorizationKakao.getAccess_token());
     }
 
     public Long getUserId() {
@@ -48,7 +48,7 @@ public class AuthService {
                     ErrorCode.INVALID_PASSWORD
             );
         }
-        String token = jwtTokenProvider.createToken(user.getId());
+        String token = jwtTokenProvider.createToken(user.getId(), null);
         return new LoginSuccessResponseDto(token);
     }
 }

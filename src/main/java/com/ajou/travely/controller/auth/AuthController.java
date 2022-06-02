@@ -22,7 +22,7 @@ public class AuthController {
     private final AuthService authService;
 
     @GetMapping("/v1/oauth2/authorization/kakao")
-    public JSONObject login(HttpServletRequest request, @RequestParam("code") String code) {
+    public JSONObject kakaoLogin(HttpServletRequest request, @RequestParam("code") String code) {
         String origin = request.getHeader(HttpHeaders.ORIGIN);
         return authService.kakaoAuthentication(origin, code);
     }
