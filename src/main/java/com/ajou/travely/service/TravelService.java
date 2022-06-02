@@ -24,6 +24,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -48,6 +50,9 @@ public class TravelService {
 
     private final CustomMailSender customMailSender;
 
+    @PersistenceContext
+    private final EntityManager em;
+
     @Value("${domain.base-url}")
     private String baseUrl;
 
@@ -57,7 +62,7 @@ public class TravelService {
     }
 
     @Transactional
-    public Travel createTravel(Long userId, TravelCreateRequestDto requestDto) {
+    public TravelResponseDto createTravel(Long userId, TravelCreateRequestDto requestDto) {
         User user = checkUserRecord(userId);
         Travel travel = travelRepository.save(
             Travel.builder()
@@ -71,24 +76,25 @@ public class TravelService {
                 .build();
         userTravelRepository.save(userTravel);
         travel.addUserTravel(userTravel);
-        travelRepository.save(travel);
-        createTravelDates(travel, requestDto.getStartDate(), requestDto.getEndDate());
-        return travel;
+        Travel returnTravel = travelRepository.save(travel);
+        List<TravelDate> travelDates =  createTravelDates(travel, requestDto.getStartDate(), requestDto.getEndDate());
+        return new TravelResponseDto(returnTravel, travelDates, new ArrayList<>());
     }
 
     @Transactional
-    public void updateTravelDates(Long userId, Long travelId, TravelDateUpdateRequestDto requestDto) {
+    public List<TravelDate> updateTravelDates(Long userId, Long travelId, TravelDateUpdateRequestDto requestDto) {
         Travel travel = checkAuthorization(travelId, userId);
         travelDateRepository.deleteAllByTravel(travel);
         travel.getTravelDates().clear();
-        createTravelDates(travel, requestDto.getStartDate(), requestDto.getEndDate());
+        return createTravelDates(travel, requestDto.getStartDate(), requestDto.getEndDate());
     }
 
     @Transactional
-    public void updateTravelDateTitle(Long userId, Long travelId, TravelDateTitleUpdateRequestDto requestDto) {
+    public TravelDateResponseDto updateTravelDateTitle(Long userId, Long travelId, TravelDateTitleUpdateRequestDto requestDto) {
         Travel travel = checkAuthorization(travelId, userId);
         TravelDate travelDate = checkTravelDateRecord(travel.getId(), requestDto.getDate());
         travelDate.updateTitle(requestDto.getTitle());
+        return new TravelDateResponseDto(travelDate);
     }
 
     @Transactional
@@ -227,16 +233,19 @@ public class TravelService {
     }
 
     @Transactional
-    public void changeScheduleOrder(Long travelId, LocalDate date, ScheduleOrderUpdateRequestDto requestDto) {
-        checkTravelDateRecord(travelId, date).setScheduleOrder(requestDto.getScheduleOrder());
+    public List<Long> changeScheduleOrder(Long travelId, LocalDate date, ScheduleOrderUpdateRequestDto requestDto) {
+        TravelDate travelDate = checkTravelDateRecord(travelId, date);
+        travelDate.setScheduleOrder(requestDto.getScheduleOrder());
+        return travelDate.getScheduleOrder();
     }
 
     @Transactional
-    public void updateTravel(Long travelId,
+    public TravelUpdateResponseDto updateTravel(Long travelId,
                              Long userId,
                              TravelUpdateRequestDto requestDto) {
         Travel travel = checkAuthorization(travelId, userId);
         travel.updateTravel(requestDto);
+        return new TravelUpdateResponseDto(travel);
     }
 
     @Transactional
@@ -406,11 +415,11 @@ public class TravelService {
                 new RecordNotFoundException(message, code));
     }
 
-    private void createTravelDates(Travel travel, LocalDate startDate, LocalDate endDate) {
+    private List<TravelDate> createTravelDates(Travel travel, LocalDate startDate, LocalDate endDate) {
         LocalDate currentDate = startDate;
+        List<TravelDate> returnTravelDates = new ArrayList<>();
         int day = 1;
         while (endDate.compareTo(currentDate) >= 0) {
-            System.out.println(currentDate);
             TravelDate save = travelDateRepository.save(
                     TravelDate
                             .builder()
@@ -419,9 +428,10 @@ public class TravelService {
                             .travel(travel)
                             .build()
             );
-            System.out.println("save = " + save);
+            returnTravelDates.add(save);
             currentDate = currentDate.plusDays(1);
             day += 1;
         }
+        return returnTravelDates;
     }
 }
