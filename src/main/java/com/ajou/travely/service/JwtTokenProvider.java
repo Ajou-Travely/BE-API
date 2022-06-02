@@ -35,15 +35,11 @@ public class JwtTokenProvider {
     }
 
     public String createToken(Long userId) {
-        Map<String, Long> userInfo = new HashMap<>();
-        userInfo.put("userId", userId);
-        JSONObject payload = new JSONObject(userInfo);
-        Claims claims = Jwts.claims().setSubject(payload.toJSONString());
         Date now = new Date();
         Date expiredAt = new Date(now.getTime() + tokenValidTime);
 
         return Jwts.builder()
-                .setClaims(claims)
+                .claim("userId", userId)
                 .setIssuedAt(now)
                 .setExpiration(expiredAt)
                 .signWith(SignatureAlgorithm.HS256, secretKey)
@@ -57,7 +53,7 @@ public class JwtTokenProvider {
 
     public Long getUserId(String token) throws ParseException {
         String subject = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token)
-                .getBody().getSubject();
+                .getBody().get("userId", String.class);
         JSONParser jsonParser = new JSONParser();
         JSONObject parse = (JSONObject) jsonParser.parse(subject);
 
