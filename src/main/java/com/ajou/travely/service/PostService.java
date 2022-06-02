@@ -35,7 +35,7 @@ public class PostService {
     @PersistenceContext
     private final EntityManager em;
 
-    public Long createPost(Long userId, PostCreateRequestDto requestDto) {
+    public PostResponseDto createPost(Long userId, PostCreateRequestDto requestDto) {
         User user = findUserById(userId);
         Schedule schedule = findScheduleById(requestDto.getScheduleId());
         Post post = Post.builder()
@@ -49,7 +49,7 @@ public class PostService {
             photoService.createPhotos(post, requestDto.getPhotos());
         }
 
-        return postRepository.save(post).getId();
+        return new PostResponseDto(postRepository.save(post));
     }
 
     @Transactional(readOnly = true)

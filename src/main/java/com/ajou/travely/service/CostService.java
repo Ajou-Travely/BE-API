@@ -134,7 +134,7 @@ public class CostService {
         em.clear();
 
         Cost returnCost = costRepository.findById(costId)
-                .orElseThrow(() -> new RuntimeException("해당 지출이 존재하지 않습니다."));;
+                .orElseThrow(() -> new RuntimeException("해당 지출이 존재하지 않습니다."));
         return new CostResponseDto(returnCost);
     }
     @Transactional
