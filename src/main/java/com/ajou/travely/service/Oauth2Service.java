@@ -1,15 +1,10 @@
 package com.ajou.travely.service;
 
-import com.ajou.travely.config.auth.CustomAuthentication;
-import com.ajou.travely.config.auth.SessionUser;
 import com.ajou.travely.domain.AuthorizationKakao;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.repository.UserRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -88,7 +83,7 @@ public class Oauth2Service {
         }
     }
 
-    public JSONObject setSessionOrRedirectToSignUp(JSONObject userInfoFromKakao) {
+    public JSONObject setSessionOrRedirectToSignUp(JSONObject userInfoFromKakao, String accessToken) {
         Long kakaoId = (Long) userInfoFromKakao.get("id");
         JSONObject kakao_account = (JSONObject) userInfoFromKakao.get("kakao_account");
         Optional<User> user = userRepository.findByKakaoId(kakaoId);
@@ -100,7 +95,7 @@ public class Oauth2Service {
                 return result;
             } else {
                 User exUser = user.get();
-                String token = jwtTokenProvider.createToken(exUser.getId());
+                String token = jwtTokenProvider.createToken(exUser.getId(), accessToken);
                 result.put("status", 200);
                 result.put("token", token);
             }

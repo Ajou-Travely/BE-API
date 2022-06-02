@@ -5,16 +5,23 @@ import com.ajou.travely.controller.schedule.dto.ScheduleCreateRequestDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleResponseDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleUpdateRequestDto;
 import com.ajou.travely.controller.schedule.dto.SimpleScheduleResponseDto;
-import com.ajou.travely.controller.travel.dto.ScheduleOrderUpdateRequestDto;
-import com.ajou.travely.controller.travel.dto.TravelCreateRequestDto;
+import com.ajou.travely.controller.schedulePhoto.dto.SchedulePhotoResponseDto;
+import com.ajou.travely.controller.travel.dto.*;
+import com.ajou.travely.domain.Schedule;
+import com.ajou.travely.domain.SchedulePhoto;
 import com.ajou.travely.domain.travel.Travel;
 import com.ajou.travely.domain.travel.TravelDate;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.domain.user.UserType;
 import com.ajou.travely.exception.ErrorCode;
 import com.ajou.travely.exception.custom.RecordNotFoundException;
+import com.ajou.travely.repository.SchedulePhotoRepository;
+import com.ajou.travely.repository.ScheduleRepository;
 import com.ajou.travely.repository.TravelDateRepository;
 import com.ajou.travely.repository.TravelRepository;
+
+import java.util.stream.Collectors;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -58,6 +65,12 @@ class ScheduleServiceTest {
     @Autowired
     TravelDateRepository travelDateRepository;
 
+    @Autowired
+    ScheduleRepository scheduleRepository;
+
+    @Autowired
+    SchedulePhotoRepository schedulePhotoRepository;
+
     @PersistenceContext
     EntityManager em;
 
@@ -67,7 +80,7 @@ class ScheduleServiceTest {
     PlaceCreateRequestDto ajouUniv;
     PlaceCreateRequestDto inhaUniv;
     User user;
-    Travel travel;
+    TravelResponseDto travelResponseDto;
 
     @BeforeEach
     public void setUp() {
@@ -104,7 +117,7 @@ class ScheduleServiceTest {
                 .endDate(LocalDate.of(2022, 5, 15))
                 .userEmails(new ArrayList<>())
                 .build();
-        travel = travelService.createTravel(user.getId(), travelCreateRequestDto);
+        travelResponseDto = travelService.createTravel(user.getId(), travelCreateRequestDto);
     }
 
     @Test
@@ -129,12 +142,12 @@ class ScheduleServiceTest {
                         .kakaoId(2L)
                         .build()
         );
-        travelService.addUserToTravel(travel.getId(), user1.getId());
-        travelService.addUserToTravel(travel.getId(), user2.getId());
-        List<TravelDate> travelDates = travel.getTravelDates();
+        travelService.addUserToTravel(travelResponseDto.getId(), user1.getId());
+        travelService.addUserToTravel(travelResponseDto.getId(), user2.getId());
+        List<SimpleTravelDateResponseDto> travelDates = travelResponseDto.getDates();
 
-        Long scheduleId1 = scheduleService.createSchedule(
-                travel.getId(),
+        SimpleScheduleResponseDto schedule1 = scheduleService.createSchedule(
+                travelResponseDto.getId(),
                 travelDates.get(0).getDate(),
                 ScheduleCreateRequestDto
                         .builder()
@@ -144,8 +157,8 @@ class ScheduleServiceTest {
                         .userIds(new ArrayList<>(List.of(user.getId(), user1.getId(), user2.getId())))
                         .build()
         );
-        Long scheduleId2 = scheduleService.createSchedule(
-                travel.getId(),
+        SimpleScheduleResponseDto schedule2 = scheduleService.createSchedule(
+                travelResponseDto.getId(),
                 travelDates.get(0).getDate(),
                 ScheduleCreateRequestDto
                         .builder()
@@ -157,18 +170,20 @@ class ScheduleServiceTest {
         );
         em.flush();
         em.clear();
-        Travel foundTravel = travelRepository.findById(travel.getId())
+        Travel foundTravel = travelRepository.findById(travelResponseDto.getId())
                 .orElseThrow(() -> new RecordNotFoundException(
                         "해당 여행을 찾을 수 없습니다.",
                         ErrorCode.TRAVEL_NOT_FOUND
                 ));
-        ScheduleResponseDto schedule = scheduleService.getScheduleById(scheduleId1);
+        ScheduleResponseDto schedule = scheduleService.getScheduleById(schedule1.getScheduleId());
         assertThat(schedule.getPlace().getPlaceName()).isEqualTo(ajouUniv.getPlaceName());
         assertThat(schedule.getUsers()).hasSize(3);
         assertThat(foundTravel.getTravelDates().size()).isEqualTo(6);
         assertThat(foundTravel.getTravelDates().get(0).getSchedules().size()).isEqualTo(2);
         assertThat(foundTravel.getTravelDates().get(0).getScheduleOrder().size()).isEqualTo(2);
-        assertThat(foundTravel.getTravelDates().get(0).getScheduleOrder()).containsAll(Arrays.asList(scheduleId1, scheduleId2));
+        assertThat(foundTravel.getTravelDates().get(0).getScheduleOrder())
+                .containsAll(Arrays.asList(schedule1.getScheduleId(),
+                        schedule2.getScheduleId()));
     }
 
     @Test
@@ -195,13 +210,13 @@ class ScheduleServiceTest {
                         .kakaoId(2L)
                         .build()
         );
-        travelService.addUserToTravel(travel.getId(), user.getId());
-        travelService.addUserToTravel(travel.getId(), user1.getId());
-        travelService.addUserToTravel(travel.getId(), user2.getId());
-        List<TravelDate> travelDates = travel.getTravelDates();
+        travelService.addUserToTravel(travelResponseDto.getId(), user.getId());
+        travelService.addUserToTravel(travelResponseDto.getId(), user1.getId());
+        travelService.addUserToTravel(travelResponseDto.getId(), user2.getId());
+        List<SimpleTravelDateResponseDto> travelDates = travelResponseDto.getDates();
 
-        Long scheduleId = scheduleService.createSchedule(
-                travel.getId(),
+        SimpleScheduleResponseDto schedule = scheduleService.createSchedule(
+                travelResponseDto.getId(),
                 travelDates.get(0).getDate(),
                 ScheduleCreateRequestDto
                         .builder()
@@ -218,10 +233,10 @@ class ScheduleServiceTest {
                 .place(inhaUniv)
                 .userIds(new ArrayList<>(List.of(user.getId(), user2.getId())))
                 .build();
-        scheduleService.updateSchedule(scheduleId, scheduleUpdateRequestDto);
-        ScheduleResponseDto schedule = scheduleService.getScheduleById(scheduleId);
-        assertThat(schedule.getPlace().getPlaceName()).isEqualTo(inhaUniv.getPlaceName());
-        assertThat(schedule.getUsers()).hasSize(2);
+        scheduleService.updateSchedule(schedule.getScheduleId(), scheduleUpdateRequestDto);
+        ScheduleResponseDto scheduleResponseDto = scheduleService.getScheduleById(schedule.getScheduleId());
+        assertThat(scheduleResponseDto.getPlace().getPlaceName()).isEqualTo(inhaUniv.getPlaceName());
+        assertThat(scheduleResponseDto.getUsers()).hasSize(2);
     }
 
     @Test
@@ -246,12 +261,12 @@ class ScheduleServiceTest {
                         .kakaoId(2L)
                         .build()
         );
-        travelService.addUserToTravel(travel.getId(), user1.getId());
-        travelService.addUserToTravel(travel.getId(), user2.getId());
-        List<TravelDate> travelDates = travel.getTravelDates();
+        travelService.addUserToTravel(travelResponseDto.getId(), user1.getId());
+        travelService.addUserToTravel(travelResponseDto.getId(), user2.getId());
+        List<SimpleTravelDateResponseDto> travelDates = travelResponseDto.getDates();
 
-        Long scheduleId = scheduleService.createSchedule(
-                travel.getId(),
+        SimpleScheduleResponseDto schedule = scheduleService.createSchedule(
+                travelResponseDto.getId(),
                 travelDates.get(0).getDate(),
                 ScheduleCreateRequestDto
                         .builder()
@@ -261,9 +276,9 @@ class ScheduleServiceTest {
                         .userIds(new ArrayList<>(List.of(user.getId(), user1.getId(), user2.getId())))
                         .build()
         );
-        ScheduleResponseDto schedule = scheduleService.getScheduleById(scheduleId);
-        assertThat(schedule.getPlace().getPlaceName()).isEqualTo(ajouUniv.getPlaceName());
-        assertThat(schedule.getUsers()).hasSize(3);
+        ScheduleResponseDto scheduleResponseDto = scheduleService.getScheduleById(schedule.getScheduleId());
+        assertThat(scheduleResponseDto.getPlace().getPlaceName()).isEqualTo(ajouUniv.getPlaceName());
+        assertThat(scheduleResponseDto.getUsers()).hasSize(3);
     }
 
     @Test
@@ -287,12 +302,12 @@ class ScheduleServiceTest {
                         .kakaoId(2L)
                         .build()
         );
-        travelService.addUserToTravel(travel.getId(), user1.getId());
-        travelService.addUserToTravel(travel.getId(), user2.getId());
-        List<TravelDate> travelDates = travel.getTravelDates();
+        travelService.addUserToTravel(travelResponseDto.getId(), user1.getId());
+        travelService.addUserToTravel(travelResponseDto.getId(), user2.getId());
+        List<SimpleTravelDateResponseDto> travelDates = travelResponseDto.getDates();
 
-        Long scheduleId1 = scheduleService.createSchedule(
-                travel.getId(),
+        SimpleScheduleResponseDto schedule1 = scheduleService.createSchedule(
+                travelResponseDto.getId(),
                 travelDates.get(0).getDate(),
                 ScheduleCreateRequestDto
                         .builder()
@@ -302,8 +317,8 @@ class ScheduleServiceTest {
                         .userIds(new ArrayList<>(List.of(user.getId(), user1.getId(), user2.getId())))
                         .build()
         );
-        Long scheduleId2 = scheduleService.createSchedule(
-                travel.getId(),
+        SimpleScheduleResponseDto schedule2 = scheduleService.createSchedule(
+                travelResponseDto.getId(),
                 travelDates.get(0).getDate(),
                 ScheduleCreateRequestDto
                         .builder()
@@ -313,8 +328,8 @@ class ScheduleServiceTest {
                         .userIds(new ArrayList<>(List.of(user.getId(), user1.getId(), user2.getId())))
                         .build()
         );
-        Long scheduleId3 = scheduleService.createSchedule(
-                travel.getId(),
+        SimpleScheduleResponseDto schedule3 = scheduleService.createSchedule(
+                travelResponseDto.getId(),
                 travelDates.get(0).getDate(),
                 ScheduleCreateRequestDto
                         .builder()
@@ -327,13 +342,169 @@ class ScheduleServiceTest {
         em.flush();
         em.clear();
         travelService.changeScheduleOrder(
-                travel.getId(),
+                travelResponseDto.getId(),
                 travelDates.get(0).getDate(),
-                new ScheduleOrderUpdateRequestDto(Arrays.asList(scheduleId3, scheduleId1, scheduleId2)));
-        List<SimpleScheduleResponseDto> schedulesByTravelId = travelService.getSchedulesByTravelIdAndDate(travel.getId(), travelDates.get(0).getDate());
+                new ScheduleOrderUpdateRequestDto(Arrays.asList(
+                        schedule3.getScheduleId(),
+                        schedule1.getScheduleId(),
+                        schedule2.getScheduleId()))
+        );
+        List<SimpleScheduleResponseDto> schedulesByTravelId = travelService.getSchedulesByTravelIdAndDate(travelResponseDto.getId(), travelDates.get(0).getDate());
         List<Long> result = new ArrayList<>();
         schedulesByTravelId.forEach(simpleScheduleResponseDto -> result.add(simpleScheduleResponseDto.getScheduleId()));
-        assertThat(result).isEqualTo(Arrays.asList(scheduleId3, scheduleId1, scheduleId2));
+        assertThat(result).isEqualTo(Arrays.asList(
+                schedule3.getScheduleId(),
+                schedule1.getScheduleId(),
+                schedule2.getScheduleId())
+        );
+    }
+
+    @Test
+    @DisplayName("스케줄 기준 사진 조회")
+    void testGetSchedulePhotos() {
+        // given
+        User user1 = userService.insertUser(
+                User.builder()
+                        .userType(UserType.USER)
+                        .email("sophoca@ajou.ac.kr")
+                        .name("홍성빈")
+                        .phoneNumber("112")
+                        .kakaoId(1L)
+                        .build()
+        );
+        User user2 = userService.insertUser(
+                User.builder()
+                        .userType(UserType.USER)
+                        .email("errander@ajou.ac.kr")
+                        .name("이호용")
+                        .phoneNumber("119")
+                        .kakaoId(2L)
+                        .build()
+        );
+        travelService.addUserToTravel(travelResponseDto.getId(), user1.getId());
+        travelService.addUserToTravel(travelResponseDto.getId(), user2.getId());
+
+        List<SimpleTravelDateResponseDto> travelDates = travelResponseDto.getDates();
+
+        SimpleScheduleResponseDto schedule = scheduleService.createSchedule(
+                travelResponseDto.getId(),
+                travelDates.get(0).getDate(),
+                ScheduleCreateRequestDto
+                        .builder()
+                        .place(ajouUniv)
+                        .startTime(LocalTime.now())
+                        .endTime(LocalTime.now().plusHours(2))
+                        .userIds(new ArrayList<>(List.of(user.getId(), user1.getId(), user2.getId())))
+                        .build()
+        );
+
+        Schedule findSchedule = scheduleRepository.findById(schedule.getScheduleId())
+                .orElseThrow(() -> new IllegalArgumentException("no schedule"));
+
+        // when
+        List<String> photoPaths1 =
+                new ArrayList<>(List.of("testUrl1", "testUrl2", "testUrl3"));
+        List<SchedulePhoto> schedulePhotos1 = photoPaths1.stream()
+                .map(photoPath ->
+                        SchedulePhoto.builder()
+                                .user(user1)
+                                .schedule(findSchedule)
+                                .photoPath(photoPath)
+                                .build())
+                .collect(Collectors.toList());
+        schedulePhotoRepository.saveAll(schedulePhotos1);
+        findSchedule.addSchedulePhotos(schedulePhotos1);
+
+        List<String> photoPaths2 =
+                new ArrayList<>(List.of("testUrl5", "testUrl6"));
+        List<SchedulePhoto> schedulePhotos2 = photoPaths2.stream()
+                .map(photoPath ->
+                        SchedulePhoto.builder()
+                                .user(user1)
+                                .schedule(findSchedule)
+                                .photoPath(photoPath)
+                                .build())
+                .collect(Collectors.toList());
+        schedulePhotoRepository.saveAll(schedulePhotos2);
+        findSchedule.addSchedulePhotos(schedulePhotos2);
+
+        em.flush();
+        em.clear();
+
+        // then
+        Schedule resultSchedule = scheduleRepository.findById(schedule.getScheduleId())
+                .orElseThrow(() -> new IllegalArgumentException("no schedule"));
+        List<SchedulePhotoResponseDto> responseDtos =
+                scheduleService.getSchedulePhotos(resultSchedule.getId());
+
+        assertThat(responseDtos).hasSize(photoPaths1.size() + photoPaths2.size());
+    }
+
+    @Test
+    @DisplayName("스케줄 사진들 삭제")
+    void testDeleteSchedulePhotos() {
+        // given
+        User user1 = userService.insertUser(
+                User.builder()
+                        .userType(UserType.USER)
+                        .email("sophoca@ajou.ac.kr")
+                        .name("홍성빈")
+                        .phoneNumber("112")
+                        .kakaoId(1L)
+                        .build()
+        );
+        travelService.addUserToTravel(travelResponseDto.getId(), user1.getId());
+
+        List<SimpleTravelDateResponseDto> travelDates = travelResponseDto.getDates();
+
+        SimpleScheduleResponseDto schedule = scheduleService.createSchedule(
+                travelResponseDto.getId(),
+                travelDates.get(0).getDate(),
+                ScheduleCreateRequestDto
+                        .builder()
+                        .place(ajouUniv)
+                        .startTime(LocalTime.now())
+                        .endTime(LocalTime.now().plusHours(2))
+                        .userIds(new ArrayList<>(List.of(user.getId(), user1.getId())))
+                        .build()
+        );
+
+        Schedule findSchedule = scheduleRepository.findById(schedule.getScheduleId())
+                .orElseThrow(() -> new IllegalArgumentException("no schedule"));
+
+        List<String> photoPaths =
+                new ArrayList<>(List.of("testUrl1", "testUrl2", "testUrl3", "testUrl4", "testUrl5"));
+        List<SchedulePhoto> schedulePhotos1 = photoPaths.stream()
+                .map(photoPath ->
+                        SchedulePhoto.builder()
+                                .user(user1)
+                                .schedule(findSchedule)
+                                .photoPath(photoPath)
+                                .build())
+                .collect(Collectors.toList());
+        schedulePhotoRepository.saveAll(schedulePhotos1);
+        findSchedule.addSchedulePhotos(schedulePhotos1);
+
+        List<Long> schedulePhotoIds =
+                schedulePhotoRepository.findSchedulePhotosByScheduleIdInQuery(schedule.getScheduleId())
+                        .stream()
+                        .map(SchedulePhoto::getId)
+                        .collect(Collectors.toList());
+        System.out.println(schedulePhotoIds);
+
+        // when
+        List<Long> removeIds = List.of(schedulePhotoIds.get(0), schedulePhotoIds.get(1));
+        scheduleService.deleteSchedulePhotos(schedule.getScheduleId(), removeIds);
+        em.flush();
+        em.clear();
+
+        // then
+        Schedule resultSchedule = scheduleRepository.findById(schedule.getScheduleId())
+                .orElseThrow(() -> new IllegalArgumentException("no schedule"));
+        List<SchedulePhotoResponseDto> responseDtos =
+                scheduleService.getSchedulePhotos(resultSchedule.getId());
+
+        assertThat(responseDtos).hasSize(photoPaths.size() - removeIds.size());
     }
 
 }

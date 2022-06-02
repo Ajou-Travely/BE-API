@@ -34,7 +34,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public void updateUser(Long userId, UserUpdateRequestDto requestDto) {
+    public UserResponseDto updateUser(Long userId, UserUpdateRequestDto requestDto) {
         User user = findUserById(userId);
         String profilePath = requestDto.getProfileImage() == null
                 ? null
@@ -46,6 +46,7 @@ public class UserService {
                 requestDto.getSex(),
                 requestDto.getBirthday(),
                 profilePath);
+        return new UserResponseDto(user);
     }
 
     public List<User> getAllUsers() {

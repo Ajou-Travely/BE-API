@@ -1,5 +1,6 @@
 package com.ajou.travely.domain;
 
+import com.ajou.travely.domain.cost.Cost;
 import com.ajou.travely.domain.user.User;
 import lombok.Builder;
 import lombok.Getter;
@@ -49,5 +50,9 @@ public class UserCost {
     public void update(Long amount, Boolean isRequested) {
         this.amount = amount;
         this.isRequested = isRequested;
+    }
+
+    public void isRequested() {
+        this.isRequested = true;
     }
 }

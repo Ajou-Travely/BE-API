@@ -1,9 +1,11 @@
 package com.ajou.travely.service;
 
+import com.ajou.travely.config.auth.SessionUser;
 import com.ajou.travely.controller.cost.dto.CostCreateResponseDto;
 import com.ajou.travely.controller.cost.dto.CostResponseDto;
 import com.ajou.travely.controller.cost.dto.*;
-import com.ajou.travely.domain.Cost;
+import com.ajou.travely.domain.kakao.KakaoMessageResponse;
+import com.ajou.travely.domain.cost.Cost;
 import com.ajou.travely.domain.travel.Travel;
 import com.ajou.travely.domain.UserCost;
 import com.ajou.travely.exception.ErrorCode;
@@ -16,6 +18,9 @@ import com.ajou.travely.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.Map;
 import java.util.*;
 
@@ -30,6 +35,11 @@ public class CostService {
     private final UserCostRepository userCostRepository;
 
     private final TravelRepository travelRepository;
+
+    private final KakaoApiService kakaoApiService;
+
+    @PersistenceContext
+    private final EntityManager em;
 
     @Transactional
     public CostCreateResponseDto createCost(CostCreateRequestDto requestDto, Long travelId) {
@@ -83,7 +93,7 @@ public class CostService {
     }
 
     @Transactional
-    public void updateCostById(Long costId, CostUpdateDto costUpdateDto) {
+    public CostResponseDto updateCostById(Long costId, CostUpdateDto costUpdateDto) {
         Cost cost = costRepository.findById(costId)
                 .orElseThrow(() -> new RuntimeException("해당 지출이 존재하지 않습니다."));
         cost.updateCost(costUpdateDto);
@@ -119,10 +129,37 @@ public class CostService {
                     exAmountsPerUser.get(userId).getId()
             ));
         }
-    }
 
+        em.flush();
+        em.clear();
+
+        Cost returnCost = costRepository.findById(costId)
+                .orElseThrow(() -> new RuntimeException("해당 지출이 존재하지 않습니다."));
+        return new CostResponseDto(returnCost);
+    }
     @Transactional
     public void deleteCostById(Long costId) {
         costRepository.deleteById(costId);
+    }
+
+    @Transactional
+    public KakaoMessageResponse calculateCost(Long userCostId, SessionUser sessionUser, CostCalculateRequestDto requestDto) {
+        UserCost userCost = userCostRepository.findById(userCostId)
+                .orElseThrow(() -> new RecordNotFoundException(
+                        "해당 정산 사항이 존재하지 않습니다.",
+                        ErrorCode.USER_COST_NOT_FOUND
+                ));
+        User user = userRepository.findById(sessionUser.getUserId())
+                .orElseThrow(() -> new RecordNotFoundException(
+                        "해당 ID의 유저가 존재하지 않습니다.",
+                        ErrorCode.USER_NOT_FOUND
+                ));
+        String msg = "Travely\n" +
+                "안녕하세요 " + userCost.getUser().getName() + "님!\n" +
+                 user.getName() + " 님으로 부터\n" +
+                 userCost.getAmount() + "원 정산이 요청되었습니다!";
+        KakaoMessageResponse response = kakaoApiService.sendTextMessage(requestDto.getReceiverUuids(), msg, sessionUser.getAccessToken());
+        userCost.isRequested();
+        return response;
     }
 }

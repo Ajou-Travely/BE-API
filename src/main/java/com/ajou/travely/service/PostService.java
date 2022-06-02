@@ -16,6 +16,9 @@ import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 @RequiredArgsConstructor
 @Transactional
 @Service
@@ -29,7 +32,10 @@ public class PostService {
 
     private final PhotoService photoService;
 
-    public Long createPost(Long userId, PostCreateRequestDto requestDto) {
+    @PersistenceContext
+    private final EntityManager em;
+
+    public PostResponseDto createPost(Long userId, PostCreateRequestDto requestDto) {
         User user = findUserById(userId);
         Schedule schedule = findScheduleById(requestDto.getScheduleId());
         Post post = Post.builder()
@@ -43,7 +49,7 @@ public class PostService {
             photoService.createPhotos(post, requestDto.getPhotos());
         }
 
-        return postRepository.save(post).getId();
+        return new PostResponseDto(postRepository.save(post));
     }
 
     @Transactional(readOnly = true)
@@ -51,7 +57,7 @@ public class PostService {
         return new PostResponseDto(initializePostInfo(postId));
     }
 
-    public void updatePost(Long postId, PostUpdateRequestDto requestDto) {
+    public PostResponseDto updatePost(Long postId, PostUpdateRequestDto requestDto) {
         Post post = findPostById(postId);
         post.update(requestDto.getTitle(), requestDto.getText());
 
@@ -61,6 +67,12 @@ public class PostService {
         if (requestDto.getRemovePhotoIds() != null) {
             photoService.removePhotoIds(requestDto.getRemovePhotoIds());
         }
+
+        em.flush();
+        em.clear();
+
+        Post returnPost = findPostById(postId);
+        return new PostResponseDto(returnPost);
     }
 
     public void deletePost(Long postId){

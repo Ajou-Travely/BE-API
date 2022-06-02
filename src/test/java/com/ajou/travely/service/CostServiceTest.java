@@ -2,7 +2,8 @@ package com.ajou.travely.service;
 
 import com.ajou.travely.controller.cost.dto.*;
 import com.ajou.travely.controller.travel.dto.TravelCreateRequestDto;
-import com.ajou.travely.domain.Cost;
+import com.ajou.travely.controller.travel.dto.TravelResponseDto;
+import com.ajou.travely.domain.cost.Cost;
 import com.ajou.travely.domain.UserCost;
 import com.ajou.travely.domain.travel.Travel;
 import com.ajou.travely.domain.user.User;
@@ -122,7 +123,7 @@ class CostServiceTest {
                 )
             )
         );
-        Travel travel = travelService.createTravel(users.get(0).getId(),
+        TravelResponseDto travelResponseDto = travelService.createTravel(users.get(0).getId(),
             TravelCreateRequestDto.builder()
                 .title("첫 여행")
                 .userEmails(new ArrayList<>())
@@ -130,7 +131,7 @@ class CostServiceTest {
                     .endDate(LocalDate.of(2022, 5, 15))
                 .build()
         );
-        Long travelId = travel.getId();
+        Long travelId = travelResponseDto.getId();
         for (User user : users) {
             travelService.addUserToTravel(travelId, user.getId());
         }

@@ -21,9 +21,9 @@ public class CustomUserDetailsService {
 
     private final UserRepository userRepository;
 
-    public UserDetails loadUserByUserId(Long userId) {
+    public UserDetails loadUserByUserId(Long userId, String accessToken) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RecordNotFoundException("해당 사용자를 찾을 수 없습니다.", ErrorCode.USER_NOT_FOUND));
-        return new CustomUserDetails(user);
+        return new CustomUserDetails(user, accessToken);
     }
 }
