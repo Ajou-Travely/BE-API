@@ -6,6 +6,7 @@ import com.ajou.travely.controller.cost.dto.CostCreateRequestDto;
 import com.ajou.travely.controller.cost.dto.CostCreateResponseDto;
 import com.ajou.travely.controller.cost.dto.CostResponseDto;
 import com.ajou.travely.controller.cost.dto.CostUpdateDto;
+import com.ajou.travely.controller.material.dto.MaterialCreateOrUpdateRequestDto;
 import com.ajou.travely.controller.material.dto.MaterialResponseDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleCreateRequestDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleResponseDto;
@@ -25,6 +26,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -204,4 +206,30 @@ public class TravelController {
 
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/{travelId}/materials")
+    public ResponseEntity<MaterialResponseDto> createMaterial(
+        @PathVariable Long travelId,
+        @RequestBody MaterialCreateOrUpdateRequestDto requestDto
+    ) {
+        MaterialResponseDto responseDto = materialService.createMaterial(travelId, requestDto);
+        return ResponseEntity.ok(responseDto);
+    }
+
+    @PutMapping("/{travelId}/materials/{materialId}")
+    public ResponseEntity<MaterialResponseDto> updateMaterial(
+        @PathVariable Long travelId,
+        @PathVariable Long materialId,
+        @RequestBody MaterialCreateOrUpdateRequestDto requestDto
+    ) {
+        MaterialResponseDto responseDto = materialService.updateMaterial(materialId, requestDto);
+        return ResponseEntity.ok(responseDto);
+    }
+
+    @DeleteMapping("/{travelId}/materials/{materialId}")
+    public ResponseEntity<Long> deleteMaterial(@PathVariable Long materialId) {
+        materialService.deleteMaterial(materialId);
+        return ResponseEntity.ok(materialId);
+    }
+
 }
