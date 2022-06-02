@@ -69,6 +69,8 @@ public class TravelService {
                 .title(requestDto.getTitle())
                 .managerId(userId)
                 .travelType(requestDto.getTravelType())
+                    .startDate(requestDto.getStartDate())
+                    .endDate(requestDto.getEndDate())
                 .build());
         UserTravel userTravel = UserTravel.builder()
                 .user(user)
@@ -85,6 +87,7 @@ public class TravelService {
     public List<TravelDate> updateTravelDates(Long userId, Long travelId, TravelDateUpdateRequestDto requestDto) {
         Travel travel = checkAuthorization(travelId, userId);
         travelDateRepository.deleteAllByTravel(travel);
+        travel.updateDate(requestDto.getStartDate(), requestDto.getEndDate());
         travel.getTravelDates().clear();
         return createTravelDates(travel, requestDto.getStartDate(), requestDto.getEndDate());
     }

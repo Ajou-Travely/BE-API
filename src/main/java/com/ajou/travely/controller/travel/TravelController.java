@@ -85,11 +85,10 @@ public class TravelController {
     }
 
     @PatchMapping("/{travelId}")
-    public ResponseEntity<Void> updateTravel(@PathVariable Long travelId,
+    public ResponseEntity<TravelUpdateResponseDto> updateTravel(@PathVariable Long travelId,
         @LoginUser SessionUser sessionUser,
         @RequestBody TravelUpdateRequestDto requestDto) {
-        travelService.updateTravel(travelId, sessionUser.getUserId(), requestDto);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(travelService.updateTravel(travelId, sessionUser.getUserId(), requestDto));
     }
 
     @PostMapping("/accept/{code}")

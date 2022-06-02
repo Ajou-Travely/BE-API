@@ -83,6 +83,8 @@ class CostServiceTest {
             Travel.builder()
                 .title("첫 여행")
                 .managerId(user1.getId())
+                    .startDate(LocalDate.now())
+                    .endDate(LocalDate.now().plusDays(1))
                 .build()
         );
         Map<Long, Long> amountPerUser = new HashMap<>();
@@ -202,6 +204,8 @@ class CostServiceTest {
             Travel.builder()
                 .title("첫 여행")
                 .managerId(users.get(0).getId())
+                    .startDate(LocalDate.now())
+                    .endDate(LocalDate.now().plusDays(1))
                 .build()
         );
         for (User user : users) {
@@ -293,6 +297,8 @@ class CostServiceTest {
             Travel.builder()
                 .title("첫 여행")
                 .managerId(user1.getId())
+                    .startDate(LocalDate.now())
+                    .endDate(LocalDate.now().plusDays(1))
                 .build()
         );
         Map<Long, Long> amountPerUser = new HashMap<>();
