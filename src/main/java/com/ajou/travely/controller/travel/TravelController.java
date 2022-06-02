@@ -12,7 +12,6 @@ import com.ajou.travely.controller.material.dto.MaterialUpdateRequestDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleCreateRequestDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleResponseDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleUpdateRequestDto;
-import com.ajou.travely.controller.schedule.dto.SimpleScheduleResponseDto;
 import com.ajou.travely.controller.travel.dto.*;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.domain.travel.Travel;
@@ -26,6 +25,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
@@ -33,8 +33,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.web.multipart.MultipartFile;
 
 @RequestMapping("/v1/travels")
 @RequiredArgsConstructor
@@ -70,8 +72,7 @@ public class TravelController {
 
     @PostMapping()
     public ResponseEntity<Long> createTravel(@LoginUser SessionUser sessionUser,
-        @Valid @RequestBody TravelCreateRequestDto requestDto) {
-        System.out.println("sessionUser.getUserId() = " + sessionUser.getUserId());
+                                             @Valid @RequestBody TravelCreateRequestDto requestDto) {
         Travel travel = travelService.createTravel(
             sessionUser.getUserId(),
             requestDto
@@ -90,12 +91,10 @@ public class TravelController {
 
     @PostMapping("/accept/{code}")
     public ResponseEntity<Long> addUserToTravel(@LoginUser SessionUser sessionUser,
-        @PathVariable UUID code) {
-        return ResponseEntity
-            .ok(
-                travelService
-                    .addUserToTravelWithValidation(sessionUser.getUserId()
-                        , code));
+                                                @PathVariable UUID code) {
+        Long travelId = travelService
+            .addUserToTravelWithValidation(sessionUser.getUserId(), code);
+        return ResponseEntity.ok(travelId);
     }
 
     @PostMapping("/{travelId}/invite")
@@ -127,27 +126,37 @@ public class TravelController {
         return ResponseEntity.ok(travelService.getSimpleUsersInfoOfTravel(travelId));
     }
 
-    // Schedules
+    // Travel Date
 
-    @GetMapping("/{travelId}/schedules")
-    public ResponseEntity<List<SimpleScheduleResponseDto>> showSchedulesByTravel(
-        @PathVariable Long travelId,
-        @LoginUser SessionUser sessionUser) {
-        return ResponseEntity.ok(
-            travelService.getSchedulesByTravelId(travelId, sessionUser.getUserId()));
+    @PutMapping("/{travelId}/dates")
+    public ResponseEntity<Void> updateTravelDates(@PathVariable Long travelId,
+                                                  @RequestBody TravelDateUpdateRequestDto requestDto,
+                                                  @LoginUser SessionUser sessionUser) {
+        travelService.updateTravelDates(sessionUser.getUserId(), travelId, requestDto);
+        return ResponseEntity.ok().build();
     }
+
+    @PatchMapping("/{travelId}/dates")
+    public ResponseEntity<Void> updateTravelDateTitle(@PathVariable Long travelId,
+                                                      @RequestBody TravelDateTitleUpdateRequestDto requestDto,
+                                                      @LoginUser SessionUser sessionUser) {
+        travelService.updateTravelDateTitle(sessionUser.getUserId(), travelId, requestDto);
+        return ResponseEntity.ok().build();
+    }
+
+    // Schedules
 
     @GetMapping("/{travelId}/schedules/{scheduleId}")
     public ResponseEntity<ScheduleResponseDto> showSchedule(@PathVariable Long travelId,
-        @PathVariable Long scheduleId) {
+                                                            @PathVariable Long scheduleId) {
         return ResponseEntity.ok(scheduleService.getScheduleById(scheduleId));
     }
 
     @PostMapping("/{travelId}/schedules")
     public ResponseEntity<Long> createSchedule(@PathVariable Long travelId,
-        @RequestBody ScheduleCreateRequestDto scheduleCreateRequestDto) {
-        return ResponseEntity.ok(
-            scheduleService.createSchedule(travelId, scheduleCreateRequestDto));
+                                               @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
+                                               @RequestBody ScheduleCreateRequestDto scheduleCreateRequestDto) {
+        return ResponseEntity.ok(scheduleService.createSchedule(travelId, date, scheduleCreateRequestDto));
     }
 
     @PutMapping("/{travelId}/schedules/{scheduleId}")
@@ -159,23 +168,47 @@ public class TravelController {
         return ResponseEntity.ok().build();
     }
 
+//    @GetMapping("/{travelId}/photos")
+//    public ResponseEntity<Void> showTravelPhotos(@LoginUser SessionUser sessionUser,
+//        @PathVariable Long travelId
+//        ) {
+//
+//        return ResponseEntity.ok().build();
+//    }
+
+    @GetMapping("/{travelId}/schedules/{scheduleId}/photos")
+    public ResponseEntity<Void> showSchedulePhotos(@LoginUser SessionUser sessionUser,
+        @PathVariable String travelId,
+        @PathVariable Long scheduleId,
+        @RequestPart List<MultipartFile> photos) {
+        scheduleService.uploadSchedulePhotos(sessionUser.getUserId(), scheduleId, photos);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{travelId}/schedules/{scheduleId}/photos")
+    public ResponseEntity<Void> uploadSchedulePhotos(@LoginUser SessionUser sessionUser,
+                                                     @PathVariable String travelId,
+                                                     @PathVariable Long scheduleId,
+                                                     @RequestPart List<MultipartFile> photos) {
+        scheduleService.uploadSchedulePhotos(sessionUser.getUserId(), scheduleId, photos);
+        return ResponseEntity.ok().build();
+    }
+
     @PostMapping("/{travelId}/change")
     public ResponseEntity<Void> changeScheduleOrder(@PathVariable Long travelId,
-        @LoginUser SessionUser sessionUser,
-        ScheduleOrderUpdateRequestDto requestDto) {
-        travelService.changeScheduleOrder(travelId, sessionUser.getUserId(), requestDto);
+                                                    @RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
+                                                    @RequestBody ScheduleOrderUpdateRequestDto requestDto) {
+        travelService.changeScheduleOrder(travelId, date, requestDto);
         return ResponseEntity.ok().build();
     }
 
     // Costs
 
-    @GetMapping("/{travelId}/costs")
-    public ResponseEntity<List<SimpleCostResponseDto>> showCostsByTravel(
-        @PathVariable Long travelId,
-        @LoginUser SessionUser sessionUser) {
-        return ResponseEntity.ok(
-            travelService.getCostsByTravelId(travelId, sessionUser.getUserId()));
-    }
+//    @GetMapping("/{travelId}/costs")
+//    public ResponseEntity<List<CostResponseDto>> showCostsByTravel(@PathVariable Long travelId,
+//                                                                         @LoginUser SessionUser sessionUser) {
+//        return ResponseEntity.ok(travelService.getCostsByTravelId(travelId, sessionUser.getUserId()));
+//    }
 
     @GetMapping("/{travelId}/costs/{costId}")
     public CostResponseDto showCost(@PathVariable Long costId,
@@ -243,4 +276,34 @@ public class TravelController {
         return ResponseEntity.ok(materialId);
     }
 
+    // TravelTransaction
+
+    @PostMapping("/{travelId}/transaction")
+    public ResponseEntity<TravelTransactionCreateResponseDto> createTravelTransaction(@PathVariable Long travelId,
+                                        @LoginUser SessionUser sessionUser,
+                                        @Valid @RequestBody TravelTransactionCreateRequestDto travelTransactionCreateRequestDto) {
+        return ResponseEntity.ok(this.travelService.createTravelTransaction(travelId, sessionUser.getUserId(), travelTransactionCreateRequestDto));
+    }
+
+    @GetMapping("/{travelId}/transaction")
+    public ResponseEntity<TravelTransactionResponseDto> getAllTravelTransactionsByUserId(@PathVariable Long travelId,
+                                              @LoginUser SessionUser sessionUser) {
+        return ResponseEntity.ok(this.travelService.getAllTravelTransactionsByUserId(travelId, sessionUser.getUserId()));
+    }
+
+    @PutMapping("/{travelId}/transaction/{travelTransactionId}")
+    public ResponseEntity<Void> updateTravelTransaction(@PathVariable Long travelId,
+                                                        @PathVariable Long travelTransactionId,
+                                                        @LoginUser SessionUser sessionUser,
+                                                        @RequestBody TravelTransactionUpdateDto travelTransactionUpdateDto) {
+        this.travelService.updateTravelTransaction(travelTransactionId, sessionUser.getUserId(), travelTransactionUpdateDto);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{travelId}/transaction/{travelTransactionId")
+    public ResponseEntity<Void> deleteTravelTransaction(@PathVariable Long travelId,
+                                                        @PathVariable Long travelTransactionId) {
+        this.travelService.deleteTravelTransaction(travelTransactionId);
+        return ResponseEntity.ok().build();
+    }
 }

@@ -1,10 +1,12 @@
 package com.ajou.travely.controller.travel.dto;
 
+import com.ajou.travely.controller.cost.dto.CostResponseDto;
 import com.ajou.travely.controller.schedule.dto.SimpleScheduleResponseDto;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.domain.Schedule;
 import com.ajou.travely.domain.UserTravel;
 import com.ajou.travely.domain.travel.Travel;
+import com.ajou.travely.domain.travel.TravelDate;
 import com.ajou.travely.domain.travel.TravelType;
 import lombok.Getter;
 
@@ -16,20 +18,19 @@ import java.util.stream.Collectors;
 public class TravelResponseDto {
     private final Long id;
     private final String title;
-    private final LocalDate startDate;
-    private final LocalDate endDate;
     private final String memo;
+    private final Integer budget;
     private final Long managerId;
     private final TravelType travelType;
     private final List<SimpleUserInfoDto> users;
-    private final List<SimpleScheduleResponseDto> schedules;
+    private final List<SimpleTravelDateResponseDto> dates;
+    private final List<CostResponseDto> costs;
 
-    public TravelResponseDto(Travel entity, List<Schedule> schedules) {
+    public TravelResponseDto(Travel entity, List<TravelDate> dates, List<CostResponseDto> costs) {
         this.id = entity.getId();
         this.title = entity.getTitle();
-        this.startDate = entity.getStartDate();
-        this.endDate = entity.getEndDate();
         this.memo = entity.getMemo();
+        this.budget = entity.getBudget();
         this.managerId = entity.getManagerId();
         this.travelType = entity.getTravelType();
         this.users = entity
@@ -38,9 +39,10 @@ public class TravelResponseDto {
                 .map(UserTravel::getUser)
                 .map(SimpleUserInfoDto::new)
                 .collect(Collectors.toList());
-        this.schedules = schedules
+        this.dates = dates
                 .stream()
-                .map(SimpleScheduleResponseDto::new)
+                .map(SimpleTravelDateResponseDto::new)
                 .collect(Collectors.toList());
+        this.costs = costs;
     }
 }

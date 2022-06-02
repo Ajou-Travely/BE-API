@@ -1,6 +1,6 @@
 package com.ajou.travely.controller.cost.dto;
 
-import com.ajou.travely.domain.Cost;
+import com.ajou.travely.domain.cost.Cost;
 import com.ajou.travely.domain.travel.Travel;
 import com.ajou.travely.domain.UserCost;
 import com.ajou.travely.domain.user.User;

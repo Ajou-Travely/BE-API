@@ -1,7 +1,7 @@
 package com.ajou.travely.domain.travel;
 
 import com.ajou.travely.controller.travel.dto.TravelUpdateRequestDto;
-import com.ajou.travely.converter.ScheduleOrderConverter;
+import com.ajou.travely.converter.OrderConverter;
 import com.ajou.travely.domain.UserTravel;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,15 +29,10 @@ public class Travel {
 
     private String title;
 
-    private LocalDate startDate;
-
-    private LocalDate endDate;
-
-    @Convert(converter = ScheduleOrderConverter.class)
-    private List<Long> scheduleOrder = new ArrayList<>();
-
     @Column(columnDefinition = "TEXT")
     private String memo;
+
+    private Integer budget;
 
     @Enumerated(EnumType.STRING)
     private TravelType travelType;
@@ -45,38 +40,44 @@ public class Travel {
     @OneToMany(mappedBy = "travel")
     private final List<UserTravel> userTravels = new ArrayList<>();
 
+    @OneToMany(mappedBy = "travel")
+    private List<TravelDate> travelDates = new ArrayList<>();
+
     @Builder
     public Travel(@NonNull String title,
-            @NonNull Long managerId,
-            @NonNull LocalDate startDate,
-            @NonNull LocalDate endDate,
-            String memo,
-            List<Long> scheduleOrder,
-            TravelType travelType) {
+                  @NonNull Long managerId,
+                  String memo,
+                  TravelType travelType,
+                  Integer budget) {
         this.title = title;
         this.managerId = managerId;
         this.memo = memo;
-        this.startDate = startDate;
-        this.endDate = endDate;
         this.travelType = travelType;
-        setScheduleOrder(scheduleOrder);
+        this.budget = budget;
     }
 
     public void addUserTravel(UserTravel userTravel) {
         userTravel.setTravel(this);
     }
 
-    public void setScheduleOrder(List<Long> scheduleOrder) {
-        if (Objects.isNull(scheduleOrder)) {
-            this.scheduleOrder = new ArrayList<>();
-        } else {
-            this.scheduleOrder = scheduleOrder;
-        }
-    }
+//    public void setScheduleOrder(List<Long> scheduleOrder) {
+//        if (Objects.isNull(scheduleOrder)) {
+//            this.scheduleOrder = new ArrayList<>();
+//        } else {
+//            this.scheduleOrder = scheduleOrder;
+//        }
+//    }
+//    public void setdateOrder(List<Long> dateOrder) {
+//        if (Objects.isNull(dateOrder)) {
+//            this.dateOrder = new ArrayList<>();
+//        } else {
+//            this.dateOrder = dateOrder;
+//        }
+//    }
 
     @PrePersist
     public void prePersist() {
-        this.travelType = this.travelType == null ? TravelType.PUBLIC : this.travelType;
+        this.travelType = this.travelType == null ? TravelType.PRIVATE : this.travelType;
     }
 
     public void setTravelType(TravelType type) {
@@ -85,9 +86,8 @@ public class Travel {
 
     public void updateTravel(TravelUpdateRequestDto requestDto) {
         this.title = requestDto.getTitle() != null ? requestDto.getTitle() : this.title;
-        this.startDate = requestDto.getStartDate() != null ? requestDto.getStartDate() : this.startDate;
-        this.endDate = requestDto.getEndDate() != null ? requestDto.getEndDate() : this.endDate;
         this.memo = requestDto.getMemo() != null ? requestDto.getMemo() : this.memo;
+        this.budget = requestDto.getBudget() != null ? requestDto.getBudget() : this.budget;
     }
 
 }

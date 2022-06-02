@@ -1,12 +1,12 @@
 package com.ajou.travely.service;
 
 import com.ajou.travely.controller.cost.dto.*;
-import com.ajou.travely.domain.Cost;
 import com.ajou.travely.controller.travel.dto.TravelCreateRequestDto;
-import com.ajou.travely.domain.travel.Travel;
+import com.ajou.travely.domain.cost.Cost;
 import com.ajou.travely.domain.UserCost;
-import com.ajou.travely.domain.user.UserType;
+import com.ajou.travely.domain.travel.Travel;
 import com.ajou.travely.domain.user.User;
+import com.ajou.travely.domain.user.UserType;
 import com.ajou.travely.repository.CostRepository;
 import com.ajou.travely.repository.TravelRepository;
 import com.ajou.travely.repository.UserCostRepository;
@@ -81,8 +81,6 @@ class CostServiceTest {
         Travel travel = travelRepository.save(
             Travel.builder()
                 .title("첫 여행")
-                .startDate(LocalDate.now())
-                .endDate(LocalDate.now())
                 .managerId(user1.getId())
                 .build()
         );
@@ -127,9 +125,9 @@ class CostServiceTest {
         Travel travel = travelService.createTravel(users.get(0).getId(),
             TravelCreateRequestDto.builder()
                 .title("첫 여행")
-                .startDate(LocalDate.now())
-                .endDate(LocalDate.now())
                 .userEmails(new ArrayList<>())
+                    .startDate(LocalDate.of(2022, 5, 10))
+                    .endDate(LocalDate.of(2022, 5, 15))
                 .build()
         );
         Long travelId = travel.getId();
@@ -202,8 +200,6 @@ class CostServiceTest {
         Travel travel = travelService.insertTravel(
             Travel.builder()
                 .title("첫 여행")
-                .startDate(LocalDate.now())
-                .endDate(LocalDate.now())
                 .managerId(users.get(0).getId())
                 .build()
         );
@@ -295,8 +291,6 @@ class CostServiceTest {
         Travel travel = travelService.insertTravel(
             Travel.builder()
                 .title("첫 여행")
-                .startDate(LocalDate.now())
-                .endDate(LocalDate.now())
                 .managerId(user1.getId())
                 .build()
         );

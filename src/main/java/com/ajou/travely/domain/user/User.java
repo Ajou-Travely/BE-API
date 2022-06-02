@@ -48,6 +48,7 @@ public class User implements Serializable {
     @NotNull
     private String phoneNumber;
 
+    @Enumerated(EnumType.STRING)
     @Column
     private Sex sex;
 
