@@ -120,9 +120,13 @@ public class CostService {
             ));
         }
     }
-
     @Transactional
     public void deleteCostById(Long costId) {
         costRepository.deleteById(costId);
+    }
+
+    @Transactional
+    public void calculateCost(Long costId, Long targetId) {
+
     }
 }

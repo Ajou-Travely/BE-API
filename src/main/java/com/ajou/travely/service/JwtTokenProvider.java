@@ -34,9 +34,10 @@ public class JwtTokenProvider {
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
     }
 
-    public String createToken(Long userId) {
-        Map<String, Long> userInfo = new HashMap<>();
+    public String createToken(Long userId, String accessToken) {
+        Map<String, Object> userInfo = new HashMap<>();
         userInfo.put("userId", userId);
+        userInfo.put("accessToken", accessToken);
         JSONObject payload = new JSONObject(userInfo);
         Claims claims = Jwts.claims().setSubject(payload.toJSONString());
         Date now = new Date();
@@ -51,7 +52,7 @@ public class JwtTokenProvider {
     }
 
     public Authentication getAuthentication(String token) throws ParseException {
-        UserDetails userDetails = customUserDetailsService.loadUserByUserId(this.getUserId(token));
+        UserDetails userDetails = customUserDetailsService.loadUserByUserId(this.getUserId(token), this.getAccessToken(token));
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
@@ -62,6 +63,15 @@ public class JwtTokenProvider {
         JSONObject parse = (JSONObject) jsonParser.parse(subject);
 
         return (Long) parse.get("userId");
+    }
+
+    public String getAccessToken(String token) throws ParseException {
+        String subject = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token)
+                .getBody().getSubject();
+        JSONParser jsonParser = new JSONParser();
+        JSONObject parse = (JSONObject) jsonParser.parse(subject);
+
+        return (String) parse.get("accessToken");
     }
 
     public String resolveToken(HttpServletRequest request) {

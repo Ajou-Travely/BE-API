@@ -62,7 +62,7 @@ class AuthServiceTest {
                 .build();
 
         userRepository.save(user);
-        JSONObject result = oauth2Service.setSessionOrRedirectToSignUp(userInfoFromKakao);
+        JSONObject result = oauth2Service.setSessionOrRedirectToSignUp(userInfoFromKakao, null);
 //        Long userId = authService.getUserId();
 
         assertThat(result.get("status")).isEqualTo(200);
