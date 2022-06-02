@@ -619,7 +619,7 @@ class TravelServiceTest {
         travelService.deleteTravelTransaction(travelTransaction.getId());
 
         Optional<TravelTransaction> deletedTravelTransaction = travelTransactionRepository.findById(travelTransaction.getId());
-        
+
         assertThat(deletedTravelTransaction.isEmpty()).isEqualTo(true);
     }
 }
