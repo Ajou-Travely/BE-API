@@ -6,6 +6,7 @@ import lombok.Getter;
 
 @Getter
 public class TravelTransactionCreateResponseDto {
+    private Long id;
     private Long travelId;
     private Long senderId;
     private Long receiverId;
@@ -14,6 +15,7 @@ public class TravelTransactionCreateResponseDto {
 
     @Builder
     public TravelTransactionCreateResponseDto(TravelTransaction entity) {
+        this.id = entity.getId();
         this.travelId = entity.getTravel().getId();
         this.senderId = entity.getSender().getId();
         this.receiverId = entity.getReceiver().getId();

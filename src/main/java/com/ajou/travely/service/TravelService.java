@@ -327,6 +327,7 @@ public class TravelService {
 
         for (TravelTransaction travelTransaction : bySenderId) {
             userInfoAndAmountToSend.add(TravelTransactionResponseToSendDto.builder()
+                    .travelTransactionId(travelTransaction.getId())
                     .userToRecieve(new SimpleUserInfoDto(travelTransaction.getReceiver()))
                     .amount(travelTransaction.getAmount())
                     .build());
@@ -334,6 +335,7 @@ public class TravelService {
 
         for (TravelTransaction travelTransaction : byReceiverId) {
             userInfoAndAmountToReceive.add(TravelTransactionResponseToReceiveDto.builder()
+                    .travelTransactionId(travelTransaction.getId())
                     .userToSend(new SimpleUserInfoDto(travelTransaction.getSender()))
                     .amount(travelTransaction.getAmount())
                     .build());
@@ -343,7 +345,7 @@ public class TravelService {
     }
 
     @Transactional
-    public void updateTravelTransaction(Long travelId, Long travelTransactionId, Long userId, TravelTransactionUpdateDto travelTransactionUpdateDto) {
+    public void updateTravelTransaction(Long travelTransactionId, Long userId, TravelTransactionUpdateDto travelTransactionUpdateDto) {
         TravelTransaction travelTransaction = checkTravelTransactionRecord(travelTransactionId);
         travelTransaction.updateTravelTransaction(
                 checkUserRecord(travelTransactionUpdateDto.getSenderId()),

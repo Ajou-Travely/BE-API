@@ -251,7 +251,7 @@ public class TravelController {
                                                         @PathVariable Long travelTransactionId,
                                                         @LoginUser SessionUser sessionUser,
                                                         @RequestBody TravelTransactionUpdateDto travelTransactionUpdateDto) {
-        this.travelService.updateTravelTransaction(travelId, travelTransactionId, sessionUser.getUserId(), travelTransactionUpdateDto);
+        this.travelService.updateTravelTransaction(travelTransactionId, sessionUser.getUserId(), travelTransactionUpdateDto);
         return ResponseEntity.ok().build();
     }
 
