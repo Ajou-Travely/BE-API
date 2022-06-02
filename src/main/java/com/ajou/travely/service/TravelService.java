@@ -1,5 +1,6 @@
 package com.ajou.travely.service;
 
+import com.ajou.travely.controller.cost.dto.CostResponseDto;
 import com.ajou.travely.controller.schedule.dto.SimpleScheduleResponseDto;
 import com.ajou.travely.controller.travel.dto.*;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
@@ -184,7 +185,8 @@ public class TravelService {
     @Transactional
     public TravelResponseDto getTravelById(Long travelId, Long userId) {
         Travel travel = checkAuthorization(travelId, userId);
-        return new TravelResponseDto(travel, travel.getTravelDates());
+        List<CostResponseDto> costs = getCostsByTravelId(travelId);
+        return new TravelResponseDto(travel, travel.getTravelDates(), costs);
     }
 
     @Transactional
@@ -210,10 +212,9 @@ public class TravelService {
     }
 
     @Transactional(readOnly = true)
-    public List<SimpleCostResponseDto> getCostsByTravelId(Long travelId, Long userId) {
-        checkAuthorization(travelId, userId);
+    public List<CostResponseDto> getCostsByTravelId(Long travelId) {
         List<Cost> costs = costRepository.findCostsByTravelId(travelId);
-        return costs.stream().map(SimpleCostResponseDto::new).collect(Collectors.toList());
+        return costs.stream().map(CostResponseDto::new).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)

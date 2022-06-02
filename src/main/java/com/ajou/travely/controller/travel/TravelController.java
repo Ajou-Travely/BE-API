@@ -196,11 +196,11 @@ public class TravelController {
 
     // Costs
 
-    @GetMapping("/{travelId}/costs")
-    public ResponseEntity<List<SimpleCostResponseDto>> showCostsByTravel(@PathVariable Long travelId,
-                                                                         @LoginUser SessionUser sessionUser) {
-        return ResponseEntity.ok(travelService.getCostsByTravelId(travelId, sessionUser.getUserId()));
-    }
+//    @GetMapping("/{travelId}/costs")
+//    public ResponseEntity<List<CostResponseDto>> showCostsByTravel(@PathVariable Long travelId,
+//                                                                         @LoginUser SessionUser sessionUser) {
+//        return ResponseEntity.ok(travelService.getCostsByTravelId(travelId, sessionUser.getUserId()));
+//    }
 
     @GetMapping("/{travelId}/costs/{costId}")
     public CostResponseDto showCost(@PathVariable Long costId,
