@@ -532,16 +532,16 @@ class TravelServiceTest {
                         .amount(1000L)
                         .build());
 
-        TravelTransactionResponseDto allTravelTransactionsByUserId = travelService.getAllTravelTransactionsByUserId(travel.getId(), u1.getId());
+        TravelTransactionResponseDto allTravelTransactionsByUserId1 = travelService.getAllTravelTransactionsByUserId(travel.getId(), u1.getId());
 
-        assertThat(allTravelTransactionsByUserId.getUsersToSend().stream().map(travelTransactionResponseToSendDto -> {
+        assertThat(allTravelTransactionsByUserId1.getUsersToSend().stream().map(travelTransactionResponseToSendDto -> {
             return travelTransactionResponseToSendDto.getUserToRecieve().getUserId();
         }).collect(Collectors.toList()))
                 .isEqualTo(Arrays.asList(u2.getId(), u3.getId()));
 
-        TravelTransactionResponseDto allTravelTransactionsByUserId1 = travelService.getAllTravelTransactionsByUserId(travel.getId(), u3.getId());
+        TravelTransactionResponseDto allTravelTransactionsByUserId2 = travelService.getAllTravelTransactionsByUserId(travel.getId(), u3.getId());
 
-        assertThat(allTravelTransactionsByUserId1.getUsersToReceive().stream().map(travelTransactionResponseToReceiveDto -> {
+        assertThat(allTravelTransactionsByUserId2.getUsersToReceive().stream().map(travelTransactionResponseToReceiveDto -> {
             return travelTransactionResponseToReceiveDto.getUserToSend().getUserId();
         }).collect(Collectors.toList()))
                 .isEqualTo(Arrays.asList(u1.getId(), u2.getId()));
