@@ -3,21 +3,26 @@ package com.ajou.travely.service;
 import com.ajou.travely.controller.post.dto.PostCreateRequestDto;
 import com.ajou.travely.controller.post.dto.PostResponseDto;
 import com.ajou.travely.controller.post.dto.PostUpdateRequestDto;
+import com.ajou.travely.domain.Friend;
 import com.ajou.travely.domain.Post;
 import com.ajou.travely.domain.Schedule;
 import com.ajou.travely.exception.ErrorCode;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.exception.custom.RecordNotFoundException;
+import com.ajou.travely.repository.FriendRepository;
 import com.ajou.travely.repository.PostRepository;
 import com.ajou.travely.repository.ScheduleRepository;
 import com.ajou.travely.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Hibernate;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Transactional
@@ -29,6 +34,8 @@ public class PostService {
     private final UserRepository userRepository;
 
     private final ScheduleRepository scheduleRepository;
+
+    private final FriendRepository friendRepository;
 
     private final PhotoService photoService;
 
@@ -55,6 +62,14 @@ public class PostService {
     @Transactional(readOnly = true)
     public PostResponseDto getPost(Long postId) {
         return new PostResponseDto(initializePostInfo(postId));
+    }
+
+    public Page<PostResponseDto> getPostsOfFriends(Long userId, Pageable pageable) {
+        List<Long> friendIds = friendRepository
+                .findAllFriendsByFollowee(userId, pageable)
+                .map(Friend::getId)
+                .toList();
+        return postRepository.findAllPostsByUserIds(friendIds, pageable).map(PostResponseDto::new);
     }
 
     public PostResponseDto updatePost(Long postId, PostUpdateRequestDto requestDto) {
