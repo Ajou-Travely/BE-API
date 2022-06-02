@@ -233,14 +233,14 @@ public class TravelController {
 
     // TravelTransaction
 
-    @PostMapping("/{travelId}/travelTransaction")
+    @PostMapping("/{travelId}/transaction")
     public ResponseEntity<TravelTransactionCreateResponseDto> createTravelTransaction(@PathVariable Long travelId,
                                         @LoginUser SessionUser sessionUser,
                                         @Valid @RequestBody TravelTransactionCreateRequestDto travelTransactionCreateRequestDto) {
         return ResponseEntity.ok(this.travelService.createTravelTransaction(travelId, sessionUser.getUserId(), travelTransactionCreateRequestDto));
     }
 
-    @GetMapping("/{travelId}/travelTransaction")
+    @GetMapping("/{travelId}/transaction")
     public ResponseEntity<TravelTransactionResponseDto> getAllTravelTransactionsByUserId(@PathVariable Long travelId,
                                               @LoginUser SessionUser sessionUser) {
         return ResponseEntity.ok(this.travelService.getAllTravelTransactionsByUserId(travelId, sessionUser.getUserId()));

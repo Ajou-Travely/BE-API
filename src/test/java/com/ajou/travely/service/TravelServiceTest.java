@@ -204,72 +204,74 @@ class TravelServiceTest {
         users.forEach(u -> System.out.println(u.toString()));
     }
 
-//    @Test
-//    @DisplayName("여행에 해당하는 지출 내역을 반환한다.")
-//    public void testGetCostsByTravelId() {
-//        List<Long> numbers = new ArrayList<>(Arrays.asList(1L, 2L, 3L, 4L));
-//        List<User> users = new ArrayList<>();
-//        numbers.forEach(number -> users.add(userService.insertUser(
-//                User.builder()
-//                        .userType(UserType.USER)
-//                        .email(String.format("test%d@ajou.ac.kr", number))
-//                        .name(String.format("test%d", number))
-//                        .phoneNumber(String.format("11%d", number))
-//                        .kakaoId(number)
-//                        .build()
-//        )));
-//        TravelCreateRequestDto request = TravelCreateRequestDto
-//                .builder()
-//                .title("첫 여행")
-//                .userEmails(new ArrayList<>())
-//                .startDate(LocalDate.of(2022, 5, 10))
-//                .endDate(LocalDate.of(2022, 5, 15))
-//                .build();
-//        Travel travel = travelService.createTravel(users.get(0).getId(), request);
-//        Long travelId = travel.getId();
-//        for (User user : users) {
-//            travelService.addUserToTravel(travelId, user.getId());
-//        }
-//
-//        Map<Long, Long> amountPerUser1 = new HashMap<>();
-//        amountPerUser1.put(users.get(0).getId(), 1000L);
-//        amountPerUser1.put(users.get(1).getId(), 10000L);
-//        CostCreateRequestDto requestDto1 = CostCreateRequestDto.builder()
-//                .totalAmount(11000L)
-//                .title("TestTitle")
-//                .content("안녕난이거야")
-//                .amountsPerUser(amountPerUser1)
-//                .payerId(users.get(0).getId())
-//                .build();
-//        CostCreateResponseDto createdCost1 = costService.createCost(
-//                requestDto1, travelId
-//        );
-//
-//        Map<Long, Long> amountPerUser2 = new HashMap<>();
-//        amountPerUser2.put(users.get(2).getId(), 10000L);
-//        amountPerUser2.put(users.get(3).getId(), 10000L);
-//        CostCreateRequestDto requestDto2 = CostCreateRequestDto.builder()
-//                .totalAmount(20000L)
-//                .title("SecondTitle")
-//                .content("안녕난그거야")
-//                .amountsPerUser(amountPerUser2)
-//                .payerId(users.get(2).getId())
-//                .build();
-//        CostCreateResponseDto createdCost2 = costService.createCost(
-//                requestDto2, travelId
-//        );
-//        List<SimpleCostResponseDto> costsByTravelId = travelService.getCostsByTravelId(travelId, users.get(0).getId());
-//
-//        assertThat(costsByTravelId).hasSize(2);
-//
-//        assertThat(costsByTravelId.get(0).getTitle()).isEqualTo("TestTitle");
-//        assertThat(costsByTravelId.get(0).getTotalAmount()).isEqualTo(11000L);
+    @Test
+    @DisplayName("여행에 해당하는 지출 내역을 반환한다.")
+    public void testGetCostsByTravelId() {
+        List<Long> numbers = new ArrayList<>(Arrays.asList(1L, 2L, 3L, 4L));
+        List<User> users = new ArrayList<>();
+        numbers.forEach(number -> users.add(userService.insertUser(
+                User.builder()
+                        .userType(UserType.USER)
+                        .email(String.format("test%d@ajou.ac.kr", number))
+                        .name(String.format("test%d", number))
+                        .phoneNumber(String.format("11%d", number))
+                        .kakaoId(number)
+                        .build()
+        )));
+        TravelCreateRequestDto request = TravelCreateRequestDto
+                .builder()
+                .title("첫 여행")
+                .userEmails(new ArrayList<>())
+                .startDate(LocalDate.of(2022, 5, 10))
+                .endDate(LocalDate.of(2022, 5, 15))
+                .build();
+        Travel travel = travelService.createTravel(users.get(0).getId(), request);
+        Long travelId = travel.getId();
+        for (User user : users) {
+            travelService.addUserToTravel(travelId, user.getId());
+        }
+
+        Map<Long, Long> amountPerUser1 = new HashMap<>();
+        amountPerUser1.put(users.get(0).getId(), 1000L);
+        amountPerUser1.put(users.get(1).getId(), 10000L);
+        CostCreateRequestDto requestDto1 = CostCreateRequestDto.builder()
+                .totalAmount(11000L)
+                .title("TestTitle")
+                .content("안녕난이거야")
+                .amountsPerUser(amountPerUser1)
+                .payerId(users.get(0).getId())
+                .build();
+        CostCreateResponseDto createdCost1 = costService.createCost(
+                requestDto1, travelId
+        );
+
+        Map<Long, Long> amountPerUser2 = new HashMap<>();
+        amountPerUser2.put(users.get(2).getId(), 10000L);
+        amountPerUser2.put(users.get(3).getId(), 10000L);
+        CostCreateRequestDto requestDto2 = CostCreateRequestDto.builder()
+                .totalAmount(20000L)
+                .title("SecondTitle")
+                .content("안녕난그거야")
+                .amountsPerUser(amountPerUser2)
+                .payerId(users.get(2).getId())
+                .build();
+        CostCreateResponseDto createdCost2 = costService.createCost(
+                requestDto2, travelId
+        );
+        List<SimpleCostResponseDto> costsByTravelId = travelService.getCostsByTravelId(travelId, users.get(0).getId());
+
+        assertThat(costsByTravelId).hasSize(2);
+
+        assertThat(costsByTravelId.get(0).getTitle()).isEqualTo("TestTitle");
+        assertThat(costsByTravelId.get(0).getTotalAmount()).isEqualTo(11000L);
 //        assertThat(costsByTravelId.get(0).getUserIds().toArray()).isEqualTo(Arrays.asList(users.get(0).getId(), users.get(1).getId()).toArray());
-//
-//        assertThat(costsByTravelId.get(1).getTitle()).isEqualTo("SecondTitle");
-//        assertThat(costsByTravelId.get(1).getTotalAmount()).isEqualTo(20000L);
+        assertThat(costsByTravelId.get(0).getUserIds().toArray()).containsAll(Arrays.asList(Arrays.asList(users.get(0).getId(), users.get(1).getId()).toArray()));
+
+        assertThat(costsByTravelId.get(1).getTitle()).isEqualTo("SecondTitle");
+        assertThat(costsByTravelId.get(1).getTotalAmount()).isEqualTo(20000L);
 //        assertThat(costsByTravelId.get(1).getUserIds().toArray()).isEqualTo(Arrays.asList(users.get(2).getId(), users.get(3).getId()).toArray());
-//    }
+        assertThat(costsByTravelId.get(1).getUserIds().toArray()).containsAll(Arrays.asList(Arrays.asList(users.get(2).getId(), users.get(3).getId()).toArray()));
+    }
 
     @Test
     void testPagination() {
