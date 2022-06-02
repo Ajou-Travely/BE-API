@@ -1,5 +1,6 @@
 package com.ajou.travely.domain;
 
+import com.ajou.travely.domain.cost.Cost;
 import com.ajou.travely.domain.user.User;
 import lombok.Builder;
 import lombok.Getter;

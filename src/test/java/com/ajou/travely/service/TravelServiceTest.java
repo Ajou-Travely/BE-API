@@ -2,15 +2,20 @@ package com.ajou.travely.service;
 
 import com.ajou.travely.controller.cost.dto.CostCreateRequestDto;
 import com.ajou.travely.controller.cost.dto.CostCreateResponseDto;
+import com.ajou.travely.controller.cost.dto.CostResponseDto;
 import com.ajou.travely.controller.travel.dto.*;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.domain.Invitation;
 import com.ajou.travely.domain.UserTravel;
+import com.ajou.travely.domain.cost.TravelTransaction;
 import com.ajou.travely.domain.travel.Travel;
 import com.ajou.travely.domain.travel.TravelType;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.domain.user.UserType;
+import com.ajou.travely.exception.ErrorCode;
+import com.ajou.travely.exception.custom.RecordNotFoundException;
 import com.ajou.travely.repository.InvitationRepository;
+import com.ajou.travely.repository.TravelTransactionRepository;
 import com.ajou.travely.repository.UserTravelRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -25,6 +30,7 @@ import org.springframework.test.annotation.Rollback;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -60,6 +66,9 @@ class TravelServiceTest {
 
     @Autowired
     UserTravelRepository userTravelRepository;
+
+    @Autowired
+    TravelTransactionRepository travelTransactionRepository;
 
     @Value("${domain.base-url}")
     private String baseUrl;
@@ -257,17 +266,17 @@ class TravelServiceTest {
         CostCreateResponseDto createdCost2 = costService.createCost(
                 requestDto2, travelId
         );
-        List<SimpleCostResponseDto> costsByTravelId = travelService.getCostsByTravelId(travelId, users.get(0).getId());
+        List<CostResponseDto> costsByTravelId = travelService.getCostsByTravelId(travelId);
 
         assertThat(costsByTravelId).hasSize(2);
 
         assertThat(costsByTravelId.get(0).getTitle()).isEqualTo("TestTitle");
         assertThat(costsByTravelId.get(0).getTotalAmount()).isEqualTo(11000L);
-        assertThat(costsByTravelId.get(0).getUserIds().toArray()).isEqualTo(Arrays.asList(users.get(0).getId(), users.get(1).getId()).toArray());
+//        assertThat(costsByTravelId.get(0).getUserIds().toArray()).containsAll(Arrays.asList(Arrays.asList(users.get(0).getId(), users.get(1).getId()).toArray()));
 
         assertThat(costsByTravelId.get(1).getTitle()).isEqualTo("SecondTitle");
         assertThat(costsByTravelId.get(1).getTotalAmount()).isEqualTo(20000L);
-        assertThat(costsByTravelId.get(1).getUserIds().toArray()).isEqualTo(Arrays.asList(users.get(2).getId(), users.get(3).getId()).toArray());
+//        assertThat(costsByTravelId.get(1).getUserIds().toArray()).containsAll(Arrays.asList(Arrays.asList(users.get(2).getId(), users.get(3).getId()).toArray()));
     }
 
     @Test
@@ -461,5 +470,157 @@ class TravelServiceTest {
         Optional<Invitation> foundInvitation = invitationRepository.findById(invitation.getId());
 
         Assertions.assertThat(foundInvitation.isEmpty()).isEqualTo(true);
+    }
+
+    @Test
+    @DisplayName("자신이 포함된 정산을 확인할 수 있다.")
+    void testGetAllTravelTransactions() {
+        User u1 = userService.insertUser(
+                User.builder()
+                        .userType(UserType.USER)
+                        .email("u1@ajou.ac.kr")
+                        .name("홍성빈")
+                        .phoneNumber("112")
+                        .kakaoId(0L)
+                        .build()
+        );
+        User u2 = userService.insertUser(
+                User.builder()
+                        .userType(UserType.USER)
+                        .email("u2@ajou.ac.kr")
+                        .name("홍성빈")
+                        .phoneNumber("113")
+                        .kakaoId(1L)
+                        .build()
+        );
+        User u3 = userService.insertUser(
+                User.builder()
+                        .userType(UserType.USER)
+                        .email("u3@ajou.ac.kr")
+                        .name("홍성빈")
+                        .phoneNumber("114")
+                        .kakaoId(2L)
+                        .build()
+        );
+
+        TravelCreateRequestDto request = TravelCreateRequestDto
+                .builder()
+                .title("test")
+                .userEmails(new ArrayList<>())
+                .startDate(LocalDate.of(2022, 5, 10))
+                .endDate(LocalDate.of(2022, 5, 15))
+                .build();
+
+        Travel travel = travelService.createTravel(u1.getId(), request);
+
+        // u1 -> u2
+        // u1 -> u3
+        // u2 -> u3
+
+        TravelTransactionCreateResponseDto travelTransaction1 = travelService.createTravelTransaction(travel.getId(), u1.getId(),
+                TravelTransactionCreateRequestDto.builder()
+                        .senderId(u1.getId())
+                        .receiverId(u2.getId())
+                        .amount(3000L)
+                        .build());
+
+        TravelTransactionCreateResponseDto travelTransaction2 = travelService.createTravelTransaction(travel.getId(), u1.getId(),
+                TravelTransactionCreateRequestDto.builder()
+                        .senderId(u1.getId())
+                        .receiverId(u3.getId())
+                        .amount(2000L)
+                        .build());
+
+        TravelTransactionCreateResponseDto travelTransaction3 = travelService.createTravelTransaction(travel.getId(), u1.getId(),
+                TravelTransactionCreateRequestDto.builder()
+                        .senderId(u2.getId())
+                        .receiverId(u3.getId())
+                        .amount(1000L)
+                        .build());
+
+        TravelTransactionResponseDto allTravelTransactionsByUserId1 = travelService.getAllTravelTransactionsByUserId(travel.getId(), u1.getId());
+
+        assertThat(allTravelTransactionsByUserId1.getUsersToSend().stream().map(travelTransactionResponseToSendDto -> {
+            return travelTransactionResponseToSendDto.getUserToRecieve().getUserId();
+        }).collect(Collectors.toList()))
+                .isEqualTo(Arrays.asList(u2.getId(), u3.getId()));
+
+        TravelTransactionResponseDto allTravelTransactionsByUserId2 = travelService.getAllTravelTransactionsByUserId(travel.getId(), u3.getId());
+
+        assertThat(allTravelTransactionsByUserId2.getUsersToReceive().stream().map(travelTransactionResponseToReceiveDto -> {
+            return travelTransactionResponseToReceiveDto.getUserToSend().getUserId();
+        }).collect(Collectors.toList()))
+                .isEqualTo(Arrays.asList(u1.getId(), u2.getId()));
+    }
+
+    @Test
+    @DisplayName("travelTransaction을 수정/삭제할 수 있다.")
+    void testUpdateTravelTransaction() {
+        User u1 = userService.insertUser(
+                User.builder()
+                        .userType(UserType.USER)
+                        .email("u1@ajou.ac.kr")
+                        .name("홍성빈")
+                        .phoneNumber("112")
+                        .kakaoId(0L)
+                        .build()
+        );
+        User u2 = userService.insertUser(
+                User.builder()
+                        .userType(UserType.USER)
+                        .email("u2@ajou.ac.kr")
+                        .name("홍성빈")
+                        .phoneNumber("113")
+                        .kakaoId(1L)
+                        .build()
+        );
+        User u3 = userService.insertUser(
+                User.builder()
+                        .userType(UserType.USER)
+                        .email("u3@ajou.ac.kr")
+                        .name("홍성빈")
+                        .phoneNumber("114")
+                        .kakaoId(2L)
+                        .build()
+        );
+        TravelCreateRequestDto request = TravelCreateRequestDto
+                .builder()
+                .title("test")
+                .userEmails(new ArrayList<>())
+                .startDate(LocalDate.of(2022, 5, 10))
+                .endDate(LocalDate.of(2022, 5, 15))
+                .build();
+
+        Travel travel = travelService.createTravel(u1.getId(), request);
+
+        TravelTransactionCreateResponseDto travelTransaction = travelService.createTravelTransaction(travel.getId(), u3.getId(),
+                TravelTransactionCreateRequestDto.builder()
+                        .senderId(u1.getId())
+                        .receiverId(u2.getId())
+                        .amount(3000L)
+                        .build());
+        travelService.updateTravelTransaction(travelTransaction.getId(), u1.getId(),
+                TravelTransactionUpdateDto.builder()
+                        .senderId(u2.getId())
+                        .receiverId(u3.getId())
+                        .amount(4000L)
+                        .build()
+        );
+
+        TravelTransaction foundTravelTransaction = travelTransactionRepository.findById(travelTransaction.getId())
+                .orElseThrow(() -> new RecordNotFoundException(
+                        "Not exist",
+                        ErrorCode.TRAVEL_TRANSACTION_NOT_FOUND
+                ));
+        assertThat(foundTravelTransaction.getCreatedBy().getId()).isEqualTo(u1.getId());
+        assertThat(foundTravelTransaction.getSender().getId()).isEqualTo(u2.getId());
+        assertThat(foundTravelTransaction.getReceiver().getId()).isEqualTo(u3.getId());
+        assertThat(foundTravelTransaction.getAmount()).isEqualTo(4000L);
+
+        travelService.deleteTravelTransaction(travelTransaction.getId());
+
+        Optional<TravelTransaction> deletedTravelTransaction = travelTransactionRepository.findById(travelTransaction.getId());
+
+        assertThat(deletedTravelTransaction.isEmpty()).isEqualTo(true);
     }
 }

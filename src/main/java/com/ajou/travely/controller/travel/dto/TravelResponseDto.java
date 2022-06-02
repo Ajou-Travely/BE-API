@@ -1,5 +1,6 @@
 package com.ajou.travely.controller.travel.dto;
 
+import com.ajou.travely.controller.cost.dto.CostResponseDto;
 import com.ajou.travely.controller.schedule.dto.SimpleScheduleResponseDto;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.domain.Schedule;
@@ -23,8 +24,9 @@ public class TravelResponseDto {
     private final TravelType travelType;
     private final List<SimpleUserInfoDto> users;
     private final List<SimpleTravelDateResponseDto> dates;
+    private final List<CostResponseDto> costs;
 
-    public TravelResponseDto(Travel entity, List<TravelDate> dates) {
+    public TravelResponseDto(Travel entity, List<TravelDate> dates, List<CostResponseDto> costs) {
         this.id = entity.getId();
         this.title = entity.getTitle();
         this.memo = entity.getMemo();
@@ -41,5 +43,6 @@ public class TravelResponseDto {
                 .stream()
                 .map(SimpleTravelDateResponseDto::new)
                 .collect(Collectors.toList());
+        this.costs = costs;
     }
 }
