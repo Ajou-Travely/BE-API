@@ -7,6 +7,7 @@ import com.ajou.travely.controller.material.dto.MaterialCreateRequestDto;
 import com.ajou.travely.controller.material.dto.MaterialResponseDto;
 import com.ajou.travely.controller.material.dto.MaterialUpdateRequestDto;
 import com.ajou.travely.controller.travel.dto.TravelCreateRequestDto;
+import com.ajou.travely.controller.travel.dto.TravelResponseDto;
 import com.ajou.travely.domain.Material;
 import com.ajou.travely.domain.travel.Travel;
 import com.ajou.travely.domain.user.User;
@@ -63,11 +64,11 @@ class MaterialServiceTest {
             .endDate(LocalDate.of(2022, 5, 15))
             .build();
 
-        Travel travel = travelService.createTravel(user1.getId(), request);
+        TravelResponseDto responseDto = travelService.createTravel(user1.getId(), request);
 
         // when
         MaterialResponseDto result = materialService.createMaterial(
-            travel.getId(),
+                responseDto.getId(),
             MaterialCreateRequestDto
                 .builder()
                 .userId(user1.getId())
@@ -101,10 +102,10 @@ class MaterialServiceTest {
             .endDate(LocalDate.of(2022, 5, 15))
             .build();
 
-        Travel travel = travelService.createTravel(user.getId(), request);
+        TravelResponseDto responseDto = travelService.createTravel(user.getId(), request);
 
         MaterialResponseDto response = materialService.createMaterial(
-            travel.getId(),
+                responseDto.getId(),
             MaterialCreateRequestDto
                 .builder()
                 .userId(user.getId())
@@ -157,10 +158,10 @@ class MaterialServiceTest {
             .endDate(LocalDate.of(2022, 5, 15))
             .build();
 
-        Travel travel = travelService.createTravel(user.getId(), request);
+        TravelResponseDto responseDto = travelService.createTravel(user.getId(), request);
 
         MaterialResponseDto response = materialService.createMaterial(
-            travel.getId(),
+                responseDto.getId(),
             MaterialCreateRequestDto
                 .builder()
                 .userId(user.getId())
@@ -169,7 +170,7 @@ class MaterialServiceTest {
         Long responseId = response.getId();
 
         // when
-        Long resultId = materialService.deleteMaterial(travel.getId(), response.getId());
+        Long resultId = materialService.deleteMaterial(responseDto.getId(), response.getId());
 
         // then
         assertThat(responseId).isEqualTo(resultId);
