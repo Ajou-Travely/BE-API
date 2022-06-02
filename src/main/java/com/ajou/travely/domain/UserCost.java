@@ -51,4 +51,8 @@ public class UserCost {
         this.amount = amount;
         this.isRequested = isRequested;
     }
+
+    public void isRequested() {
+        this.isRequested = true;
+    }
 }
