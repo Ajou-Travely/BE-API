@@ -1,6 +1,7 @@
 package com.ajou.travely.controller.travel.dto;
 
 import com.ajou.travely.controller.cost.dto.CostResponseDto;
+import com.ajou.travely.controller.material.dto.MaterialResponseDto;
 import com.ajou.travely.controller.schedule.dto.SimpleScheduleResponseDto;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.domain.Schedule;
@@ -25,6 +26,7 @@ public class TravelResponseDto {
     private final List<SimpleUserInfoDto> users;
     private final List<SimpleTravelDateResponseDto> dates;
     private final List<CostResponseDto> costs;
+    private final List<MaterialResponseDto> materials;
 
     public TravelResponseDto(Travel entity, List<TravelDate> dates, List<CostResponseDto> costs) {
         this.id = entity.getId();
@@ -34,15 +36,20 @@ public class TravelResponseDto {
         this.managerId = entity.getManagerId();
         this.travelType = entity.getTravelType();
         this.users = entity
-                .getUserTravels()
-                .stream()
-                .map(UserTravel::getUser)
-                .map(SimpleUserInfoDto::new)
-                .collect(Collectors.toList());
+            .getUserTravels()
+            .stream()
+            .map(UserTravel::getUser)
+            .map(SimpleUserInfoDto::new)
+            .collect(Collectors.toList());
         this.dates = dates
-                .stream()
-                .map(SimpleTravelDateResponseDto::new)
-                .collect(Collectors.toList());
+            .stream()
+            .map(SimpleTravelDateResponseDto::new)
+            .collect(Collectors.toList());
+        this.materials = entity
+            .getMaterials()
+            .stream()
+            .map(MaterialResponseDto::new)
+            .collect(Collectors.toList());
         this.costs = costs;
     }
 }

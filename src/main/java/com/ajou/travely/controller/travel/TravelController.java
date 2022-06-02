@@ -2,6 +2,9 @@ package com.ajou.travely.controller.travel;
 
 import com.ajou.travely.config.auth.LoginUser;
 import com.ajou.travely.config.auth.SessionUser;
+import com.ajou.travely.controller.material.dto.MaterialCreateRequestDto;
+import com.ajou.travely.controller.material.dto.MaterialResponseDto;
+import com.ajou.travely.controller.material.dto.MaterialUpdateRequestDto;
 import com.ajou.travely.controller.cost.dto.*;
 import com.ajou.travely.controller.schedule.dto.ScheduleCreateRequestDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleResponseDto;
@@ -15,6 +18,7 @@ import com.ajou.travely.domain.travel.TravelDate;
 import com.ajou.travely.exception.ErrorCode;
 import com.ajou.travely.exception.custom.KakaoNotAuthenticationExcpetion;
 import com.ajou.travely.service.CostService;
+import com.ajou.travely.service.MaterialService;
 import com.ajou.travely.service.ScheduleService;
 import com.ajou.travely.service.TravelService;
 import com.ajou.travely.service.UserService;
@@ -25,6 +29,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -49,19 +54,22 @@ public class TravelController {
 
     private final UserService userService;
 
+    private final MaterialService materialService;
+
     @GetMapping()
     public ResponseEntity<Page<SimpleTravelResponseDto>> showTravelsByUser(
-            @LoginUser SessionUser sessionUser,
-            @PageableDefault(
-                    sort = "id",
-                    direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<SimpleTravelResponseDto> travels = userService.getTravelsByUser(sessionUser.getUserId(), pageable);
+        @LoginUser SessionUser sessionUser,
+        @PageableDefault(
+            sort = "id",
+            direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<SimpleTravelResponseDto> travels = userService.getTravelsByUser(
+            sessionUser.getUserId(), pageable);
         return ResponseEntity.ok(travels);
     }
 
     @GetMapping("/{travelId}")
     public ResponseEntity<TravelResponseDto> showTravel(@PathVariable Long travelId,
-                                                        @LoginUser SessionUser sessionUser) {
+        @LoginUser SessionUser sessionUser) {
         return ResponseEntity.ok(travelService.getTravelById(travelId, sessionUser.getUserId()));
     }
 
@@ -78,8 +86,8 @@ public class TravelController {
 
     @PatchMapping("/{travelId}")
     public ResponseEntity<Void> updateTravel(@PathVariable Long travelId,
-                                             @LoginUser SessionUser sessionUser,
-                                             @RequestBody TravelUpdateRequestDto requestDto) {
+        @LoginUser SessionUser sessionUser,
+        @RequestBody TravelUpdateRequestDto requestDto) {
         travelService.updateTravel(travelId, sessionUser.getUserId(), requestDto);
         return ResponseEntity.ok().build();
     }
@@ -94,24 +102,24 @@ public class TravelController {
 
     @PostMapping("/{travelId}/invite")
     public ResponseEntity<Void> inviteUserToTravel(@PathVariable Long travelId,
-                                                   @LoginUser SessionUser sessionUser,
-                                                   @RequestBody TravelInviteRequestDto travelInviteRequestDto) {
+        @LoginUser SessionUser sessionUser,
+        @RequestBody TravelInviteRequestDto travelInviteRequestDto) {
         travelService.inviteUserToTravel(travelId, sessionUser.getUserId(), travelInviteRequestDto);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/accept/{code}")
     public void acceptInvitation(
-            @LoginUser SessionUser sessionUser,
-            @PathVariable UUID code,
-            HttpServletResponse response) throws IOException {
+        @LoginUser SessionUser sessionUser,
+        @PathVariable UUID code,
+        HttpServletResponse response) throws IOException {
         String redirectUri = travelService.acceptInvitation(sessionUser.getUserId(), code);
         response.sendRedirect(redirectUri);
     }
 
     @GetMapping("/reject/{code}")
     public ResponseEntity<Void> rejectInvitation(@LoginUser SessionUser sessionUser,
-                                                 @PathVariable UUID code) {
+        @PathVariable UUID code) {
         travelService.rejectInvitation(sessionUser.getUserId(), code);
         return ResponseEntity.ok().build();
     }
@@ -203,13 +211,14 @@ public class TravelController {
 
     @GetMapping("/{travelId}/costs/{costId}")
     public CostResponseDto showCost(@PathVariable Long costId,
-                                    @PathVariable Long travelId) {
+        @PathVariable Long travelId) {
         return this.costService.getCostById(costId);
     }
 
     @PostMapping("/{travelId}/costs")
-    public CostCreateResponseDto createCost(@Valid @RequestBody CostCreateRequestDto costCreateRequestDto,
-                                            @PathVariable Long travelId) {
+    public CostCreateResponseDto createCost(
+        @Valid @RequestBody CostCreateRequestDto costCreateRequestDto,
+        @PathVariable Long travelId) {
         return costService.createCost(
             costCreateRequestDto, travelId
         );
@@ -236,9 +245,45 @@ public class TravelController {
 
     @DeleteMapping("/{travelId}/costs/{costId}")
     public ResponseEntity<Void> deleteCost(@PathVariable Long travelId,
-                                           @PathVariable Long costId) {
+        @PathVariable Long costId) {
         this.costService.deleteCostById(costId);
         return ResponseEntity.ok().build();
+    }
+
+    // TODO 준비물: checked, title, 한 명 지정
+
+    @GetMapping("/{travelId}/materials")
+    public ResponseEntity<List<MaterialResponseDto>> getMaterials(@PathVariable Long travelId) {
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{travelId}/materials")
+    public ResponseEntity<MaterialResponseDto> createMaterial(
+        @PathVariable Long travelId,
+        @RequestBody MaterialCreateRequestDto requestDto
+    ) {
+        MaterialResponseDto responseDto = materialService.createMaterial(travelId, requestDto);
+        return ResponseEntity.ok(responseDto);
+    }
+
+    @PutMapping("/{travelId}/materials/{materialId}")
+    public ResponseEntity<MaterialResponseDto> updateMaterial(
+        @PathVariable Long travelId,
+        @PathVariable Long materialId,
+        @RequestBody MaterialUpdateRequestDto requestDto
+    ) {
+        MaterialResponseDto responseDto = materialService.updateMaterial(materialId, requestDto);
+        return ResponseEntity.ok(responseDto);
+    }
+
+    @DeleteMapping("/{travelId}/materials/{materialId}")
+    public ResponseEntity<Long> deleteMaterial(
+        @PathVariable Long travelId,
+        @PathVariable Long materialId
+    ) {
+        materialService.deleteMaterial(travelId, materialId);
+        return ResponseEntity.ok(materialId);
     }
 
     // TravelTransaction
