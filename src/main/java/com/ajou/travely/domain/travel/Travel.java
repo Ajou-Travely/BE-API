@@ -1,7 +1,7 @@
 package com.ajou.travely.domain.travel;
 
 import com.ajou.travely.controller.travel.dto.TravelUpdateRequestDto;
-import com.ajou.travely.converter.OrderConverter;
+import com.ajou.travely.domain.Material;
 import com.ajou.travely.domain.UserTravel;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,10 +10,8 @@ import lombok.NonNull;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Getter
 @NoArgsConstructor
@@ -41,7 +39,10 @@ public class Travel {
     private final List<UserTravel> userTravels = new ArrayList<>();
 
     @OneToMany(mappedBy = "travel")
-    private List<TravelDate> travelDates = new ArrayList<>();
+    private final List<TravelDate> travelDates = new ArrayList<>();
+
+    @OneToMany(mappedBy = "travel")
+    private final List<Material> materials = new ArrayList<>();
 
     @Builder
     public Travel(@NonNull String title,
