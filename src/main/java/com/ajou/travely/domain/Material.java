@@ -37,16 +37,20 @@ public class Material {
 
     private String material;
 
+    private Boolean checked;
+
     @Builder
-    public Material(Travel travel, User user, String material) {
+    public Material(Travel travel, User user, String material, Boolean checked) {
         this.travel = travel;
         this.user = user;
         this.material = material;
+        this.checked = checked;
     }
 
-    public void updateMaterial(User user, String material) {
+    public void updateMaterial(User user, String material, Boolean checked) {
         this.user = user == null ? this.user : user;
         this.material = material == null ? this.material : material;
+        this.checked = checked;
     }
 
 }

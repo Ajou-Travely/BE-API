@@ -6,12 +6,12 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Getter
-public class MaterialCreateOrUpdateRequestDto {
+public class MaterialCreateRequestDto {
     private Long userId;
     private String material;
 
     @Builder
-    public MaterialCreateOrUpdateRequestDto(Long userId, String material) {
+    public MaterialCreateRequestDto(Long userId, String material) {
         this.userId = userId;
         this.material = material;
     }

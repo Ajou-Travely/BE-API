@@ -1,7 +1,8 @@
 package com.ajou.travely.service;
 
-import com.ajou.travely.controller.material.dto.MaterialCreateOrUpdateRequestDto;
+import com.ajou.travely.controller.material.dto.MaterialCreateRequestDto;
 import com.ajou.travely.controller.material.dto.MaterialResponseDto;
+import com.ajou.travely.controller.material.dto.MaterialUpdateRequestDto;
 import com.ajou.travely.domain.Material;
 import com.ajou.travely.domain.travel.Travel;
 import com.ajou.travely.domain.user.User;
@@ -26,7 +27,7 @@ public class MaterialService {
 
     private final MaterialRepository materialRepository;
 
-    public MaterialResponseDto createMaterial(Long travelId, MaterialCreateOrUpdateRequestDto requestDto) {
+    public MaterialResponseDto createMaterial(Long travelId, MaterialCreateRequestDto requestDto) {
         Travel travel = checkTravelRecord(travelId);
         User user = requestDto.getUserId() == null
             ? null
@@ -41,12 +42,12 @@ public class MaterialService {
         return new MaterialResponseDto(material);
     }
 
-    public MaterialResponseDto updateMaterial(Long materialId, MaterialCreateOrUpdateRequestDto requestDto) {
+    public MaterialResponseDto updateMaterial(Long materialId, MaterialUpdateRequestDto requestDto) {
         Material material = checkMaterialRecord(materialId);
         User user = requestDto.getUserId() == null
             ? null
             : checkUserRecord(requestDto.getUserId());
-        material.updateMaterial(user, requestDto.getMaterial());
+        material.updateMaterial(user, requestDto.getMaterial(), requestDto.getChecked());
         return new MaterialResponseDto(material);
     }
 
