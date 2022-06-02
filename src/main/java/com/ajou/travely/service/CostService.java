@@ -145,5 +145,6 @@ public class CostService {
                  user.getName() + " 님으로 부터\n" +
                  userCost.getAmount() + "원 정산이 요청되었습니다!";
         kakaoApiService.sendTextMessage(requestDto.getReceiverUuids(), msg, sessionUser.getAccessToken());
+        userCost.isRequested();
     }
 }
