@@ -192,4 +192,10 @@ public class TravelController {
         this.costService.deleteCostById(costId);
         return ResponseEntity.ok().build();
     }
+
+    // TODO 준비물: checked, title, 한 명 지정
+
+    @GetMapping("/{travelId}/materials")
+    public ResponseEntity<List<MaterialResponseDto>> getMaterials(@PathVariable Long travelId,
+                                                                  @)
 }
