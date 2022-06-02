@@ -196,11 +196,11 @@ public class TravelController {
 
     // Costs
 
-    @GetMapping("/{travelId}/costs")
-    public ResponseEntity<List<SimpleCostResponseDto>> showCostsByTravel(@PathVariable Long travelId,
-                                                                         @LoginUser SessionUser sessionUser) {
-        return ResponseEntity.ok(travelService.getCostsByTravelId(travelId, sessionUser.getUserId()));
-    }
+//    @GetMapping("/{travelId}/costs")
+//    public ResponseEntity<List<CostResponseDto>> showCostsByTravel(@PathVariable Long travelId,
+//                                                                         @LoginUser SessionUser sessionUser) {
+//        return ResponseEntity.ok(travelService.getCostsByTravelId(travelId, sessionUser.getUserId()));
+//    }
 
     @GetMapping("/{travelId}/costs/{costId}")
     public CostResponseDto showCost(@PathVariable Long costId,
@@ -247,12 +247,18 @@ public class TravelController {
     }
 
     @PutMapping("/{travelId}/travelTransaction/{travelTransactionId}")
-    public void updateTravelTransaction() {
-
+    public ResponseEntity<Void> updateTravelTransaction(@PathVariable Long travelId,
+                                                        @PathVariable Long travelTransactionId,
+                                                        @LoginUser SessionUser sessionUser,
+                                                        @RequestBody TravelTransactionUpdateDto travelTransactionUpdateDto) {
+        this.travelService.updateTravelTransaction(travelTransactionId, sessionUser.getUserId(), travelTransactionUpdateDto);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{travelId}/travelTransaction/{travelTransactionId")
-    public void deleteTravelTransaction() {
-
+    public ResponseEntity<Void> deleteTravelTransaction(@PathVariable Long travelId,
+                                                        @PathVariable Long travelTransactionId) {
+        this.travelService.deleteTravelTransaction(travelTransactionId);
+        return ResponseEntity.ok().build();
     }
 }

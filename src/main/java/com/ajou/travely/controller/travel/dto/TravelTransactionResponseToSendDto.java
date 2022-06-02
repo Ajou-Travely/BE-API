@@ -6,11 +6,13 @@ import lombok.Getter;
 
 @Getter
 public class TravelTransactionResponseToSendDto {
+    private Long travelTransactionId;
     private SimpleUserInfoDto userToRecieve;
     private Long amount;
 
     @Builder
-    public TravelTransactionResponseToSendDto(SimpleUserInfoDto userToRecieve, Long amount) {
+    public TravelTransactionResponseToSendDto(Long travelTransactionId, SimpleUserInfoDto userToRecieve, Long amount) {
+        this.travelTransactionId = travelTransactionId;
         this.userToRecieve = userToRecieve;
         this.amount = amount;
     }
