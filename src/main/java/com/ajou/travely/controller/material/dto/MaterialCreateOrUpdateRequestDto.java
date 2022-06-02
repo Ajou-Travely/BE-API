@@ -1,12 +1,14 @@
-package com.ajou.travely.material.dto;
+package com.ajou.travely.controller.material.dto;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 @Getter
 public class MaterialCreateOrUpdateRequestDto {
-    private final Long userId;
-    private final String material;
+    private Long userId;
+    private String material;
 
     @Builder
     public MaterialCreateOrUpdateRequestDto(Long userId, String material) {

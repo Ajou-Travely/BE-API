@@ -36,6 +36,9 @@ public class Material {
         this.material = material;
     }
 
-    public void updateMaterial()
+    public void updateMaterial(User user, String material) {
+        this.user = user == null ? this.user : user;
+        this.material = material == null ? this.material : material;
+    }
 
 }

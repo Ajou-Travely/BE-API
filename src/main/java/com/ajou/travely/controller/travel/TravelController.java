@@ -6,6 +6,7 @@ import com.ajou.travely.controller.cost.dto.CostCreateRequestDto;
 import com.ajou.travely.controller.cost.dto.CostCreateResponseDto;
 import com.ajou.travely.controller.cost.dto.CostResponseDto;
 import com.ajou.travely.controller.cost.dto.CostUpdateDto;
+import com.ajou.travely.controller.material.dto.MaterialResponseDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleCreateRequestDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleResponseDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleUpdateRequestDto;
@@ -196,6 +197,7 @@ public class TravelController {
     // TODO 준비물: checked, title, 한 명 지정
 
     @GetMapping("/{travelId}/materials")
-    public ResponseEntity<List<MaterialResponseDto>> getMaterials(@PathVariable Long travelId,
-                                                                  @)
+    public ResponseEntity<List<MaterialResponseDto>> getMaterials(@PathVariable Long travelId) {
+
+    }
 }
