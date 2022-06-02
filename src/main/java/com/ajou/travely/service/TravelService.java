@@ -5,10 +5,11 @@ import com.ajou.travely.controller.schedule.dto.SimpleScheduleResponseDto;
 import com.ajou.travely.controller.travel.dto.*;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.controller.user.dto.UserResponseDto;
-import com.ajou.travely.domain.Cost;
+import com.ajou.travely.domain.cost.Cost;
 import com.ajou.travely.domain.Invitation;
 import com.ajou.travely.domain.Schedule;
 import com.ajou.travely.domain.UserTravel;
+import com.ajou.travely.domain.cost.TravelTransaction;
 import com.ajou.travely.domain.travel.Travel;
 import com.ajou.travely.domain.travel.TravelDate;
 import com.ajou.travely.exception.ErrorCode;
@@ -42,6 +43,8 @@ public class TravelService {
     private final InvitationRepository invitationRepository;
 
     private final TravelDateRepository travelDateRepository;
+
+    private final TravelTransactionRepository travelTransactionRepository;
 
     private final CustomMailSender customMailSender;
 
@@ -292,6 +295,53 @@ public class TravelService {
         travelDateRepository.delete(checkTravelDateRecord(travelId, date));
     }
 
+    // TravelTransaction
+
+    public TravelTransactionCreateResponseDto createTravelTransaction(Long travelId,
+                                                                      Long userId,
+                                                                      TravelTransactionCreateRequestDto travelTransactionCreateRequestDto) {
+        Travel travel = checkTravelRecord(travelId);
+        User createdBy = checkUserRecord(userId);
+        User sender = checkUserRecord(travelTransactionCreateRequestDto.getSenderId());
+        User receiver = checkUserRecord(travelTransactionCreateRequestDto.getReceiverId());
+
+        TravelTransaction travelTransaction = travelTransactionRepository.save(
+                TravelTransaction.builder()
+                        .travel(travel)
+                        .sender(sender)
+                        .receiver(receiver)
+                        .createdBy(createdBy)
+                        .build()
+        );
+
+        return new TravelTransactionCreateResponseDto(travelTransaction);
+    }
+
+    public TravelTransactionResponseDto getAllTravelTransactionsByUserId(Long travelId,
+                                                                        Long userId) {
+        List<TravelTransaction> bySenderId = travelTransactionRepository.findBySenderId(userId);
+        List<TravelTransaction> byReceiverId = travelTransactionRepository.findByReceiverId(userId);
+
+        List<TravelTransactionResponseToSendDto> userInfoAndAmountToSend = new ArrayList<>();
+        List<TravelTransactionResponseToReceiveDto> userInfoAndAmountToReceive = new ArrayList<>();
+
+        for (TravelTransaction travelTransaction : bySenderId) {
+            userInfoAndAmountToSend.add(TravelTransactionResponseToSendDto.builder()
+                    .userToRecieve(new SimpleUserInfoDto(travelTransaction.getReceiver()))
+                    .amount(travelTransaction.getAmount())
+                    .build());
+        }
+
+        for (TravelTransaction travelTransaction : byReceiverId) {
+            userInfoAndAmountToReceive.add(TravelTransactionResponseToReceiveDto.builder()
+                    .userToSend(new SimpleUserInfoDto(travelTransaction.getSender()))
+                    .amount(travelTransaction.getAmount())
+                    .build());
+        }
+
+        return new TravelTransactionResponseDto(userInfoAndAmountToSend, userInfoAndAmountToReceive);
+    }
+
     private Travel checkTravelRecord(Long travelId) {
         return checkRecord(
                 travelRepository.findById(travelId),
@@ -347,5 +397,4 @@ public class TravelService {
             day += 1;
         }
     }
-
 }

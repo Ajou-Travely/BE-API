@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.web.multipart.MultipartFile;
@@ -189,7 +188,7 @@ public class TravelController {
 
     @PostMapping("/{travelId}/change")
     public ResponseEntity<Void> changeScheduleOrder(@PathVariable Long travelId,
-                                                    @RequestParam("date") LocalDate date,
+                                                    @RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
                                                     @RequestBody ScheduleOrderUpdateRequestDto requestDto) {
         travelService.changeScheduleOrder(travelId, date, requestDto);
         return ResponseEntity.ok().build();
@@ -232,4 +231,28 @@ public class TravelController {
         return ResponseEntity.ok().build();
     }
 
+    // TravelTransaction
+
+    @PostMapping("/{travelId}/transaction")
+    public ResponseEntity<TravelTransactionCreateResponseDto> createTravelTransaction(@PathVariable Long travelId,
+                                        @LoginUser SessionUser sessionUser,
+                                        @Valid @RequestBody TravelTransactionCreateRequestDto travelTransactionCreateRequestDto) {
+        return ResponseEntity.ok(this.travelService.createTravelTransaction(travelId, sessionUser.getUserId(), travelTransactionCreateRequestDto));
+    }
+
+    @GetMapping("/{travelId}/transaction")
+    public ResponseEntity<TravelTransactionResponseDto> getAllTravelTransactionsByUserId(@PathVariable Long travelId,
+                                              @LoginUser SessionUser sessionUser) {
+        return ResponseEntity.ok(this.travelService.getAllTravelTransactionsByUserId(travelId, sessionUser.getUserId()));
+    }
+
+    @PutMapping("/{travelId}/travelTransaction/{travelTransactionId}")
+    public void updateTravelTransaction() {
+
+    }
+
+    @DeleteMapping("/{travelId}/travelTransaction/{travelTransactionId")
+    public void deleteTravelTransaction() {
+
+    }
 }
