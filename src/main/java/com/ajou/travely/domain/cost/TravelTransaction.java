@@ -45,4 +45,14 @@ public class TravelTransaction {
         this.createdBy = createdBy;
         this.amount = amount;
     }
+
+    public void updateTravelTransaction(User sender,
+                                   User receiver,
+                                   User createdBy,
+                                   Long amount) {
+        this.sender = sender;
+        this.receiver = receiver;
+        this.createdBy = createdBy;
+        this.amount = amount;
+    }
 }

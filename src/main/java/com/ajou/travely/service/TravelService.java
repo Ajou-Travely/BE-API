@@ -295,7 +295,7 @@ public class TravelService {
     }
 
     // TravelTransaction
-
+    @Transactional
     public TravelTransactionCreateResponseDto createTravelTransaction(Long travelId,
                                                                       Long userId,
                                                                       TravelTransactionCreateRequestDto travelTransactionCreateRequestDto) {
@@ -316,6 +316,7 @@ public class TravelService {
         return new TravelTransactionCreateResponseDto(travelTransaction);
     }
 
+    @Transactional(readOnly = true)
     public TravelTransactionResponseDto getAllTravelTransactionsByUserId(Long travelId,
                                                                         Long userId) {
         List<TravelTransaction> bySenderId = travelTransactionRepository.findBySenderId(userId);
@@ -339,6 +340,22 @@ public class TravelService {
         }
 
         return new TravelTransactionResponseDto(userInfoAndAmountToSend, userInfoAndAmountToReceive);
+    }
+
+    @Transactional
+    public void updateTravelTransaction(Long travelId, Long travelTransactionId, Long userId, TravelTransactionUpdateDto travelTransactionUpdateDto) {
+        TravelTransaction travelTransaction = checkTravelTransactionRecord(travelTransactionId);
+        travelTransaction.updateTravelTransaction(
+                checkUserRecord(travelTransactionUpdateDto.getSenderId()),
+                checkUserRecord(travelTransactionUpdateDto.getReceiverId()),
+                checkUserRecord(userId),
+                travelTransactionUpdateDto.getAmount()
+        );
+    }
+
+    @Transactional
+    public void deleteTravelTransaction(Long travelTransactionId) {
+        travelTransactionRepository.delete(checkTravelTransactionRecord(travelTransactionId));
     }
 
     private Travel checkTravelRecord(Long travelId) {
@@ -370,6 +387,14 @@ public class TravelService {
                 travelDateRepository.findTravelDateByDateAndTravelId(date, travelId),
                 "해당 여행과 날짜에 해당하는 TravelDate가 존재하지 않습니다.",
                 ErrorCode.TRAVEL_DATE_NOT_FOUND
+        );
+    }
+
+    private TravelTransaction checkTravelTransactionRecord(Long travelTransactionId) {
+        return checkRecord(
+                travelTransactionRepository.findById(travelTransactionId),
+                "해당 ID의 Transaction을 찾을 수 없습니다.",
+                ErrorCode.TRAVEL_TRANSACTION_NOT_FOUND
         );
     }
 

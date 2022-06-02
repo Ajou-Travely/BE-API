@@ -247,12 +247,18 @@ public class TravelController {
     }
 
     @PutMapping("/{travelId}/travelTransaction/{travelTransactionId}")
-    public void updateTravelTransaction() {
-
+    public ResponseEntity<Void> updateTravelTransaction(@PathVariable Long travelId,
+                                                        @PathVariable Long travelTransactionId,
+                                                        @LoginUser SessionUser sessionUser,
+                                                        @RequestBody TravelTransactionUpdateDto travelTransactionUpdateDto) {
+        this.travelService.updateTravelTransaction(travelId, travelTransactionId, sessionUser.getUserId(), travelTransactionUpdateDto);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{travelId}/travelTransaction/{travelTransactionId")
-    public void deleteTravelTransaction() {
-
+    public ResponseEntity<Void> deleteTravelTransaction(@PathVariable Long travelId,
+                                                        @PathVariable Long travelTransactionId) {
+        this.travelService.deleteTravelTransaction(travelTransactionId);
+        return ResponseEntity.ok().build();
     }
 }
