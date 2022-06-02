@@ -1,4 +1,4 @@
-package com.ajou.travely.domain;
+package com.ajou.travely.domain.kakao;
 
 public class KakaoMessageResponse {
     private final String[] successful_receiver_uuids;

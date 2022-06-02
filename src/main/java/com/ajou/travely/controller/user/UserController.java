@@ -8,7 +8,11 @@ import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.controller.user.dto.UserCreateRequestDto;
 import com.ajou.travely.controller.user.dto.UserResponseDto;
 import com.ajou.travely.controller.user.dto.UserUpdateRequestDto;
+import com.ajou.travely.domain.kakao.KakaoFriendsResponse;
 import com.ajou.travely.domain.user.User;
+import com.ajou.travely.exception.ErrorCode;
+import com.ajou.travely.exception.custom.KakaoNotAuthenticationExcpetion;
+import com.ajou.travely.service.KakaoApiService;
 import com.ajou.travely.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RequestMapping("/v1/users")
@@ -29,6 +34,8 @@ import java.util.stream.Collectors;
 public class UserController {
 
     private final UserService userService;
+
+    private final KakaoApiService kakaoApiService;
 
     @GetMapping("")
     public List<UserResponseDto> getAllUsers() {
@@ -114,5 +121,13 @@ public class UserController {
                                                     @LoginUser SessionUser sessionUser) {
         userService.cancelRequest(sessionUser.getUserId(), targetId);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/kakao/friends")
+    public ResponseEntity<KakaoFriendsResponse> getKakaoFriends(@LoginUser SessionUser sessionUser) {
+        if (Objects.nonNull(sessionUser.getAccessToken())) {
+            throw new KakaoNotAuthenticationExcpetion("카카오 계정 인증이 필요합니다.", ErrorCode.KAKAO_NOT_AUTHENTICATION);
+        }
+        return ResponseEntity.ok(kakaoApiService.getKakaoFriends(sessionUser.getAccessToken()));
     }
 }

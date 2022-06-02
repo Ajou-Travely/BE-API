@@ -1,4 +1,4 @@
-package com.ajou.travely.domain;
+package com.ajou.travely.domain.kakao;
 
 import lombok.Builder;
 
