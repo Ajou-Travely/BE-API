@@ -20,6 +20,11 @@ public class NoticeController {
     @PostMapping(value = "", consumes = "multipart/form-data")
     public ResponseEntity<NoticeResponseDto> createNotice(@LoginUser SessionUser sessionUser,
                                                           @Valid @RequestPart NoticeCreateRequestDto requestDto) {
-        return ResponseEntity.ok(this.noticeService.createNotice(sessionUser.getUserId(), requestDto));
+        return ResponseEntity.ok(noticeService.createNotice(sessionUser.getUserId(), requestDto));
+    }
+
+    @GetMapping("/{noticeId}")
+    public ResponseEntity<NoticeResponseDto> getNotice(@PathVariable Long noticeId) {
+        return ResponseEntity.ok(noticeService.getNotice(noticeId));
     }
 }

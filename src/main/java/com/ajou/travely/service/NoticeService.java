@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Transactional
@@ -29,6 +30,7 @@ public class NoticeService {
 
     private final UserRepository userRepository;
 
+    @Transactional
     public NoticeResponseDto createNotice(Long authorId, NoticeCreateRequestDto requestDto) {
         User author = userRepository.findById(authorId)
                 .orElseThrow(() -> new RecordNotFoundException(
@@ -46,5 +48,14 @@ public class NoticeService {
             photos = photoService.createPhotosOfNotice(notice, requestDto.getPhotos());
         }
         return new NoticeResponseDto(notice);
+    }
+
+    @Transactional(readOnly = true)
+    public NoticeResponseDto getNotice(Long noticeId) {
+        return new NoticeResponseDto(noticeRepository.findById(noticeId)
+                .orElseThrow(() -> new RecordNotFoundException(
+                        "해당 ID를 가진 사용자를 찾을 수 없습니다.",
+                        ErrorCode.USER_NOT_FOUND
+                )));
     }
 }
