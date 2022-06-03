@@ -27,4 +27,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Page<Travel> findTravelsByUserId(@Param("userId") Long userId, Pageable pageable);
 
     Optional<User> findByEmail(String email);
+
+    Page<User> findAll(Pageable pageable);
 }
