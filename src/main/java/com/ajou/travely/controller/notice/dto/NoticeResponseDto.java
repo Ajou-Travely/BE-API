@@ -27,9 +27,13 @@ public class NoticeResponseDto {
         this.content = entity.getContent();
         this.authorInfo = new SimpleUserInfoDto(entity.getAuthor());
         this.createdAt = entity.getCreatedAt();
-        this.photoInfos = entity.getPhotos()
-                .stream()
-                .map(SimplePhotoResponseDto::new)
-                .collect(Collectors.toList());
+        if (entity.getPhotos() == null) {
+            this.photoInfos = new ArrayList<>();
+        } else {
+            this.photoInfos = entity.getPhotos()
+                    .stream()
+                    .map(SimplePhotoResponseDto::new)
+                    .collect(Collectors.toList());
+        }
     }
 }

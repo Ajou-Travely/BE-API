@@ -46,9 +46,8 @@ public class NoticeService {
                 .author(author)
                 .createdAt(LocalDateTime.now())
                 .build());
-        List<Photo> photos = new ArrayList<>();
-        if (!requestDto.getPhotos().isEmpty()) {
-            photos = photoService.createPhotosOfNotice(notice, requestDto.getPhotos());
+        if (requestDto.getPhotos().size() > 0) {
+            photoService.createPhotosOfNotice(notice, requestDto.getPhotos());
         }
         return new NoticeResponseDto(notice);
     }

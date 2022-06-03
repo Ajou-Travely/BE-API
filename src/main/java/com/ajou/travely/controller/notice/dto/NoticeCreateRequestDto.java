@@ -23,4 +23,8 @@ public class NoticeCreateRequestDto {
         this.content = content;
         this.photos = photos;
     }
+
+    public void setEmptyList() {
+        this.photos = new ArrayList<>();
+    }
 }

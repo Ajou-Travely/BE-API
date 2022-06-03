@@ -13,8 +13,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.Optional;
 
 @RequestMapping("v1/notices")
 @RequiredArgsConstructor
@@ -24,7 +27,11 @@ public class NoticeController {
 
     @PostMapping(value = "", consumes = "multipart/form-data")
     public ResponseEntity<NoticeResponseDto> createNotice(@LoginUser SessionUser sessionUser,
-                                                          @Valid @RequestPart NoticeCreateRequestDto requestDto) {
+                                                          @Valid @ModelAttribute NoticeCreateRequestDto requestDto) {
+        Optional<List<MultipartFile>> photos = Optional.ofNullable(requestDto.getPhotos());
+        if (photos.isEmpty()) {
+            requestDto.setEmptyList();
+        }
         return ResponseEntity.ok(noticeService.createNotice(sessionUser.getUserId(), requestDto));
     }
 
