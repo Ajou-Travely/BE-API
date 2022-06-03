@@ -72,7 +72,7 @@ cloud:
     s3:
       bucket: ${AWS_S3_BUCKET:test}
     region:
-      static: us-east-2
+      static: ap-northeast-2
     stack:
       auto: false
 
