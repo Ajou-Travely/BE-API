@@ -32,4 +32,11 @@ public class Photo {
         this.name = name;
         post.getPhotos().add(this);
     }
+
+    @Builder
+    public Photo(@NonNull Notice notice, @NonNull String name) {
+        this.notice = notice;
+        this.name = name;
+        notice.getPhotos().add(this);
+    }
 }
