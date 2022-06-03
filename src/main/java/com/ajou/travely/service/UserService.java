@@ -53,6 +53,10 @@ public class UserService {
         return userRepository.findAll();
     }
 
+    public Page<UserResponseDto> getAllUsers(Pageable pageable) {
+        return userRepository.findAll(pageable).map(UserResponseDto::new);
+    }
+
     public User findUserById(Long userId) {
         return checkUserRecord(userId);
     }
