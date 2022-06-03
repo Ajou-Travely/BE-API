@@ -20,6 +20,10 @@ public class Photo {
     @JoinColumn(name = "post_id")
     private Post post;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "notice_id")
+    private Notice notice;
+
     private String name;
 
     @Builder
