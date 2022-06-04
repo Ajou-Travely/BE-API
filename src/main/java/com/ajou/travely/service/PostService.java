@@ -128,8 +128,8 @@ public class PostService {
     private Schedule findScheduleById(Long scheduleId) {
         return scheduleRepository.findById(scheduleId)
             .orElseThrow(() -> new RecordNotFoundException(
-                    "해당 ID의 User가 존재하지 않습니다. id=" + scheduleId
-                    , ErrorCode.USER_NOT_FOUND
+                    "해당 ID의 Schedule이 존재하지 않습니다. id=" + scheduleId
+                    , ErrorCode.SCHEDULE_NOT_FOUND
             ));
     }
 
