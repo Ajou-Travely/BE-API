@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,5 +22,10 @@ public class PostAdminController {
     @GetMapping()
     public ResponseEntity<Page<PostResponseDto>> showAllPosts(@PageableDefault Pageable pageable) {
         return ResponseEntity.ok(postService.getAllPosts(pageable));
+    }
+
+    @GetMapping("/{postId}")
+    public ResponseEntity<PostResponseDto> showPost(@PathVariable Long postId) {
+        return ResponseEntity.ok(postService.getPost(postId));
     }
 }

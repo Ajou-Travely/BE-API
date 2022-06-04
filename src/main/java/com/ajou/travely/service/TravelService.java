@@ -285,7 +285,7 @@ public class TravelService {
 
     private Travel checkAuthorization(Long travelId, Long userId) {
         Travel travel = checkTravelRecord(travelId);
-        if (travel.getTravelType().equals(TravelType.PRIVATE)
+        if (travel.getTravelType().equals(TravelType.PRIVATE) && userId != -1
                 && !getUsersOfTravel(travelId).stream().map(User::getId).collect(Collectors.toList()).contains(userId)) {
             throw new UnauthorizedException("해당 Travel에 대해 접근 권한이 없습니다.", ErrorCode.UNAUTHORIZED_TRAVEL);
         }
