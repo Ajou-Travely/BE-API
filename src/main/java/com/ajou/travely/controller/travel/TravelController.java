@@ -137,6 +137,14 @@ public class TravelController {
         return ResponseEntity.ok(travelService.updateTravelDates(sessionUser.getUserId(), travelId, requestDto));
     }
 
+    @PatchMapping("/{travelId}/dates")
+    public ResponseEntity<TravelDateResponseDto> updateTravelDateTitle(@PathVariable Long travelId,
+                                                      @RequestBody TravelDateTitleUpdateRequestDto requestDto,
+                                                      @LoginUser SessionUser sessionUser) {
+
+        return ResponseEntity.ok(travelService.updateTravelDateTitle(sessionUser.getUserId(), travelId, requestDto));
+    }
+
     // Schedules
 
     @GetMapping("/{travelId}/schedules/{scheduleId}")
