@@ -1,9 +1,12 @@
 package com.ajou.travely.service;
 
+import com.ajou.travely.domain.Event;
+import com.ajou.travely.domain.Notice;
 import com.ajou.travely.domain.Photo;
 import com.ajou.travely.domain.Post;
 import com.ajou.travely.repository.PhotoRepository;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -56,4 +59,36 @@ public class PhotoService {
         removePhotos(validPhotos);
     }
 
+    // notice
+
+    public List<Photo> createPhotosOfNotice(Notice notice, List<MultipartFile> photos) {
+        return photoRepository.saveAll(
+                s3Service.uploadFiles(photos)
+                        .stream()
+                        .map(photoName -> new Photo(notice, photoName))
+                        .collect(Collectors.toList())
+        );
+    }
+
+    // event
+
+    public List<Photo> createPhotosOfEvent(Event event, List<MultipartFile> photos) {
+        return photoRepository.saveAll(
+                s3Service.uploadFiles(photos)
+                        .stream()
+                        .map(photoName -> new Photo(event, photoName))
+                        .collect(Collectors.toList())
+        );
+    }
+
+    // for Refactor
+
+    public <T> void createPhotosOfSomething(T record, List<MultipartFile> photos) {
+        photoRepository.saveAll(
+                s3Service.uploadFiles(photos)
+                        .stream()
+                        .map(photoName -> new Photo(record, photoName))
+                        .collect(Collectors.toList())
+        );
+    }
 }

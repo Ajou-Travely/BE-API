@@ -153,14 +153,12 @@ public class ScheduleService {
         scheduleRepository.deleteAll();
     }
 
-    public List<String> uploadSchedulePhotos(Long userId, Long scheduleId, List<MultipartFile> photos) {
+    public List<SchedulePhotoResponseDto> uploadSchedulePhotos(Long userId, Long scheduleId, List<MultipartFile> photos) {
         User user = checkUserRecord(userId);
         Schedule schedule = checkScheduleRecord(scheduleId);
-        List<String> returnPhotoPaths = new ArrayList<>();
         List<SchedulePhoto> schedulePhotos =
                 s3Service.uploadFiles(photos).stream()
                         .map(photoPath -> {
-                                    returnPhotoPaths.add(photoPath);
                                     return SchedulePhoto.builder()
                                             .user(user)
                                             .schedule(schedule)
@@ -172,7 +170,9 @@ public class ScheduleService {
         schedulePhotoRepository.saveAll(schedulePhotos);
         schedule.addSchedulePhotos(schedulePhotos);
 
-        return returnPhotoPaths;
+        return schedulePhotos.stream()
+            .map(SchedulePhotoResponseDto::new)
+            .collect(Collectors.toList());
     }
 
     // TODO: schedule에 user가 참가 중인지 checking

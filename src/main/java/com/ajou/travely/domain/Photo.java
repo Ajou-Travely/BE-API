@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Photo {
+public class Photo<T> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "photo_id")
@@ -20,6 +20,14 @@ public class Photo {
     @JoinColumn(name = "post_id")
     private Post post;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "notice_id")
+    private Notice notice;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "event_id")
+    private Event event;
+
     private String name;
 
     @Builder
@@ -27,5 +35,36 @@ public class Photo {
         this.post = post;
         this.name = name;
         post.getPhotos().add(this);
+    }
+
+    @Builder
+    public Photo(@NonNull Notice notice, @NonNull String name) {
+        this.notice = notice;
+        this.name = name;
+        notice.getPhotos().add(this);
+    }
+
+    @Builder
+    public Photo(@NonNull Event event, @NonNull String name) {
+        this.event = event;
+        this.name = name;
+        event.getPhotos().add(this);
+    }
+
+    @Builder
+    public Photo(@NonNull T record, @NonNull String name) {
+        if (record.getClass().equals(Event.class)) {
+            this.event = (Event) record;
+            this.name = name;
+            event.getPhotos().add(this);
+        } else if(record.getClass().equals(Event.class)) {
+            this.notice = (Notice) record;
+            this.name = name;
+            notice.getPhotos().add(this);
+        } else if(record.getClass().equals(Event.class)) {
+            this.post = (Post) record;
+            this.name = name;
+            post.getPhotos().add(this);
+        }
     }
 }

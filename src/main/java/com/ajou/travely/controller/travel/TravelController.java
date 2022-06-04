@@ -10,11 +10,10 @@ import com.ajou.travely.controller.schedule.dto.ScheduleCreateRequestDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleResponseDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleUpdateRequestDto;
 import com.ajou.travely.controller.schedule.dto.SimpleScheduleResponseDto;
+import com.ajou.travely.controller.schedulePhoto.dto.SchedulePhotoResponseDto;
 import com.ajou.travely.controller.travel.dto.*;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.domain.kakao.KakaoMessageResponse;
-import com.ajou.travely.domain.travel.Travel;
-import com.ajou.travely.domain.travel.TravelDate;
 import com.ajou.travely.exception.ErrorCode;
 import com.ajou.travely.exception.custom.KakaoNotAuthenticationExcpetion;
 import com.ajou.travely.service.CostService;
@@ -29,7 +28,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -179,7 +177,7 @@ public class TravelController {
 //    }
 
     @PostMapping("/{travelId}/schedules/{scheduleId}/photos")
-    public ResponseEntity<List<String>> uploadSchedulePhotos(@LoginUser SessionUser sessionUser,
+    public ResponseEntity<List<SchedulePhotoResponseDto>> uploadSchedulePhotos(@LoginUser SessionUser sessionUser,
                                                      @PathVariable String travelId,
                                                      @PathVariable Long scheduleId,
                                                      @RequestPart List<MultipartFile> photos) {

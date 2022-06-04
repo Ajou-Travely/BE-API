@@ -1,8 +1,8 @@
 package com.ajou.travely.controller.admin;
 
-import com.ajou.travely.controller.user.dto.UserProfileResponseDto;
-import com.ajou.travely.controller.user.dto.UserResponseDto;
-import com.ajou.travely.service.UserService;
+import com.ajou.travely.controller.notice.dto.NoticeResponseDto;
+import com.ajou.travely.controller.notice.dto.SimpleNoticeResponseDto;
+import com.ajou.travely.service.NoticeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,21 +15,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
-@RequestMapping("/v1/admin/users")
+@RequestMapping("/v1/admin/notices")
 @RestController
-public class UserAdminController {
-    private final UserService userService;
+public class NoticeAdminController {
+
+    private final NoticeService noticeService;
 
     @GetMapping()
-    public ResponseEntity<Page<UserResponseDto>> showAllUsers(@PageableDefault(
+    ResponseEntity<Page<SimpleNoticeResponseDto>> showAllNotices(@PageableDefault(
             sort = {"id"},
             direction = Sort.Direction.DESC
     ) Pageable pageable) {
-        return ResponseEntity.ok(userService.getAllUsers(pageable));
+        return ResponseEntity.ok(noticeService.getNotices(pageable));
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<UserProfileResponseDto> showUser(@PathVariable Long userId) {
-        return ResponseEntity.ok(userService.getMyProfile(userId));
+    @GetMapping("/{noticeId}")
+    ResponseEntity<NoticeResponseDto> showNotice(@PathVariable Long noticeId) {
+        return ResponseEntity.ok(noticeService.getNotice(noticeId));
     }
 }

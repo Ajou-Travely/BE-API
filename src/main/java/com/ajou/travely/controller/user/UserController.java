@@ -4,10 +4,7 @@ import com.ajou.travely.config.auth.LoginUser;
 import com.ajou.travely.config.auth.SessionUser;
 import com.ajou.travely.controller.common.ResponseWithPagination;
 import com.ajou.travely.controller.travel.dto.SimpleTravelResponseDto;
-import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
-import com.ajou.travely.controller.user.dto.UserCreateRequestDto;
-import com.ajou.travely.controller.user.dto.UserResponseDto;
-import com.ajou.travely.controller.user.dto.UserUpdateRequestDto;
+import com.ajou.travely.controller.user.dto.*;
 import com.ajou.travely.domain.kakao.KakaoFriendsResponse;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.exception.ErrorCode;
@@ -64,8 +61,8 @@ public class UserController {
     }
 
     @GetMapping("/my-info")
-    public ResponseEntity<UserResponseDto> showMyInfo(@LoginUser SessionUser sessionUser) {
-        UserResponseDto user = userService.getUserById(sessionUser.getUserId());
+    public ResponseEntity<UserProfileResponseDto> showMyInfo(@LoginUser SessionUser sessionUser) {
+        UserProfileResponseDto user = userService.getMyProfile(sessionUser.getUserId());
         return ResponseEntity.ok(user);
     }
 
@@ -110,21 +107,21 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/friends/giving-requests/{targetId}")
+    @PostMapping("/friends/given-requests/{targetId}")
     public ResponseEntity<Void> acceptFriendRequest(@PathVariable Long targetId,
                                                     @LoginUser SessionUser sessionUser) {
-        userService.acceptFriendRequest(sessionUser.getUserId(), targetId);
-        return ResponseEntity.ok().build();
-    }
-
-    @DeleteMapping("/friends/giving-requests/{targetId}")
-    public ResponseEntity<Void> rejectFriendRequest(@PathVariable Long targetId,
-                                                    @LoginUser SessionUser sessionUser) {
-        userService.rejectFriendRequest(sessionUser.getUserId(), targetId);
+        userService.acceptFriendRequest(targetId, sessionUser.getUserId());
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/friends/given-requests/{targetId}")
+    public ResponseEntity<Void> rejectFriendRequest(@PathVariable Long targetId,
+                                                    @LoginUser SessionUser sessionUser) {
+        userService.rejectFriendRequest(targetId, sessionUser.getUserId());
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/friends/giving-requests/{targetId}")
     public ResponseEntity<Void> cancelFriendRequest(@PathVariable Long targetId,
                                                     @LoginUser SessionUser sessionUser) {
         userService.cancelRequest(sessionUser.getUserId(), targetId);
@@ -137,5 +134,10 @@ public class UserController {
             throw new KakaoNotAuthenticationExcpetion("카카오 계정 인증이 필요합니다.", ErrorCode.KAKAO_NOT_AUTHENTICATION);
         }
         return ResponseEntity.ok(kakaoApiService.getKakaoFriends(sessionUser.getAccessToken()));
+    }
+
+    @GetMapping("/friend/{targetId}")
+    public ResponseEntity<FriendResponseDto> showFriendProfile(@PathVariable Long targetId) {
+        return ResponseEntity.ok(userService.getFriend(targetId));
     }
 }
