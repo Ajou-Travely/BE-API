@@ -49,6 +49,8 @@ dependencies {
 
 	// jwt setting
 	implementation 'io.jsonwebtoken:jjwt:0.9.1'
+	// fileUpload
+	implementation group: 'commons-fileupload', name: 'commons-fileupload', version: '1.4'
 }
 
 jar {
