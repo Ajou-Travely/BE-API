@@ -1,7 +1,7 @@
 package com.ajou.travely.controller.admin;
 
-import com.ajou.travely.controller.user.dto.UserResponseDto;
-import com.ajou.travely.service.UserService;
+import com.ajou.travely.controller.post.dto.PostResponseDto;
+import com.ajou.travely.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,18 +13,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
-@RequestMapping("/v1/admin/users")
+@RequestMapping("/v1/admin/posts")
 @RestController
-public class UserAdminController {
-    private final UserService userService;
+public class PostAdminController {
+
+    private final PostService postService;
 
     @GetMapping()
-    public ResponseEntity<Page<UserResponseDto>> showAllUsers(@PageableDefault Pageable pageable) {
-        return ResponseEntity.ok(userService.getAllUsers(pageable));
+    public ResponseEntity<Page<PostResponseDto>> showAllPosts(@PageableDefault Pageable pageable) {
+        return ResponseEntity.ok(postService.getAllPosts(pageable));
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<UserResponseDto> showUser(@PathVariable Long userId) {
-        return ResponseEntity.ok(userService.getUserById(userId));
+    @GetMapping("/{postId}")
+    public ResponseEntity<PostResponseDto> showPost(@PathVariable Long postId) {
+        return ResponseEntity.ok(postService.getPost(postId));
     }
 }

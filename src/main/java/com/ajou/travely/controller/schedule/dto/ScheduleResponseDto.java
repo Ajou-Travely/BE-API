@@ -1,6 +1,7 @@
 package com.ajou.travely.controller.schedule.dto;
 
 import com.ajou.travely.controller.place.dto.PlaceResponseDto;
+import com.ajou.travely.controller.schedulePhoto.dto.SchedulePhotoResponseDto;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.domain.Branch;
 import com.ajou.travely.domain.Schedule;
@@ -15,13 +16,14 @@ import java.util.stream.Collectors;
 @Getter
 @AllArgsConstructor
 public class ScheduleResponseDto {
-    private Long travelId;
-    private LocalDate date;
-    private Long scheduleId;
-    private PlaceResponseDto place;
-    private LocalTime startTime;
-    private LocalTime endTime;
-    private List<SimpleUserInfoDto> users;
+    private final Long travelId;
+    private final LocalDate date;
+    private final Long scheduleId;
+    private final PlaceResponseDto place;
+    private final LocalTime startTime;
+    private final LocalTime endTime;
+    private final List<SimpleUserInfoDto> users;
+    private final List<SchedulePhotoResponseDto> photos;
 
     public ScheduleResponseDto(Schedule entity) {
         this.travelId = entity.getTravelDate().getTravel().getId();
@@ -35,6 +37,9 @@ public class ScheduleResponseDto {
                 .stream()
                 .map(Branch::getUser)
                 .map(SimpleUserInfoDto::new)
+                .collect(Collectors.toList());
+        this.photos = entity.getPhotos().stream()
+                .map(SchedulePhotoResponseDto::new)
                 .collect(Collectors.toList());
     }
 }

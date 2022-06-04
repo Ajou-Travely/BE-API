@@ -66,6 +66,10 @@ public class PostService {
         return new PostResponseDto(initializePostInfo(postId));
     }
 
+    public Page<PostResponseDto> getAllPosts(Pageable pageable) {
+        return postRepository.findAll(pageable).map(PostResponseDto::new);
+    }
+
     public Page<PostResponseDto> getPostsOfFriends(Long userId, Pageable pageable) {
         List<Long> friendIds = friendRepository
                 .findAllFriendsByFollowee(userId, pageable)
