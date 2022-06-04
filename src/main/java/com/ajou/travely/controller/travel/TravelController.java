@@ -39,6 +39,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
+
 import org.springframework.web.multipart.MultipartFile;
 
 @RequestMapping("/v1/travels")
@@ -131,7 +133,7 @@ public class TravelController {
     // Travel Date
 
     @PutMapping("/{travelId}/dates")
-    public ResponseEntity<List<TravelDate>> updateTravelDates(@PathVariable Long travelId,
+    public ResponseEntity<List<TravelDateResponseDto>> updateTravelDates(@PathVariable Long travelId,
                                                               @RequestBody TravelDateUpdateRequestDto requestDto,
                                                               @LoginUser SessionUser sessionUser) {
         return ResponseEntity.ok(travelService.updateTravelDates(sessionUser.getUserId(), travelId, requestDto));

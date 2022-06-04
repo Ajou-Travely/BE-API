@@ -86,12 +86,13 @@ public class TravelService {
     }
 
     @Transactional
-    public List<TravelDate> updateTravelDates(Long userId, Long travelId, TravelDateUpdateRequestDto requestDto) {
+    public List<TravelDateResponseDto> updateTravelDates(Long userId, Long travelId, TravelDateUpdateRequestDto requestDto) {
         Travel travel = checkAuthorization(travelId, userId);
         travelDateRepository.deleteAllByTravel(travel);
         travel.updateDate(requestDto.getStartDate(), requestDto.getEndDate());
         travel.getTravelDates().clear();
-        return createTravelDates(travel, requestDto.getStartDate(), requestDto.getEndDate());
+        return createTravelDates(travel, requestDto.getStartDate(), requestDto.getEndDate())
+                .stream().map(TravelDateResponseDto::new).collect(Collectors.toList());
     }
 
     @Transactional
