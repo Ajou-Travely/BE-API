@@ -71,19 +71,28 @@ public class UserController {
 
     @GetMapping("/friends")
     public ResponseEntity<Page<SimpleUserInfoDto>> showFriends(@LoginUser SessionUser sessionUser,
-                                                               @PageableDefault Pageable pageable) {
+                                                               @PageableDefault(
+                                                                       sort = {"id"},
+                                                                       direction = Sort.Direction.DESC
+                                                               ) Pageable pageable) {
         return ResponseEntity.ok(userService.getFriends(sessionUser.getUserId(), pageable));
     }
 
     @GetMapping("/friends/giving-requests")
     public ResponseEntity<Page<SimpleUserInfoDto>> showGivingRequests(@LoginUser SessionUser sessionUser,
-                                                                      @PageableDefault Pageable pageable) {
+                                                                      @PageableDefault(
+                                                                              sort = {"id"},
+                                                                              direction = Sort.Direction.DESC
+                                                                      ) Pageable pageable) {
         return ResponseEntity.ok(userService.getGivingRequests(sessionUser.getUserId(), pageable));
     }
 
     @GetMapping("/friends/given-requests")
     public ResponseEntity<Page<SimpleUserInfoDto>> showGivenRequests(@LoginUser SessionUser sessionUser,
-                                                                     @PageableDefault Pageable pageable) {
+                                                                     @PageableDefault(
+                                                                             sort = {"id"},
+                                                                             direction = Sort.Direction.DESC
+                                                                     ) Pageable pageable) {
         return ResponseEntity.ok(userService.getGivenRequests(sessionUser.getUserId(), pageable));
     }
 

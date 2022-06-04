@@ -8,6 +8,7 @@ import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -42,7 +43,10 @@ public class PostController {
 
     @GetMapping()
     public ResponseEntity<Page<PostResponseDto>> showPostsOfFriends(@LoginUser SessionUser sessionUser,
-                                                                    @PageableDefault Pageable pageable) {
+                                                                    @PageableDefault(
+                                                                            sort = {"id"},
+                                                                            direction = Sort.Direction.DESC
+                                                                    ) Pageable pageable) {
         return ResponseEntity.ok(postService.getPostsOfFriends(sessionUser.getUserId(), pageable));
     }
 

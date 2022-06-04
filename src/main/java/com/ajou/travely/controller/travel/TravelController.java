@@ -178,15 +178,6 @@ public class TravelController {
 //        return ResponseEntity.ok().build();
 //    }
 
-    @GetMapping("/{travelId}/schedules/{scheduleId}/photos")
-    public ResponseEntity<Void> showSchedulePhotos(@LoginUser SessionUser sessionUser,
-        @PathVariable String travelId,
-        @PathVariable Long scheduleId,
-        @RequestPart List<MultipartFile> photos) {
-        scheduleService.uploadSchedulePhotos(sessionUser.getUserId(), scheduleId, photos);
-        return ResponseEntity.ok().build();
-    }
-
     @PostMapping("/{travelId}/schedules/{scheduleId}/photos")
     public ResponseEntity<List<String>> uploadSchedulePhotos(@LoginUser SessionUser sessionUser,
                                                      @PathVariable String travelId,
