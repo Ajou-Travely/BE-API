@@ -33,10 +33,10 @@ public class Schedule {
     })
     private TravelDate travelDate;
 
-    @OneToMany(mappedBy = "schedule")
+    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Branch> branches;
 
-    @OneToMany(mappedBy = "schedule")
+    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<SchedulePhoto> photos = new ArrayList<>();
 
     private LocalTime startTime;

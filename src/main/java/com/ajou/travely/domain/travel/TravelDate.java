@@ -30,7 +30,7 @@ public class TravelDate {
     @Convert(converter = OrderConverter.class)
     private List<Long> scheduleOrder = new ArrayList<>();
 
-    @OneToMany(mappedBy = "travelDate", orphanRemoval = true, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "travelDate", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Schedule> schedules = new ArrayList<>();
 
     public void setScheduleOrder(List<Long> scheduleOrder) {
