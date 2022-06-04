@@ -110,21 +110,21 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/friends/giving-requests/{targetId}")
+    @PostMapping("/friends/given-requests/{targetId}")
     public ResponseEntity<Void> acceptFriendRequest(@PathVariable Long targetId,
                                                     @LoginUser SessionUser sessionUser) {
-        userService.acceptFriendRequest(sessionUser.getUserId(), targetId);
-        return ResponseEntity.ok().build();
-    }
-
-    @DeleteMapping("/friends/giving-requests/{targetId}")
-    public ResponseEntity<Void> rejectFriendRequest(@PathVariable Long targetId,
-                                                    @LoginUser SessionUser sessionUser) {
-        userService.rejectFriendRequest(sessionUser.getUserId(), targetId);
+        userService.acceptFriendRequest(targetId, sessionUser.getUserId());
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/friends/given-requests/{targetId}")
+    public ResponseEntity<Void> rejectFriendRequest(@PathVariable Long targetId,
+                                                    @LoginUser SessionUser sessionUser) {
+        userService.rejectFriendRequest(targetId, sessionUser.getUserId());
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/friends/giving-requests/{targetId}")
     public ResponseEntity<Void> cancelFriendRequest(@PathVariable Long targetId,
                                                     @LoginUser SessionUser sessionUser) {
         userService.cancelRequest(sessionUser.getUserId(), targetId);
