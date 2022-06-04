@@ -6,6 +6,7 @@ import com.ajou.travely.service.CostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,7 +22,10 @@ public class CostAdminController {
     private final CostService costService;
 
     @GetMapping()
-    public ResponseEntity<Page<SimpleCostResponseDto>> showAllCosts(@PageableDefault Pageable pageable) {
+    public ResponseEntity<Page<SimpleCostResponseDto>> showAllCosts(@PageableDefault(
+            sort = {"id"},
+            direction = Sort.Direction.DESC
+    ) Pageable pageable) {
         return ResponseEntity.ok(costService.getAllCosts(pageable));
     }
 

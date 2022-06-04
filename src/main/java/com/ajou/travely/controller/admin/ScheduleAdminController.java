@@ -6,6 +6,7 @@ import com.ajou.travely.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,7 +22,10 @@ public class ScheduleAdminController {
     private final ScheduleService scheduleService;
 
     @GetMapping()
-    public ResponseEntity<Page<SimpleScheduleResponseDto>> showAllSchedules(@PageableDefault Pageable pageable) {
+    public ResponseEntity<Page<SimpleScheduleResponseDto>> showAllSchedules(@PageableDefault(
+            sort = {"id"},
+            direction = Sort.Direction.DESC
+    ) Pageable pageable) {
         return ResponseEntity.ok(scheduleService.getAllSchedules(pageable));
     }
 
