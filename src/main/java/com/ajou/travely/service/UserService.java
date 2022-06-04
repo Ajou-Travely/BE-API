@@ -1,15 +1,15 @@
 package com.ajou.travely.service;
 
 import com.ajou.travely.controller.travel.dto.SimpleTravelResponseDto;
-import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
-import com.ajou.travely.controller.user.dto.UserResponseDto;
+import com.ajou.travely.controller.user.dto.*;
 import com.ajou.travely.domain.Friend;
-import com.ajou.travely.controller.user.dto.UserUpdateRequestDto;
-import com.ajou.travely.exception.ErrorCode;
+import com.ajou.travely.domain.Post;
 import com.ajou.travely.domain.user.User;
+import com.ajou.travely.exception.ErrorCode;
 import com.ajou.travely.exception.custom.DuplicatedRequestException;
 import com.ajou.travely.exception.custom.RecordNotFoundException;
 import com.ajou.travely.repository.FriendRepository;
+import com.ajou.travely.repository.PostRepository;
 import com.ajou.travely.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -27,6 +26,7 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserRepository userRepository;
     private final AwsS3Service awsS3Service;
+    private final PostRepository postRepository;
 
     private final FriendRepository friendRepository;
 
@@ -66,8 +66,10 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public UserResponseDto getUserById(Long userId) {
-        return new UserResponseDto(checkUserRecord(userId));
+    public UserProfileResponseDto getMyProfile(Long userId) {
+        User user = checkUserRecord(userId);
+        List<Post> posts = postRepository.findAllByUser(user);
+        return new UserProfileResponseDto(user, posts);
     }
 
     @Transactional(readOnly = true)
@@ -155,6 +157,13 @@ public class UserService {
     public Boolean isEmailDuplicated(String email) {
         Optional<User> user = userRepository.findByEmail(email);
         return user.isEmpty();
+    }
+
+    @Transactional
+    public FriendResponseDto getFriend(Long targetId) {
+        User target = checkUserRecord(targetId);
+        List<Post> posts = postRepository.findAllByUser(target);
+        return new FriendResponseDto(target, posts);
     }
 
     private User checkUserRecord(Long userId) {

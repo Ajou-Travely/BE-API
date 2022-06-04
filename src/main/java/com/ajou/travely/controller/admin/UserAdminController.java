@@ -1,5 +1,6 @@
 package com.ajou.travely.controller.admin;
 
+import com.ajou.travely.controller.user.dto.UserProfileResponseDto;
 import com.ajou.travely.controller.user.dto.UserResponseDto;
 import com.ajou.travely.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,7 @@ public class UserAdminController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<UserResponseDto> showUser(@PathVariable Long userId) {
-        return ResponseEntity.ok(userService.getUserById(userId));
+    public ResponseEntity<UserProfileResponseDto> showUser(@PathVariable Long userId) {
+        return ResponseEntity.ok(userService.getMyProfile(userId));
     }
 }
