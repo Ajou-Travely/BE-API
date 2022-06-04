@@ -1,5 +1,6 @@
 package com.ajou.travely.controller.notice.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@NoArgsConstructor
 public class NoticeCreateRequestDto {
     @NotBlank(message = "제목이 필요합니다.")
     private String title;
@@ -22,9 +22,5 @@ public class NoticeCreateRequestDto {
         this.title = title;
         this.content = content;
         this.photos = photos;
-    }
-
-    public void setEmptyList() {
-        this.photos = new ArrayList<>();
     }
 }

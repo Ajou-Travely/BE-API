@@ -27,11 +27,7 @@ public class NoticeController {
 
     @PostMapping(value = "", consumes = "multipart/form-data")
     public ResponseEntity<NoticeResponseDto> createNotice(@LoginUser SessionUser sessionUser,
-                                                          @Valid @RequestPart NoticeCreateRequestDto requestDto) {
-        Optional<List<MultipartFile>> photos = Optional.ofNullable(requestDto.getPhotos());
-        if (photos.isEmpty()) {
-            requestDto.setEmptyList();
-        }
+                                                          @Valid @ModelAttribute NoticeCreateRequestDto requestDto) {
         return ResponseEntity.ok(noticeService.createNotice(sessionUser.getUserId(), requestDto));
     }
 
