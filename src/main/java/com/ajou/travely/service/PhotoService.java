@@ -1,5 +1,6 @@
 package com.ajou.travely.service;
 
+import com.ajou.travely.domain.Notice;
 import com.ajou.travely.domain.Photo;
 import com.ajou.travely.domain.Post;
 import com.ajou.travely.repository.PhotoRepository;
@@ -54,6 +55,17 @@ public class PhotoService {
             throw new IllegalArgumentException("Invalid photo ids");
         }
         removePhotos(validPhotos);
+    }
+
+    // notice
+
+    public List<Photo> createPhotosOfNotice(Notice notice, List<MultipartFile> photos) {
+        return photoRepository.saveAll(
+                s3Service.uploadFiles(photos)
+                        .stream()
+                        .map(photoName -> new Photo(notice, photoName))
+                        .collect(Collectors.toList())
+        );
     }
 
 }

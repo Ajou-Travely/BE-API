@@ -20,6 +20,10 @@ public class Photo {
     @JoinColumn(name = "post_id")
     private Post post;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "notice_id")
+    private Notice notice;
+
     private String name;
 
     @Builder
@@ -27,5 +31,12 @@ public class Photo {
         this.post = post;
         this.name = name;
         post.getPhotos().add(this);
+    }
+
+    @Builder
+    public Photo(@NonNull Notice notice, @NonNull String name) {
+        this.notice = notice;
+        this.name = name;
+        notice.getPhotos().add(this);
     }
 }
