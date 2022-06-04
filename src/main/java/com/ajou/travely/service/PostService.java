@@ -52,8 +52,10 @@ public class PostService {
             .title(requestDto.getTitle())
             .build();
 
-        if (!requestDto.getPhotos().isEmpty()) {
-            photoService.createPhotos(post, requestDto.getPhotos());
+        if (requestDto.getPhotos() != null) {
+            if (!requestDto.getPhotos().isEmpty()) {
+                photoService.createPhotos(post, requestDto.getPhotos());
+            }
         }
 
         return new PostResponseDto(postRepository.save(post));
