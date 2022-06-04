@@ -57,7 +57,7 @@ public class NoticeService {
     public NoticeResponseDto getNotice(Long noticeId) {
         return new NoticeResponseDto(noticeRepository.findById(noticeId)
                 .orElseThrow(() -> new RecordNotFoundException(
-                        "해당 ID를 가진 사용자를 찾을 수 없습니다.",
+                        "해당 ID를 가진 공지사항을 찾을 수 없습니다.",
                         ErrorCode.NOTICE_NOT_FOUND
                 )));
     }
@@ -73,7 +73,7 @@ public class NoticeService {
     public void deleteNotice(Long noticeId) {
         Notice notice = noticeRepository.findById(noticeId)
                 .orElseThrow(() -> new RecordNotFoundException(
-                        "해당 ID를 가진 사용자를 찾을 수 없습니다.",
+                        "해당 ID를 가진 공지사항을 찾을 수 없습니다.",
                         ErrorCode.NOTICE_NOT_FOUND
                 ));
         noticeRepository.delete(notice);
