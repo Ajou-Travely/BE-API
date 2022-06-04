@@ -16,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @SpringBootTest(properties = {
@@ -52,10 +54,7 @@ public class NoticeServiceTest {
                 .title("test title")
                 .content("test content")
                 .build();
-        requestDto.setEmptyList();
         NoticeResponseDto notice = noticeService.createNotice(author.getId(), requestDto);
-        System.out.println("notice = " + notice.getPhotoInfos().size());
-        System.out.println("notice.getNoticeId() = " + notice.getNoticeId());
         Assertions.assertThat(notice.getAuthorInfo().getUserId()).isEqualTo(author.getId());
         Assertions.assertThat(notice.getContent()).isEqualTo("test content");
         Assertions.assertThat(notice.getPhotoInfos().size()).isEqualTo(0);
