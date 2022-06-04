@@ -27,6 +27,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .authorizeRequests()
                         .antMatchers("/", "/v1/oauth2/authorization/kakao", "/v1/users/signup", "/v1/login", "/v1/users/email").permitAll()
                         .antMatchers("/swagger*/**", "/v3/api-docs/**").permitAll()
+                .antMatchers("/v1/admin/**").permitAll()
                         .antMatchers("/v1/**").hasAnyRole("USER", "ADMIN")
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),

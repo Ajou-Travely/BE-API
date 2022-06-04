@@ -52,8 +52,10 @@ public class PostService {
             .title(requestDto.getTitle())
             .build();
 
-        if (!requestDto.getPhotos().isEmpty()) {
-            photoService.createPhotos(post, requestDto.getPhotos());
+        if (requestDto.getPhotos() != null) {
+            if (!requestDto.getPhotos().isEmpty()) {
+                photoService.createPhotos(post, requestDto.getPhotos());
+            }
         }
 
         return new PostResponseDto(postRepository.save(post));
@@ -62,6 +64,10 @@ public class PostService {
     @Transactional(readOnly = true)
     public PostResponseDto getPost(Long postId) {
         return new PostResponseDto(initializePostInfo(postId));
+    }
+
+    public Page<PostResponseDto> getAllPosts(Pageable pageable) {
+        return postRepository.findAll(pageable).map(PostResponseDto::new);
     }
 
     public Page<PostResponseDto> getPostsOfFriends(Long userId, Pageable pageable) {
@@ -122,8 +128,8 @@ public class PostService {
     private Schedule findScheduleById(Long scheduleId) {
         return scheduleRepository.findById(scheduleId)
             .orElseThrow(() -> new RecordNotFoundException(
-                    "해당 ID의 User가 존재하지 않습니다. id=" + scheduleId
-                    , ErrorCode.USER_NOT_FOUND
+                    "해당 ID의 Schedule이 존재하지 않습니다. id=" + scheduleId
+                    , ErrorCode.SCHEDULE_NOT_FOUND
             ));
     }
 

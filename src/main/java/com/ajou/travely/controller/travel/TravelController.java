@@ -38,6 +38,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
+
 import org.springframework.web.multipart.MultipartFile;
 
 @RequestMapping("/v1/travels")
@@ -130,7 +132,7 @@ public class TravelController {
     // Travel Date
 
     @PutMapping("/{travelId}/dates")
-    public ResponseEntity<List<TravelDate>> updateTravelDates(@PathVariable Long travelId,
+    public ResponseEntity<List<TravelDateResponseDto>> updateTravelDates(@PathVariable Long travelId,
                                                               @RequestBody TravelDateUpdateRequestDto requestDto,
                                                               @LoginUser SessionUser sessionUser) {
         return ResponseEntity.ok(travelService.updateTravelDates(sessionUser.getUserId(), travelId, requestDto));
@@ -174,15 +176,6 @@ public class TravelController {
 //
 //        return ResponseEntity.ok().build();
 //    }
-
-    @GetMapping("/{travelId}/schedules/{scheduleId}/photos")
-    public ResponseEntity<Void> showSchedulePhotos(@LoginUser SessionUser sessionUser,
-        @PathVariable String travelId,
-        @PathVariable Long scheduleId,
-        @RequestPart List<MultipartFile> photos) {
-        scheduleService.uploadSchedulePhotos(sessionUser.getUserId(), scheduleId, photos);
-        return ResponseEntity.ok().build();
-    }
 
     @PostMapping("/{travelId}/schedules/{scheduleId}/photos")
     public ResponseEntity<List<String>> uploadSchedulePhotos(@LoginUser SessionUser sessionUser,

@@ -21,6 +21,8 @@ import com.ajou.travely.exception.custom.UnauthorizedException;
 import com.ajou.travely.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -84,12 +86,13 @@ public class TravelService {
     }
 
     @Transactional
-    public List<TravelDate> updateTravelDates(Long userId, Long travelId, TravelDateUpdateRequestDto requestDto) {
+    public List<TravelDateResponseDto> updateTravelDates(Long userId, Long travelId, TravelDateUpdateRequestDto requestDto) {
         Travel travel = checkAuthorization(travelId, userId);
         travelDateRepository.deleteAllByTravel(travel);
         travel.updateDate(requestDto.getStartDate(), requestDto.getEndDate());
         travel.getTravelDates().clear();
-        return createTravelDates(travel, requestDto.getStartDate(), requestDto.getEndDate());
+        return createTravelDates(travel, requestDto.getStartDate(), requestDto.getEndDate())
+                .stream().map(TravelDateResponseDto::new).collect(Collectors.toList());
     }
 
     @Transactional
@@ -107,6 +110,13 @@ public class TravelService {
                 .stream()
                 .map(SimpleTravelResponseDto::new)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public Page<SimpleTravelResponseDto> getAllTravels(Pageable pageable) {
+        return travelRepository
+                .findAll(pageable)
+                .map(SimpleTravelResponseDto::new);
     }
 
     @Transactional
@@ -276,7 +286,7 @@ public class TravelService {
 
     private Travel checkAuthorization(Long travelId, Long userId) {
         Travel travel = checkTravelRecord(travelId);
-        if (travel.getTravelType().equals(TravelType.PRIVATE)
+        if (travel.getTravelType().equals(TravelType.PRIVATE) && userId != -1
                 && !getUsersOfTravel(travelId).stream().map(User::getId).collect(Collectors.toList()).contains(userId)) {
             throw new UnauthorizedException("해당 Travel에 대해 접근 권한이 없습니다.", ErrorCode.UNAUTHORIZED_TRAVEL);
         }

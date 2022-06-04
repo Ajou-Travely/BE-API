@@ -2,6 +2,7 @@ package com.ajou.travely.config;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.auth.InstanceProfileCredentialsProvider;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,6 +24,7 @@ public class AwsS3Config {
 //        BasicAWSCredentials awsCreds = new BasicAWSCredentials(accessKey, secretKey);
         return (AmazonS3Client) AmazonS3ClientBuilder.standard()
             .withRegion(region)
+//            .withCredentials(new InstanceProfileCredentialsProvider(false))
 //            .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
             .build();
     }

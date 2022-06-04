@@ -4,6 +4,7 @@ import com.ajou.travely.config.auth.SessionUser;
 import com.ajou.travely.controller.cost.dto.CostCreateResponseDto;
 import com.ajou.travely.controller.cost.dto.CostResponseDto;
 import com.ajou.travely.controller.cost.dto.*;
+import com.ajou.travely.controller.travel.dto.SimpleCostResponseDto;
 import com.ajou.travely.domain.kakao.KakaoMessageResponse;
 import com.ajou.travely.domain.cost.Cost;
 import com.ajou.travely.domain.travel.Travel;
@@ -16,6 +17,8 @@ import com.ajou.travely.repository.TravelRepository;
 import com.ajou.travely.repository.UserCostRepository;
 import com.ajou.travely.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -79,6 +82,10 @@ public class CostService {
         costRepository.save(cost);
 
         return new CostCreateResponseDto(cost, payer);
+    }
+    @Transactional
+    public Page<SimpleCostResponseDto> getAllCosts(Pageable pageable) {
+        return costRepository.findAll(pageable).map(SimpleCostResponseDto::new);
     }
 
     @Transactional(readOnly = true)

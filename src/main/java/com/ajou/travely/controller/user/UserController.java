@@ -71,19 +71,28 @@ public class UserController {
 
     @GetMapping("/friends")
     public ResponseEntity<Page<SimpleUserInfoDto>> showFriends(@LoginUser SessionUser sessionUser,
-                                                               @PageableDefault Pageable pageable) {
+                                                               @PageableDefault(
+                                                                       sort = {"id"},
+                                                                       direction = Sort.Direction.DESC
+                                                               ) Pageable pageable) {
         return ResponseEntity.ok(userService.getFriends(sessionUser.getUserId(), pageable));
     }
 
     @GetMapping("/friends/giving-requests")
     public ResponseEntity<Page<SimpleUserInfoDto>> showGivingRequests(@LoginUser SessionUser sessionUser,
-                                                                      @PageableDefault Pageable pageable) {
+                                                                      @PageableDefault(
+                                                                              sort = {"id"},
+                                                                              direction = Sort.Direction.DESC
+                                                                      ) Pageable pageable) {
         return ResponseEntity.ok(userService.getGivingRequests(sessionUser.getUserId(), pageable));
     }
 
     @GetMapping("/friends/given-requests")
     public ResponseEntity<Page<SimpleUserInfoDto>> showGivenRequests(@LoginUser SessionUser sessionUser,
-                                                                     @PageableDefault Pageable pageable) {
+                                                                     @PageableDefault(
+                                                                             sort = {"id"},
+                                                                             direction = Sort.Direction.DESC
+                                                                     ) Pageable pageable) {
         return ResponseEntity.ok(userService.getGivenRequests(sessionUser.getUserId(), pageable));
     }
 
@@ -101,21 +110,21 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/friends/giving-requests/{targetId}")
+    @PostMapping("/friends/given-requests/{targetId}")
     public ResponseEntity<Void> acceptFriendRequest(@PathVariable Long targetId,
                                                     @LoginUser SessionUser sessionUser) {
-        userService.acceptFriendRequest(sessionUser.getUserId(), targetId);
-        return ResponseEntity.ok().build();
-    }
-
-    @DeleteMapping("/friends/giving-requests/{targetId}")
-    public ResponseEntity<Void> rejectFriendRequest(@PathVariable Long targetId,
-                                                    @LoginUser SessionUser sessionUser) {
-        userService.rejectFriendRequest(sessionUser.getUserId(), targetId);
+        userService.acceptFriendRequest(targetId, sessionUser.getUserId());
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/friends/given-requests/{targetId}")
+    public ResponseEntity<Void> rejectFriendRequest(@PathVariable Long targetId,
+                                                    @LoginUser SessionUser sessionUser) {
+        userService.rejectFriendRequest(targetId, sessionUser.getUserId());
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/friends/giving-requests/{targetId}")
     public ResponseEntity<Void> cancelFriendRequest(@PathVariable Long targetId,
                                                     @LoginUser SessionUser sessionUser) {
         userService.cancelRequest(sessionUser.getUserId(), targetId);

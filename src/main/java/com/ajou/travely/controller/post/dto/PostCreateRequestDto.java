@@ -21,7 +21,6 @@ public class PostCreateRequestDto {
     @NotBlank
     private String text;
 
-    @NotNull
     private List<MultipartFile> photos;
 
 }
