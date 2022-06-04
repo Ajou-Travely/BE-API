@@ -66,9 +66,9 @@ logging:
 
 cloud:
   aws:
-    credentials:
-      accessKey: ${AWS_S3_ACCESS_KEY_ID:test}
-      secretKey: ${AWS_S3_SECRET_ACCESS_KEY:test}
+#    credentials:
+#      accessKey: ${AWS_S3_ACCESS_KEY_ID:test}
+#      secretKey: ${AWS_S3_SECRET_ACCESS_KEY:test}
     s3:
       bucket: travely-dev-image-s3-bucket
     region:
