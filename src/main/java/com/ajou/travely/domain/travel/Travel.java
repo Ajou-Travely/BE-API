@@ -10,6 +10,7 @@ import lombok.NonNull;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +33,10 @@ public class Travel {
 
     private Integer budget;
 
+    private LocalDate startDate;
+
+    private LocalDate endDate;
+
     @Enumerated(EnumType.STRING)
     private TravelType travelType;
 
@@ -49,12 +54,16 @@ public class Travel {
                   @NonNull Long managerId,
                   String memo,
                   TravelType travelType,
-                  Integer budget) {
+                  Integer budget,
+                  @NonNull LocalDate startDate,
+                  @NonNull LocalDate endDate) {
         this.title = title;
         this.managerId = managerId;
         this.memo = memo;
         this.travelType = travelType;
         this.budget = budget;
+        this.startDate = startDate;
+        this.endDate = endDate;
     }
 
     public void addUserTravel(UserTravel userTravel) {
@@ -93,6 +102,11 @@ public class Travel {
         this.title = requestDto.getTitle() != null ? requestDto.getTitle() : this.title;
         this.memo = requestDto.getMemo() != null ? requestDto.getMemo() : this.memo;
         this.budget = requestDto.getBudget() != null ? requestDto.getBudget() : this.budget;
+    }
+
+    public void updateDate(@NonNull LocalDate startDate, @NonNull LocalDate endDate) {
+        this.startDate = startDate;
+        this.endDate = endDate;
     }
 
 }

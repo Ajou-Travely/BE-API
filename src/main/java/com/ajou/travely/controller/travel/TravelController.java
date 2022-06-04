@@ -9,10 +9,12 @@ import com.ajou.travely.controller.cost.dto.*;
 import com.ajou.travely.controller.schedule.dto.ScheduleCreateRequestDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleResponseDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleUpdateRequestDto;
+import com.ajou.travely.controller.schedule.dto.SimpleScheduleResponseDto;
 import com.ajou.travely.controller.travel.dto.*;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.domain.kakao.KakaoMessageResponse;
 import com.ajou.travely.domain.travel.Travel;
+import com.ajou.travely.domain.travel.TravelDate;
 import com.ajou.travely.exception.ErrorCode;
 import com.ajou.travely.exception.custom.KakaoNotAuthenticationExcpetion;
 import com.ajou.travely.service.CostService;
@@ -72,22 +74,21 @@ public class TravelController {
     }
 
     @PostMapping()
-    public ResponseEntity<Long> createTravel(@LoginUser SessionUser sessionUser,
+    public ResponseEntity<TravelResponseDto> createTravel(@LoginUser SessionUser sessionUser,
                                              @Valid @RequestBody TravelCreateRequestDto requestDto) {
-        Travel travel = travelService.createTravel(
+        TravelResponseDto responseDto = travelService.createTravel(
             sessionUser.getUserId(),
             requestDto
         );
-        travelService.inviteUserToTravelWithNoValidation(travel, requestDto.getUserEmails());
-        return ResponseEntity.ok(travel.getId());
+        travelService.inviteUserToTravelWithNoValidation(responseDto.getId(), requestDto.getUserEmails());
+        return ResponseEntity.ok(responseDto);
     }
 
     @PatchMapping("/{travelId}")
-    public ResponseEntity<Void> updateTravel(@PathVariable Long travelId,
+    public ResponseEntity<TravelUpdateResponseDto> updateTravel(@PathVariable Long travelId,
         @LoginUser SessionUser sessionUser,
         @RequestBody TravelUpdateRequestDto requestDto) {
-        travelService.updateTravel(travelId, sessionUser.getUserId(), requestDto);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(travelService.updateTravel(travelId, sessionUser.getUserId(), requestDto));
     }
 
     @PostMapping("/accept/{code}")
@@ -130,19 +131,18 @@ public class TravelController {
     // Travel Date
 
     @PutMapping("/{travelId}/dates")
-    public ResponseEntity<Void> updateTravelDates(@PathVariable Long travelId,
-                                                  @RequestBody TravelDateUpdateRequestDto requestDto,
-                                                  @LoginUser SessionUser sessionUser) {
-        travelService.updateTravelDates(sessionUser.getUserId(), travelId, requestDto);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<List<TravelDate>> updateTravelDates(@PathVariable Long travelId,
+                                                              @RequestBody TravelDateUpdateRequestDto requestDto,
+                                                              @LoginUser SessionUser sessionUser) {
+        return ResponseEntity.ok(travelService.updateTravelDates(sessionUser.getUserId(), travelId, requestDto));
     }
 
     @PatchMapping("/{travelId}/dates")
-    public ResponseEntity<Void> updateTravelDateTitle(@PathVariable Long travelId,
+    public ResponseEntity<TravelDateResponseDto> updateTravelDateTitle(@PathVariable Long travelId,
                                                       @RequestBody TravelDateTitleUpdateRequestDto requestDto,
                                                       @LoginUser SessionUser sessionUser) {
-        travelService.updateTravelDateTitle(sessionUser.getUserId(), travelId, requestDto);
-        return ResponseEntity.ok().build();
+
+        return ResponseEntity.ok(travelService.updateTravelDateTitle(sessionUser.getUserId(), travelId, requestDto));
     }
 
     // Schedules
@@ -154,19 +154,18 @@ public class TravelController {
     }
 
     @PostMapping("/{travelId}/schedules")
-    public ResponseEntity<Long> createSchedule(@PathVariable Long travelId,
-                                               @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
-                                               @RequestBody ScheduleCreateRequestDto scheduleCreateRequestDto) {
+    public ResponseEntity<SimpleScheduleResponseDto> createSchedule(@PathVariable Long travelId,
+                                                                    @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
+                                                                    @RequestBody ScheduleCreateRequestDto scheduleCreateRequestDto) {
         return ResponseEntity.ok(scheduleService.createSchedule(travelId, date, scheduleCreateRequestDto));
     }
 
     @PutMapping("/{travelId}/schedules/{scheduleId}")
-    public ResponseEntity<Void> updateSchedule(@PathVariable Long travelId,
-        @PathVariable Long scheduleId,
-        @RequestBody ScheduleUpdateRequestDto scheduleUpdateRequestDto
+    public ResponseEntity<SimpleScheduleResponseDto> updateSchedule(@PathVariable Long travelId,
+                                               @PathVariable Long scheduleId,
+                                               @RequestBody ScheduleUpdateRequestDto scheduleUpdateRequestDto
     ) {
-        scheduleService.updateSchedule(scheduleId, scheduleUpdateRequestDto);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(scheduleService.updateSchedule(scheduleId, scheduleUpdateRequestDto));
     }
 
 //    @GetMapping("/{travelId}/photos")
@@ -187,20 +186,18 @@ public class TravelController {
     }
 
     @PostMapping("/{travelId}/schedules/{scheduleId}/photos")
-    public ResponseEntity<Void> uploadSchedulePhotos(@LoginUser SessionUser sessionUser,
+    public ResponseEntity<List<String>> uploadSchedulePhotos(@LoginUser SessionUser sessionUser,
                                                      @PathVariable String travelId,
                                                      @PathVariable Long scheduleId,
                                                      @RequestPart List<MultipartFile> photos) {
-        scheduleService.uploadSchedulePhotos(sessionUser.getUserId(), scheduleId, photos);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(scheduleService.uploadSchedulePhotos(sessionUser.getUserId(), scheduleId, photos));
     }
 
     @PostMapping("/{travelId}/change")
-    public ResponseEntity<Void> changeScheduleOrder(@PathVariable Long travelId,
+    public ResponseEntity<List<Long>> changeScheduleOrder(@PathVariable Long travelId,
                                                     @RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
                                                     @RequestBody ScheduleOrderUpdateRequestDto requestDto) {
-        travelService.changeScheduleOrder(travelId, date, requestDto);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(travelService.changeScheduleOrder(travelId, date, requestDto));
     }
 
     // Costs
@@ -227,11 +224,10 @@ public class TravelController {
     }
 
     @PutMapping("/{travelId}/costs/{costId}")
-    public ResponseEntity<Void> updateCost(@PathVariable Long travelId,
-        @PathVariable Long costId,
-        CostUpdateDto costUpdateDto) {
-        this.costService.updateCostById(costId, costUpdateDto);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<CostResponseDto> updateCost(@PathVariable Long travelId,
+                                           @PathVariable Long costId,
+                                           CostUpdateDto costUpdateDto) {
+        return ResponseEntity.ok(this.costService.updateCostById(costId, costUpdateDto));
     }
 
     @PatchMapping("/{travelId}/costs/{costId}/userCosts/{userCostId}")
@@ -313,7 +309,7 @@ public class TravelController {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/{travelId}/transaction/{travelTransactionId")
+    @DeleteMapping("/{travelId}/transaction/{travelTransactionId}")
     public ResponseEntity<Void> deleteTravelTransaction(@PathVariable Long travelId,
                                                         @PathVariable Long travelTransactionId) {
         this.travelService.deleteTravelTransaction(travelTransactionId);

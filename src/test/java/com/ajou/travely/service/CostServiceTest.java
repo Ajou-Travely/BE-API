@@ -2,6 +2,7 @@ package com.ajou.travely.service;
 
 import com.ajou.travely.controller.cost.dto.*;
 import com.ajou.travely.controller.travel.dto.TravelCreateRequestDto;
+import com.ajou.travely.controller.travel.dto.TravelResponseDto;
 import com.ajou.travely.domain.cost.Cost;
 import com.ajou.travely.domain.UserCost;
 import com.ajou.travely.domain.travel.Travel;
@@ -82,6 +83,8 @@ class CostServiceTest {
             Travel.builder()
                 .title("첫 여행")
                 .managerId(user1.getId())
+                    .startDate(LocalDate.now())
+                    .endDate(LocalDate.now().plusDays(1))
                 .build()
         );
         Map<Long, Long> amountPerUser = new HashMap<>();
@@ -122,7 +125,7 @@ class CostServiceTest {
                 )
             )
         );
-        Travel travel = travelService.createTravel(users.get(0).getId(),
+        TravelResponseDto travelResponseDto = travelService.createTravel(users.get(0).getId(),
             TravelCreateRequestDto.builder()
                 .title("첫 여행")
                 .userEmails(new ArrayList<>())
@@ -130,7 +133,7 @@ class CostServiceTest {
                     .endDate(LocalDate.of(2022, 5, 15))
                 .build()
         );
-        Long travelId = travel.getId();
+        Long travelId = travelResponseDto.getId();
         for (User user : users) {
             travelService.addUserToTravel(travelId, user.getId());
         }
@@ -201,6 +204,8 @@ class CostServiceTest {
             Travel.builder()
                 .title("첫 여행")
                 .managerId(users.get(0).getId())
+                    .startDate(LocalDate.now())
+                    .endDate(LocalDate.now().plusDays(1))
                 .build()
         );
         for (User user : users) {
@@ -292,6 +297,8 @@ class CostServiceTest {
             Travel.builder()
                 .title("첫 여행")
                 .managerId(user1.getId())
+                    .startDate(LocalDate.now())
+                    .endDate(LocalDate.now().plusDays(1))
                 .build()
         );
         Map<Long, Long> amountPerUser = new HashMap<>();

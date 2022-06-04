@@ -45,12 +45,11 @@ public class UserController {
     }
 
     @PutMapping(value = "", consumes = "multipart/form-data")
-    public ResponseEntity<Void> updateUser(
+    public ResponseEntity<UserResponseDto> updateUser(
             @LoginUser SessionUser sessionUser,
             @Valid @ModelAttribute UserUpdateRequestDto requestDto
     ) {
-        userService.updateUser(sessionUser.getUserId(), requestDto);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(userService.updateUser(sessionUser.getUserId(), requestDto));
     }
 
     @PostMapping("/signup")

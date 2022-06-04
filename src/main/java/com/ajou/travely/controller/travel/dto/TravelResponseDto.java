@@ -21,6 +21,8 @@ public class TravelResponseDto {
     private final String title;
     private final String memo;
     private final Integer budget;
+    private final LocalDate startDate;
+    private final LocalDate endDate;
     private final Long managerId;
     private final TravelType travelType;
     private final List<SimpleUserInfoDto> users;
@@ -33,6 +35,8 @@ public class TravelResponseDto {
         this.title = entity.getTitle();
         this.memo = entity.getMemo();
         this.budget = entity.getBudget();
+        this.startDate = entity.getStartDate();
+        this.endDate = entity.getEndDate();
         this.managerId = entity.getManagerId();
         this.travelType = entity.getTravelType();
         this.users = entity

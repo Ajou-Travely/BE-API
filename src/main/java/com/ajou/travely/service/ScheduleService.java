@@ -4,6 +4,7 @@ import com.ajou.travely.controller.place.dto.PlaceCreateRequestDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleCreateRequestDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleResponseDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleUpdateRequestDto;
+import com.ajou.travely.controller.schedule.dto.SimpleScheduleResponseDto;
 import com.ajou.travely.controller.schedulePhoto.dto.SchedulePhotoResponseDto;
 import com.ajou.travely.domain.Branch;
 import com.ajou.travely.domain.Place;
@@ -24,6 +25,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 @RequiredArgsConstructor
 @Service
 public class ScheduleService {
@@ -43,6 +47,9 @@ public class ScheduleService {
 
     private final TravelDateRepository travelDateRepository;
 
+    @PersistenceContext
+    private final EntityManager em;
+
     @Transactional
     public Schedule insertSchedule(Schedule schedule) {
         return scheduleRepository.save(schedule);
@@ -54,7 +61,7 @@ public class ScheduleService {
     }
 
     @Transactional
-    public Long createSchedule(Long travelId, LocalDate date, ScheduleCreateRequestDto scheduleCreateRequestDto) {
+    public SimpleScheduleResponseDto createSchedule(Long travelId, LocalDate date, ScheduleCreateRequestDto scheduleCreateRequestDto) {
         Travel travel = checkTravelRecord(travelId);
         TravelDate travelDate = checkTravelDateRecord(travelId, date);
         Place place = createOrFindPlace(scheduleCreateRequestDto.getPlace());
@@ -68,14 +75,15 @@ public class ScheduleService {
         );
         travelDate.getScheduleOrder().add(schedule.getId());
         System.out.println(travelDate.getScheduleOrder().size());
-        scheduleCreateRequestDto.getUserIds().forEach(id -> {
-            schedule.addUser(branchRepository.save(new Branch(checkUserRecord(id), schedule)));
-        });
-        return schedule.getId();
+        scheduleCreateRequestDto.getUserIds().forEach(id ->
+                schedule.addUser(branchRepository.save(new Branch(checkUserRecord(id), schedule)))
+        );
+
+        return new SimpleScheduleResponseDto(schedule);
     }
 
     @Transactional
-    public void updateSchedule(Long scheduleId, ScheduleUpdateRequestDto scheduleUpdateRequestDto) {
+    public SimpleScheduleResponseDto updateSchedule(Long scheduleId, ScheduleUpdateRequestDto scheduleUpdateRequestDto) {
         Schedule schedule = checkScheduleRecord(scheduleId);
         Map<Long, User> currentUsers = new HashMap<>();
         schedule.getTravelDate()
@@ -119,6 +127,12 @@ public class ScheduleService {
             schedule.removeUser(branch);
             branchRepository.delete(branch);
         });
+
+        em.flush();
+        em.clear();
+
+        Schedule returnSchedule = checkScheduleRecord(scheduleId);
+        return new SimpleScheduleResponseDto(returnSchedule);
     }
 
     @Transactional
@@ -132,20 +146,26 @@ public class ScheduleService {
         scheduleRepository.deleteAll();
     }
 
-    public void uploadSchedulePhotos(Long userId, Long scheduleId, List<MultipartFile> photos) {
+    public List<String> uploadSchedulePhotos(Long userId, Long scheduleId, List<MultipartFile> photos) {
         User user = checkUserRecord(userId);
         Schedule schedule = checkScheduleRecord(scheduleId);
+        List<String> returnPhotoPaths = new ArrayList<>();
         List<SchedulePhoto> schedulePhotos =
-            s3Service.uploadFiles(photos).stream()
-                .map(photoPath ->
-                    SchedulePhoto.builder()
-                        .user(user)
-                        .schedule(schedule)
-                        .photoPath(photoPath)
-                        .build())
-                .collect(Collectors.toList());
+                s3Service.uploadFiles(photos).stream()
+                        .map(photoPath -> {
+                                    returnPhotoPaths.add(photoPath);
+                                    return SchedulePhoto.builder()
+                                            .user(user)
+                                            .schedule(schedule)
+                                            .photoPath(photoPath)
+                                            .build();
+                                }
+                        )
+                        .collect(Collectors.toList());
         schedulePhotoRepository.saveAll(schedulePhotos);
         schedule.addSchedulePhotos(schedulePhotos);
+
+        return returnPhotoPaths;
     }
 
     // TODO: schedule에 user가 참가 중인지 checking

@@ -1,9 +1,14 @@
 package com.ajou.travely.controller.post;
 
+import com.ajou.travely.config.auth.LoginUser;
+import com.ajou.travely.config.auth.SessionUser;
 import com.ajou.travely.controller.post.dto.*;
 import com.ajou.travely.service.PostService;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,10 +28,9 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping(value = "", consumes = "multipart/form-data")
-    public ResponseEntity<Long> createPost(Long userId,
+    public ResponseEntity<PostResponseDto> createPost(Long userId,
         @Valid @ModelAttribute PostCreateRequestDto requestDto) {
-        Long postId = postService.createPost(userId, requestDto);
-        return ResponseEntity.ok(postId);
+        return ResponseEntity.ok(postService.createPost(userId, requestDto));
     }
 
     @GetMapping("/{postId}")
@@ -35,12 +39,16 @@ public class PostController {
         return ResponseEntity.ok(postResponse);
     }
 
+    @GetMapping()
+    public ResponseEntity<Page<PostResponseDto>> showPostsOfFriends(@LoginUser SessionUser sessionUser,
+                                                                    @PageableDefault Pageable pageable) {
+        return ResponseEntity.ok(postService.getPostsOfFriends(sessionUser.getUserId(), pageable));
+    }
+
     @PatchMapping(value = "/{postId}", consumes = "multipart/form-data")
-    public ResponseEntity<Void> updatePost(@PathVariable Long postId,
+    public ResponseEntity<PostResponseDto> updatePost(@PathVariable Long postId,
         @Valid @ModelAttribute PostUpdateRequestDto requestDto) {
-        postService.updatePost(postId, requestDto);
-        return ResponseEntity.ok()
-            .build();
+        return ResponseEntity.ok(postService.updatePost(postId, requestDto));
     }
 
     @DeleteMapping("/{postId}")

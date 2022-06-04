@@ -3,18 +3,26 @@ package com.ajou.travely.service;
 import com.ajou.travely.controller.post.dto.PostCreateRequestDto;
 import com.ajou.travely.controller.post.dto.PostResponseDto;
 import com.ajou.travely.controller.post.dto.PostUpdateRequestDto;
+import com.ajou.travely.domain.Friend;
 import com.ajou.travely.domain.Post;
 import com.ajou.travely.domain.Schedule;
 import com.ajou.travely.exception.ErrorCode;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.exception.custom.RecordNotFoundException;
+import com.ajou.travely.repository.FriendRepository;
 import com.ajou.travely.repository.PostRepository;
 import com.ajou.travely.repository.ScheduleRepository;
 import com.ajou.travely.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Hibernate;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Transactional
@@ -27,9 +35,14 @@ public class PostService {
 
     private final ScheduleRepository scheduleRepository;
 
+    private final FriendRepository friendRepository;
+
     private final PhotoService photoService;
 
-    public Long createPost(Long userId, PostCreateRequestDto requestDto) {
+    @PersistenceContext
+    private final EntityManager em;
+
+    public PostResponseDto createPost(Long userId, PostCreateRequestDto requestDto) {
         User user = findUserById(userId);
         Schedule schedule = findScheduleById(requestDto.getScheduleId());
         Post post = Post.builder()
@@ -45,7 +58,7 @@ public class PostService {
             }
         }
 
-        return postRepository.save(post).getId();
+        return new PostResponseDto(postRepository.save(post));
     }
 
     @Transactional(readOnly = true)
@@ -53,7 +66,15 @@ public class PostService {
         return new PostResponseDto(initializePostInfo(postId));
     }
 
-    public void updatePost(Long postId, PostUpdateRequestDto requestDto) {
+    public Page<PostResponseDto> getPostsOfFriends(Long userId, Pageable pageable) {
+        List<Long> friendIds = friendRepository
+                .findAllFriendsByFollowee(userId, pageable)
+                .map(Friend::getId)
+                .toList();
+        return postRepository.findAllPostsByUserIds(friendIds, pageable).map(PostResponseDto::new);
+    }
+
+    public PostResponseDto updatePost(Long postId, PostUpdateRequestDto requestDto) {
         Post post = findPostById(postId);
         post.update(requestDto.getTitle(), requestDto.getText());
 
@@ -63,6 +84,12 @@ public class PostService {
         if (requestDto.getRemovePhotoIds() != null) {
             photoService.removePhotoIds(requestDto.getRemovePhotoIds());
         }
+
+        em.flush();
+        em.clear();
+
+        Post returnPost = findPostById(postId);
+        return new PostResponseDto(returnPost);
     }
 
     public void deletePost(Long postId){
