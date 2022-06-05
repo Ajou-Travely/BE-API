@@ -107,14 +107,14 @@ public class TravelController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/accept/{code}")
-    public void acceptInvitation(
-        @LoginUser SessionUser sessionUser,
-        @PathVariable UUID code,
-        HttpServletResponse response) throws IOException {
-        String redirectUri = travelService.acceptInvitation(sessionUser.getUserId(), code);
-        response.sendRedirect(redirectUri);
-    }
+//    @PostMapping("/accept/{code}")
+//    public void acceptInvitation(
+//        @LoginUser SessionUser sessionUser,
+//        @PathVariable UUID code,
+//        HttpServletResponse response) throws IOException {
+//        String redirectUri = travelService.acceptInvitation(sessionUser.getUserId(), code);
+//        response.sendRedirect(redirectUri);
+//    }
 
     @DeleteMapping("/reject/{code}")
     public ResponseEntity<Void> rejectInvitation(@LoginUser SessionUser sessionUser,
