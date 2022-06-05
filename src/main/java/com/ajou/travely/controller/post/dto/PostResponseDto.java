@@ -1,5 +1,6 @@
 package com.ajou.travely.controller.post.dto;
 
+import com.ajou.travely.controller.comment.dto.CommentResponseDto;
 import com.ajou.travely.controller.photo.dto.SimplePhotoResponseDto;
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.domain.Post;

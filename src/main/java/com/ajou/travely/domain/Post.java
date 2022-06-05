@@ -37,11 +37,11 @@ public class Post extends BaseEntity {
 
     private String title;
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Comment> comments = new ArrayList<>();
-
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
     private List<Photo> photos = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    private List<Comment> comments = new ArrayList<>();
 
     @Builder
     public Post(@NonNull Schedule schedule, @NonNull User user, String text, @NonNull String title, LocalDateTime createdAt) {

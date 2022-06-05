@@ -26,7 +26,7 @@ public class Notice extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id")
     private User author;
-    @OneToMany(mappedBy = "notice", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "notice")
     private List<Photo> photos = new ArrayList<>();
 
     @Builder
