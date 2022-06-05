@@ -70,6 +70,7 @@ public class EventService {
                         "해당 ID를 가진 이벤트를 찾을 수 없습니다.",
                         ErrorCode.EVENT_NOT_FOUND
                 ));
+        photoService.removePhotos(event.getPhotos());
         eventRepository.delete(event);
     }
 }

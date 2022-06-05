@@ -1,4 +1,4 @@
-package com.ajou.travely.controller.post.dto;
+package com.ajou.travely.controller.comment.dto;
 
 import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.domain.Comment;
