@@ -24,6 +24,8 @@ public class SimplePostResponseDto {
 
     private final LocalDateTime createdAt;
 
+    private final List<SimplePhotoResponseDto> photoInfos;
+
     public SimplePostResponseDto(Post entity) {
         this.postId = entity.getId();
         this.scheduleId = entity.getSchedule().getId();
@@ -31,6 +33,10 @@ public class SimplePostResponseDto {
         this.title = entity.getTitle();
         this.text = entity.getText();
         this.createdAt = entity.getCreatedAt();
+        this.photoInfos = entity.getPhotos()
+                .stream()
+                .map(SimplePhotoResponseDto::new)
+                .collect(Collectors.toList());
     }
 
 }

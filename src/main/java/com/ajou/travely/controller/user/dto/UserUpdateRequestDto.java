@@ -25,22 +25,18 @@ public class UserUpdateRequestDto {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private final LocalDate birthday;
 
-    private final MultipartFile profileImage;
-
     @Builder
     public UserUpdateRequestDto(@NonNull String name,
                                 @NonNull String phoneNumber,
                                 Mbti mbti,
                                 Sex sex,
-                                LocalDate birthday,
-                                MultipartFile profileImage
+                                LocalDate birthday
         ) {
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.mbti = mbti;
         this.sex = sex;
         this.birthday = birthday;
-        this.profileImage = profileImage;
     }
 
 }
