@@ -29,7 +29,7 @@ public class PostController {
 
     private final PostService postService;
 
-    @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "")
     public ResponseEntity<PostResponseDto> createPost(@LoginUser SessionUser sessionUser,
         @Valid @ModelAttribute PostCreateRequestDto requestDto) {
         return ResponseEntity.ok(postService.createPost(sessionUser.getUserId(), requestDto));
