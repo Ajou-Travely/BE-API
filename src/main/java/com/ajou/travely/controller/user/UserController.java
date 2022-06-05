@@ -19,6 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -41,12 +42,20 @@ public class UserController {
                 .collect(Collectors.toList());
     }
 
-    @PutMapping(value = "", consumes = "multipart/form-data")
+    @PutMapping()
     public ResponseEntity<UserResponseDto> updateUser(
             @LoginUser SessionUser sessionUser,
-            @Valid @ModelAttribute UserUpdateRequestDto requestDto
+            @RequestBody UserUpdateRequestDto requestDto
     ) {
         return ResponseEntity.ok(userService.updateUser(sessionUser.getUserId(), requestDto));
+    }
+
+    @PutMapping("/photo")
+    public ResponseEntity<String> updateUserAvatar(
+            @LoginUser SessionUser sessionUser,
+            @RequestPart MultipartFile photo
+            ) {
+        return ResponseEntity.ok(userService.updateUserAvatar(sessionUser.getUserId(), photo));
     }
 
     @PostMapping("/signup")

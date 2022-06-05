@@ -16,6 +16,7 @@ import javax.validation.constraints.NotNull;
 
 import lombok.*;
 import org.springframework.lang.Nullable;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @NoArgsConstructor
@@ -93,14 +94,16 @@ public class User implements Serializable {
                     @NonNull String phoneNumber,
                     Mbti mbti,
                     Sex sex,
-                    LocalDate birthday,
-                    String profilePath
+                    LocalDate birthday
     ) {
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.mbti = mbti;
         this.sex = sex;
         this.birthday = birthday;
-        this.profilePath = profilePath;
+    }
+
+    public void updateAvatar(String ProfilePath) {
+        this.profilePath = ProfilePath;
     }
 }
