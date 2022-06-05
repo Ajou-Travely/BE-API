@@ -107,7 +107,7 @@ public class TravelController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/accept/{code}")
+    @PostMapping("/accept/{code}")
     public void acceptInvitation(
         @LoginUser SessionUser sessionUser,
         @PathVariable UUID code,
@@ -116,7 +116,7 @@ public class TravelController {
         response.sendRedirect(redirectUri);
     }
 
-    @GetMapping("/reject/{code}")
+    @DeleteMapping("/reject/{code}")
     public ResponseEntity<Void> rejectInvitation(@LoginUser SessionUser sessionUser,
         @PathVariable UUID code) {
         travelService.rejectInvitation(sessionUser.getUserId(), code);
