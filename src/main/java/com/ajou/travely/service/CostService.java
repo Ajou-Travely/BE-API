@@ -126,13 +126,11 @@ public class CostService {
                     cost,
                     userRepository.findById(userId)
                             .orElseThrow(() -> new RuntimeException("유저가 존재하지 않습니다.")),
-                    costUpdateDto.getAmountsPerUser().get(userId).getAmount(),
-                    costUpdateDto.getAmountsPerUser().get(userId).getIsRequested()
+                    costUpdateDto.getAmountsPerUser().get(userId)
             )));
 
             userToStay.forEach(userId -> userCostRepository.updateUserCostByUserCostId(
-                    costUpdateDto.getAmountsPerUser().get(userId).getAmount(),
-                    costUpdateDto.getAmountsPerUser().get(userId).getIsRequested(),
+                    costUpdateDto.getAmountsPerUser().get(userId),
                     exAmountsPerUser.get(userId).getId()
             ));
         }

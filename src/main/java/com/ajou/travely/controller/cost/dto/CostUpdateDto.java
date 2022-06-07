@@ -11,14 +11,14 @@ public class CostUpdateDto {
     private Long totalAmount;
     private String title;
     private String content;
-    private Map<Long, CostUpdateInfoDto> amountsPerUser;
+    private Map<Long, Long> amountsPerUser;
     private Long payerId;
 
     public CostUpdateDto(
             Long totalAmount,
             String title,
             String content,
-            Map<Long, CostUpdateInfoDto> amountsPerUser,
+            Map<Long, Long> amountsPerUser,
             Long payerId
     ) {
         this.totalAmount = totalAmount;

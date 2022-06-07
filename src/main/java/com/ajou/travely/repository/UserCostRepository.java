@@ -16,12 +16,10 @@ public interface UserCostRepository extends JpaRepository<UserCost, Long> {
     @Modifying
     @Query("update " +
             "UserCost uc " +
-            "set uc.amount = :amount, " +
-            "uc.isRequested = :isRequested " +
+            "set uc.amount = :amount " +
             "where uc.id = :userCostId")
     void updateUserCostByUserCostId(
             @Param("amount") Long amount,
-            @Param("isRequested") Boolean isRequested,
             @Param("userCostId") Long userCostId
     );
 

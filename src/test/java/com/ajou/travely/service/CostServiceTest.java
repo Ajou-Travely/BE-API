@@ -231,11 +231,11 @@ class CostServiceTest {
             .orElseThrow(() -> new RuntimeException("지출 없다."));
         String changedTitle = "ChangedTitle";
         String changedContent = "ChangedContent";
-        Map<Long, CostUpdateInfoDto> amountsPerUser = new HashMap<>();
-        amountsPerUser.put(users.get(2).getId(), new CostUpdateInfoDto(20000L, true));
-        amountsPerUser.put(users.get(3).getId(), new CostUpdateInfoDto(2000L, true));
-        amountsPerUser.put(users.get(4).getId(), new CostUpdateInfoDto(100000L, false));
-        amountsPerUser.put(users.get(5).getId(), new CostUpdateInfoDto(1000000L, false));
+        Map<Long, Long> amountsPerUser = new HashMap<>();
+        amountsPerUser.put(users.get(2).getId(), 20000L);
+        amountsPerUser.put(users.get(3).getId(), 2000L);
+        amountsPerUser.put(users.get(4).getId(), 100000L);
+        amountsPerUser.put(users.get(5).getId(), 1000000L);
         CostUpdateDto costUpdateDto = new CostUpdateDto(
             1122000L,
             changedTitle,
@@ -256,12 +256,8 @@ class CostServiceTest {
                 .toArray()).isEqualTo(amountsPerUser.keySet().toArray());
         Assertions.assertThat(
             updatedCost.getUserCosts().stream().map(UserCost::getAmount).toArray()).isEqualTo(
-            amountsPerUser.keySet().stream().map(userId -> amountsPerUser.get(userId).getAmount())
+            amountsPerUser.keySet().stream().map(userId -> amountsPerUser.get(userId))
                 .toArray());
-        Assertions.assertThat(
-            updatedCost.getUserCosts().stream().map(UserCost::getIsRequested).toArray()).isEqualTo(
-            amountsPerUser.keySet().stream()
-                .map(userId -> amountsPerUser.get(userId).getIsRequested()).toArray());
     }
 
     @Test
