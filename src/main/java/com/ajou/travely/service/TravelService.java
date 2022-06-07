@@ -55,7 +55,7 @@ public class TravelService {
     @PersistenceContext
     private final EntityManager em;
 
-    @Value("${domain.base-url}")
+    @Value("${domain.base-url}/")
     private String baseUrl;
 
     @Transactional

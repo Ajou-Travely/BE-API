@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
-    @Query(value = "select p from Post p left join fetch p.user u where u.id in :userIds",
+    @Query(value = "select distinct p from Post p left join fetch p.user u left join fetch p.schedule s left join fetch s.place where u.id in :userIds",
     countQuery = "select count(p) from Post p where p.user.id in :userIds")
     Page<Post> findAllPostsByUserIds(List<Long> userIds, Pageable pageable);
 

@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,17 +37,22 @@ public class UserService {
 
     public UserResponseDto updateUser(Long userId, UserUpdateRequestDto requestDto) {
         User user = findUserById(userId);
-        String profilePath = requestDto.getProfileImage() == null
-                ? null
-                : awsS3Service.uploadFile(requestDto.getProfileImage());
-
         user.update(requestDto.getName(),
                 requestDto.getPhoneNumber(),
                 requestDto.getMbti(),
                 requestDto.getSex(),
-                requestDto.getBirthday(),
-                profilePath);
+                requestDto.getBirthday()
+        );
         return new UserResponseDto(user);
+    }
+
+    public String updateUserAvatar(Long userId, MultipartFile avatar) {
+        User user = findUserById(userId);
+        String profilePath = avatar == null
+                ? null
+                : awsS3Service.uploadFile(avatar);
+        user.updateAvatar(profilePath);
+        return profilePath;
     }
 
     public List<User> getAllUsers() {

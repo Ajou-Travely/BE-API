@@ -2,10 +2,10 @@ package com.ajou.travely.controller.travel;
 
 import com.ajou.travely.config.auth.LoginUser;
 import com.ajou.travely.config.auth.SessionUser;
+import com.ajou.travely.controller.cost.dto.*;
 import com.ajou.travely.controller.material.dto.MaterialCreateRequestDto;
 import com.ajou.travely.controller.material.dto.MaterialResponseDto;
 import com.ajou.travely.controller.material.dto.MaterialUpdateRequestDto;
-import com.ajou.travely.controller.cost.dto.*;
 import com.ajou.travely.controller.schedule.dto.ScheduleCreateRequestDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleResponseDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleUpdateRequestDto;
@@ -16,11 +16,7 @@ import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.domain.kakao.KakaoMessageResponse;
 import com.ajou.travely.exception.ErrorCode;
 import com.ajou.travely.exception.custom.KakaoNotAuthenticationExcpetion;
-import com.ajou.travely.service.CostService;
-import com.ajou.travely.service.MaterialService;
-import com.ajou.travely.service.ScheduleService;
-import com.ajou.travely.service.TravelService;
-import com.ajou.travely.service.UserService;
+import com.ajou.travely.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,17 +25,13 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.stream.Collectors;
-
-import org.springframework.web.multipart.MultipartFile;
 
 @RequestMapping("/v1/travels")
 @RequiredArgsConstructor
@@ -107,16 +99,16 @@ public class TravelController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/accept/{code}")
-    public void acceptInvitation(
-        @LoginUser SessionUser sessionUser,
-        @PathVariable UUID code,
-        HttpServletResponse response) throws IOException {
-        String redirectUri = travelService.acceptInvitation(sessionUser.getUserId(), code);
-        response.sendRedirect(redirectUri);
-    }
+//    @PostMapping("/accept/{code}")
+//    public void acceptInvitation(
+//        @LoginUser SessionUser sessionUser,
+//        @PathVariable UUID code,
+//        HttpServletResponse response) throws IOException {
+//        String redirectUri = travelService.acceptInvitation(sessionUser.getUserId(), code);
+//        response.sendRedirect(redirectUri);
+//    }
 
-    @GetMapping("/reject/{code}")
+    @DeleteMapping("/reject/{code}")
     public ResponseEntity<Void> rejectInvitation(@LoginUser SessionUser sessionUser,
         @PathVariable UUID code) {
         travelService.rejectInvitation(sessionUser.getUserId(), code);
@@ -234,10 +226,10 @@ public class TravelController {
     }
 
     @DeleteMapping("/{travelId}/costs/{costId}")
-    public ResponseEntity<Void> deleteCost(@PathVariable Long travelId,
+    public ResponseEntity<Long> deleteCost(@PathVariable Long travelId,
         @PathVariable Long costId) {
-        this.costService.deleteCostById(costId);
-        return ResponseEntity.ok().build();
+        costService.deleteCostById(costId);
+        return ResponseEntity.ok(costId);
     }
 
     // TODO 준비물: checked, title, 한 명 지정
