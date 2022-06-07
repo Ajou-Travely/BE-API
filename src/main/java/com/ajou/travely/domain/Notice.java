@@ -34,12 +34,10 @@ public class Notice extends BaseEntity {
     public Notice(@NotBlank String title,
                   String content,
                   @NonNull User author,
-                  List<Photo> photos,
                   LocalDateTime createdAt) {
         this.title = title;
         this.content = content;
         this.author = author;
-        this.photos = photos == null ? new ArrayList<>() : photos;
         this.createdAt = createdAt;
     }
 
