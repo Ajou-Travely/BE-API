@@ -57,11 +57,11 @@ public class Photo<T> {
             this.event = (Event) record;
             this.name = name;
             event.getPhotos().add(this);
-        } else if(record.getClass().equals(Event.class)) {
+        } else if(record.getClass().equals(Notice.class)) {
             this.notice = (Notice) record;
             this.name = name;
             notice.getPhotos().add(this);
-        } else if(record.getClass().equals(Event.class)) {
+        } else if(record.getClass().equals(Post.class)) {
             this.post = (Post) record;
             this.name = name;
             post.getPhotos().add(this);
