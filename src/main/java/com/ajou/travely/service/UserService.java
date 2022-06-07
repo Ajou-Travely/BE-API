@@ -129,12 +129,13 @@ public class UserService {
     }
 
     @Transactional
-    public void requestFollowing(Long userId, String targetEmail) {
+    public SimpleUserInfoDto requestFollowing(Long userId, String targetEmail) {
         User user = checkUserRecord(userId);
         User target = checkUserRecordByEmail(targetEmail);
         checkDuplicatedRequest(user, target, false);
         checkDuplicatedRequest(target, user, true);
         friendRepository.save(new Friend(user, target));
+        return new SimpleUserInfoDto(target);
     }
 
     @Transactional

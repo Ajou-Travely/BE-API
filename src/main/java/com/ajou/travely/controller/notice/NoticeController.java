@@ -20,17 +20,11 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
-@RequestMapping("v1/notices")
+@RequestMapping("/v1/notices")
 @RequiredArgsConstructor
 @RestController
 public class NoticeController {
     private final NoticeService noticeService;
-
-    @PostMapping(value = "", consumes = "multipart/form-data")
-    public ResponseEntity<NoticeResponseDto> createNotice(@LoginUser SessionUser sessionUser,
-                                                          @Valid @ModelAttribute NoticeCreateRequestDto requestDto) {
-        return ResponseEntity.ok(noticeService.createNotice(sessionUser.getUserId(), requestDto));
-    }
 
     @GetMapping("/{noticeId}")
     public ResponseEntity<NoticeResponseDto> getNotice(@PathVariable Long noticeId) {
@@ -47,15 +41,4 @@ public class NoticeController {
         return ResponseEntity.ok(notices);
     }
 
-    @PatchMapping("/{noticeId}")
-    public ResponseEntity<NoticeResponseDto> updateNotice(@PathVariable Long noticeId,
-                                                          @RequestBody NoticeUpdateDto noticeUpdateDto) {
-        return ResponseEntity.ok(noticeService.updateNotice(noticeId, noticeUpdateDto));
-    }
-
-    @DeleteMapping("/{noticeId}")
-    public ResponseEntity<Void> deleteNotice(@PathVariable Long noticeId) {
-        noticeService.deleteNotice(noticeId);
-        return ResponseEntity.ok().build();
-    }
 }

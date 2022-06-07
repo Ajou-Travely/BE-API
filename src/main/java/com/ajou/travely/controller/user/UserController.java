@@ -103,10 +103,10 @@ public class UserController {
     }
 
     @PostMapping("/friends/{targetEmail}")
-    public ResponseEntity<Void> sendFriendRequest(@PathVariable String targetEmail,
+    public ResponseEntity<SimpleUserInfoDto> sendFriendRequest(@PathVariable String targetEmail,
                                                     @LoginUser SessionUser sessionUser) {
-        userService.requestFollowing(sessionUser.getUserId(), targetEmail);
-        return ResponseEntity.ok().build();
+        return ResponseEntity
+                .ok(userService.requestFollowing(sessionUser.getUserId(), targetEmail));
     }
 
     @DeleteMapping("/friends/{targetId}")

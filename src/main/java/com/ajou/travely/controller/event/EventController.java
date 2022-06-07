@@ -23,15 +23,9 @@ import javax.validation.Valid;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("v1/events")
+@RequestMapping("/v1/events")
 public class EventController {
     private final EventService eventService;
-
-    @PostMapping(value = "", consumes = "multipart/form-data")
-    public ResponseEntity<EventResponseDto> createEvent(@LoginUser SessionUser sessionUser,
-                                                         @Valid @ModelAttribute EventCreateRequestDto requestDto) {
-        return ResponseEntity.ok(eventService.createEvent(sessionUser.getUserId(), requestDto));
-    }
 
     @GetMapping("/{eventId}")
     public ResponseEntity<EventResponseDto> getEvent(@PathVariable Long eventId) {
@@ -47,15 +41,4 @@ public class EventController {
         return ResponseEntity.ok(events);
     }
 
-    @PatchMapping("/{eventId}")
-    public ResponseEntity<EventResponseDto> updateEvent(@PathVariable Long eventId,
-                                                          @RequestBody EventUpdateDto eventUpdateDto) {
-        return ResponseEntity.ok(eventService.updateEvent(eventId, eventUpdateDto));
-    }
-
-    @DeleteMapping("/{eventId}")
-    public ResponseEntity<Void> deleteEvent(@PathVariable Long eventId) {
-        eventService.deleteEvent(eventId);
-        return ResponseEntity.ok().build();
-    }
 }
