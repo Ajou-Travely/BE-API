@@ -226,10 +226,10 @@ public class TravelController {
     }
 
     @DeleteMapping("/{travelId}/costs/{costId}")
-    public ResponseEntity<Void> deleteCost(@PathVariable Long travelId,
+    public ResponseEntity<Long> deleteCost(@PathVariable Long travelId,
         @PathVariable Long costId) {
-        this.costService.deleteCostById(costId);
-        return ResponseEntity.ok().build();
+        costService.deleteCostById(costId);
+        return ResponseEntity.ok(costId);
     }
 
     // TODO 준비물: checked, title, 한 명 지정
