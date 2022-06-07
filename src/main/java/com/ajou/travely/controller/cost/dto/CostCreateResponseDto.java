@@ -13,7 +13,6 @@ import java.util.List;
 @Getter
 public class CostCreateResponseDto {
     private Long id;
-    private SimpleTravelResponseDto travel;
     private Long totalAmount;
     private String content;
     private String title;
@@ -22,7 +21,6 @@ public class CostCreateResponseDto {
 
     public CostCreateResponseDto(Cost entity, User payer) {
         this.id = entity.getId();
-        this.travel = new SimpleTravelResponseDto(entity.getTravel());
         this.totalAmount = entity.getTotalAmount();
         this.content = entity.getContent();
         this.title = entity.getTitle();
