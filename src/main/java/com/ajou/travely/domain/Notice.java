@@ -39,7 +39,7 @@ public class Notice extends BaseEntity {
         this.title = title;
         this.content = content;
         this.author = author;
-        this.photos = photos;
+        this.photos = photos == null ? new ArrayList<>() : photos;
         this.createdAt = createdAt;
     }
 

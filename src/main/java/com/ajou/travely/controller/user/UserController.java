@@ -2,8 +2,6 @@ package com.ajou.travely.controller.user;
 
 import com.ajou.travely.config.auth.LoginUser;
 import com.ajou.travely.config.auth.SessionUser;
-import com.ajou.travely.controller.common.ResponseWithPagination;
-import com.ajou.travely.controller.travel.dto.SimpleTravelResponseDto;
 import com.ajou.travely.controller.user.dto.*;
 import com.ajou.travely.domain.kakao.KakaoFriendsResponse;
 import com.ajou.travely.domain.user.User;
@@ -13,7 +11,6 @@ import com.ajou.travely.service.KakaoApiService;
 import com.ajou.travely.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;

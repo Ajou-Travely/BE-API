@@ -1,10 +1,6 @@
 package com.ajou.travely.controller.notice;
 
-import com.ajou.travely.config.auth.LoginUser;
-import com.ajou.travely.config.auth.SessionUser;
-import com.ajou.travely.controller.notice.dto.NoticeCreateRequestDto;
 import com.ajou.travely.controller.notice.dto.NoticeResponseDto;
-import com.ajou.travely.controller.notice.dto.NoticeUpdateDto;
 import com.ajou.travely.controller.notice.dto.SimpleNoticeResponseDto;
 import com.ajou.travely.service.NoticeService;
 import lombok.RequiredArgsConstructor;
@@ -13,12 +9,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.validation.Valid;
-import java.util.List;
-import java.util.Optional;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RequestMapping("/v1/notices")
 @RequiredArgsConstructor
@@ -40,5 +34,4 @@ public class NoticeController {
         Page<SimpleNoticeResponseDto> notices = noticeService.getNotices(pageable);
         return ResponseEntity.ok(notices);
     }
-
 }
