@@ -23,7 +23,7 @@ import javax.validation.Valid;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("v1/events")
+@RequestMapping("/v1/events")
 public class EventController {
     private final EventService eventService;
 

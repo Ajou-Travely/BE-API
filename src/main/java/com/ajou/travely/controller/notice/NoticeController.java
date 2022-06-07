@@ -20,7 +20,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
-@RequestMapping("v1/notices")
+@RequestMapping("/v1/notices")
 @RequiredArgsConstructor
 @RestController
 public class NoticeController {
