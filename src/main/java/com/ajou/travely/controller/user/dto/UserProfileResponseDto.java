@@ -1,5 +1,6 @@
 package com.ajou.travely.controller.user.dto;
 
+import com.ajou.travely.controller.post.dto.PostResponseDto;
 import com.ajou.travely.controller.post.dto.SimplePostResponseDto;
 import com.ajou.travely.domain.Post;
 import com.ajou.travely.domain.user.User;
@@ -28,7 +29,7 @@ public class UserProfileResponseDto {
 
     private final UserType userType;
 
-    private final List<SimplePostResponseDto> posts;
+    private final List<PostResponseDto> posts;
 
     public UserProfileResponseDto(User entity, List<Post> posts) {
         this.userId = entity.getId();
@@ -41,7 +42,7 @@ public class UserProfileResponseDto {
 //        this.birthday = entity.getBirthday();
         this.posts = posts
                 .stream()
-                .map(SimplePostResponseDto::new)
+                .map(PostResponseDto::new)
                 .collect(Collectors.toList());
     }
 }
