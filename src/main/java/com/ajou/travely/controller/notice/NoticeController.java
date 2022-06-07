@@ -4,6 +4,7 @@ import com.ajou.travely.config.auth.LoginUser;
 import com.ajou.travely.config.auth.SessionUser;
 import com.ajou.travely.controller.notice.dto.NoticeCreateRequestDto;
 import com.ajou.travely.controller.notice.dto.NoticeResponseDto;
+import com.ajou.travely.controller.notice.dto.NoticeUpdateDto;
 import com.ajou.travely.controller.notice.dto.SimpleNoticeResponseDto;
 import com.ajou.travely.service.NoticeService;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +40,5 @@ public class NoticeController {
         Page<SimpleNoticeResponseDto> notices = noticeService.getNotices(pageable);
         return ResponseEntity.ok(notices);
     }
-
 
 }

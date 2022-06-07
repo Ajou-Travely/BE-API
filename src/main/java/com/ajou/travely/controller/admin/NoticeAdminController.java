@@ -4,6 +4,7 @@ import com.ajou.travely.config.auth.LoginUser;
 import com.ajou.travely.config.auth.SessionUser;
 import com.ajou.travely.controller.notice.dto.NoticeCreateRequestDto;
 import com.ajou.travely.controller.notice.dto.NoticeResponseDto;
+import com.ajou.travely.controller.notice.dto.NoticeUpdateDto;
 import com.ajou.travely.controller.notice.dto.SimpleNoticeResponseDto;
 import com.ajou.travely.service.NoticeService;
 import javax.validation.Valid;
@@ -16,8 +17,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -45,6 +48,12 @@ public class NoticeAdminController {
     public ResponseEntity<NoticeResponseDto> createNotice(@LoginUser SessionUser sessionUser,
         @Valid @ModelAttribute NoticeCreateRequestDto requestDto) {
         return ResponseEntity.ok(noticeService.createNotice(sessionUser.getUserId(), requestDto));
+    }
+
+    @PatchMapping("/{noticeId}")
+    public ResponseEntity<NoticeResponseDto> updateNotice(@PathVariable Long noticeId,
+        @RequestBody NoticeUpdateDto noticeUpdateDto) {
+        return ResponseEntity.ok(noticeService.updateNotice(noticeId, noticeUpdateDto));
     }
 
     @DeleteMapping("/{noticeId}")

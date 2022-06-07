@@ -4,9 +4,11 @@ import com.ajou.travely.config.auth.LoginUser;
 import com.ajou.travely.config.auth.SessionUser;
 import com.ajou.travely.controller.event.dto.EventCreateRequestDto;
 import com.ajou.travely.controller.event.dto.EventResponseDto;
+import com.ajou.travely.controller.event.dto.EventUpdateDto;
 import com.ajou.travely.controller.event.dto.SimpleEventResponseDto;
 import com.ajou.travely.controller.notice.dto.NoticeCreateRequestDto;
 import com.ajou.travely.controller.notice.dto.NoticeResponseDto;
+import com.ajou.travely.controller.notice.dto.NoticeUpdateDto;
 import com.ajou.travely.controller.notice.dto.SimpleNoticeResponseDto;
 import com.ajou.travely.service.EventService;
 import lombok.RequiredArgsConstructor;
@@ -25,12 +27,6 @@ import javax.validation.Valid;
 public class EventController {
     private final EventService eventService;
 
-    @PostMapping(value = "", consumes = "multipart/form-data")
-    public ResponseEntity<EventResponseDto> createEvent(@LoginUser SessionUser sessionUser,
-                                                         @Valid @ModelAttribute EventCreateRequestDto requestDto) {
-        return ResponseEntity.ok(eventService.createEvent(sessionUser.getUserId(), requestDto));
-    }
-
     @GetMapping("/{eventId}")
     public ResponseEntity<EventResponseDto> getEvent(@PathVariable Long eventId) {
         return ResponseEntity.ok(eventService.getEvent(eventId));
@@ -45,9 +41,4 @@ public class EventController {
         return ResponseEntity.ok(events);
     }
 
-    @DeleteMapping("/{eventId}")
-    public ResponseEntity<Void> deleteEvent(@PathVariable Long eventId) {
-        eventService.deleteEvent(eventId);
-        return ResponseEntity.ok().build();
-    }
 }
