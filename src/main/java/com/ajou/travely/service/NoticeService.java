@@ -48,7 +48,9 @@ public class NoticeService {
                 .createdAt(LocalDateTime.now())
                 .build());
         if (requestDto.getPhotos() != null) {
-            photoService.createPhotosOfNotice(notice, requestDto.getPhotos());
+            if (!requestDto.getPhotos().isEmpty()) {
+                photoService.createPhotosOfNotice(notice, requestDto.getPhotos());
+            }
         }   
         
         return new NoticeResponseDto(notice);

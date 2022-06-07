@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
 @RequestMapping("/v1/admin/notices")
@@ -44,7 +45,7 @@ public class NoticeAdminController {
         return ResponseEntity.ok(noticeService.getNotice(noticeId));
     }
 
-    @PostMapping(value = "", consumes = "multipart/form-data")
+    @PostMapping(value = "")
     public ResponseEntity<NoticeResponseDto> createNotice(@LoginUser SessionUser sessionUser,
         @Valid @ModelAttribute NoticeCreateRequestDto requestDto) {
         return ResponseEntity.ok(noticeService.createNotice(sessionUser.getUserId(), requestDto));
@@ -52,7 +53,7 @@ public class NoticeAdminController {
 
     @PatchMapping("/{noticeId}")
     public ResponseEntity<NoticeResponseDto> updateNotice(@PathVariable Long noticeId,
-        @RequestBody NoticeUpdateDto noticeUpdateDto) {
+        @ModelAttribute NoticeUpdateDto noticeUpdateDto) {
         return ResponseEntity.ok(noticeService.updateNotice(noticeId, noticeUpdateDto));
     }
 
