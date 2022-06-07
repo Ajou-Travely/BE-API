@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-@RequestMapping("v1/places")
+@RequestMapping("/v1/places")
 @RestController
 @RequiredArgsConstructor
 public class PlaceController {

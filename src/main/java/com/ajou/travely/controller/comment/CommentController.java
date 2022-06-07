@@ -14,7 +14,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RequiredArgsConstructor
-@RequestMapping("v1/comments")
+@RequestMapping("/v1/comments")
 @RestController
 public class CommentController {
     private final CommentService commentService;
