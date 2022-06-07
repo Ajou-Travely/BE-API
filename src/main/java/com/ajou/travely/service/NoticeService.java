@@ -77,11 +77,13 @@ public class NoticeService {
                         "해당 ID를 가진 공지사항을 찾을 수 없습니다.",
                         ErrorCode.NOTICE_NOT_FOUND
                 ));
-
-        photoService.removePhotoIds(noticeUpdateDto.getPhotoIdsToRemove());
-        photoService.createPhotosOfSomething(notice, noticeUpdateDto.getPhotos());
+        if (noticeUpdateDto.getPhotoIdsToRemove() != null) {
+            photoService.removePhotoIds(noticeUpdateDto.getPhotoIdsToRemove());
+        }
+        if (noticeUpdateDto.getPhotos() != null) {
+            photoService.createPhotosOfSomething(notice, noticeUpdateDto.getPhotos());
+        }
         notice.update(noticeUpdateDto);
-
         return new NoticeResponseDto(notice);
     }
 

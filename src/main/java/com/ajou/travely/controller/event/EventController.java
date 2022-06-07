@@ -4,9 +4,11 @@ import com.ajou.travely.config.auth.LoginUser;
 import com.ajou.travely.config.auth.SessionUser;
 import com.ajou.travely.controller.event.dto.EventCreateRequestDto;
 import com.ajou.travely.controller.event.dto.EventResponseDto;
+import com.ajou.travely.controller.event.dto.EventUpdateDto;
 import com.ajou.travely.controller.event.dto.SimpleEventResponseDto;
 import com.ajou.travely.controller.notice.dto.NoticeCreateRequestDto;
 import com.ajou.travely.controller.notice.dto.NoticeResponseDto;
+import com.ajou.travely.controller.notice.dto.NoticeUpdateDto;
 import com.ajou.travely.controller.notice.dto.SimpleNoticeResponseDto;
 import com.ajou.travely.service.EventService;
 import lombok.RequiredArgsConstructor;
@@ -43,6 +45,12 @@ public class EventController {
                     direction = Sort.Direction.DESC) Pageable pageable) {
         Page<SimpleEventResponseDto> events = eventService.getEvents(pageable);
         return ResponseEntity.ok(events);
+    }
+
+    @PatchMapping("/{eventId}")
+    public ResponseEntity<EventResponseDto> updateEvent(@PathVariable Long eventId,
+                                                          @RequestBody EventUpdateDto eventUpdateDto) {
+        return ResponseEntity.ok(eventService.updateEvent(eventId, eventUpdateDto));
     }
 
     @DeleteMapping("/{eventId}")

@@ -1,5 +1,7 @@
 package com.ajou.travely.domain;
 
+import com.ajou.travely.controller.event.dto.EventUpdateDto;
+import com.ajou.travely.controller.notice.dto.NoticeUpdateDto;
 import com.ajou.travely.domain.user.User;
 import lombok.Builder;
 import lombok.Getter;
@@ -40,5 +42,14 @@ public class Event extends BaseEntity {
         this.author = author;
         this.photos = photos;
         this.createdAt = createdAt;
+    }
+
+    public void update(EventUpdateDto eventUpdateDto) {
+        if (eventUpdateDto.getTitle() != null) {
+            this.title = eventUpdateDto.getTitle();
+        }
+        if (eventUpdateDto.getContent() != null) {
+            this.content = eventUpdateDto.getContent();
+        }
     }
 }
