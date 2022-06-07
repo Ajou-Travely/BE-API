@@ -105,7 +105,7 @@ public class CostService {
                 .orElseThrow(() -> new RuntimeException("해당 지출이 존재하지 않습니다."));
         cost.updateCost(costUpdateDto);
         List<UserCost> userCosts = cost.getUserCosts();
-        System.out.println("costUpdateDto = " + costUpdateDto.getAmountsPerUser());
+        
         if (!costUpdateDto.getAmountsPerUser().keySet().isEmpty()) {
             Map<Long, UserCost> exAmountsPerUser = new HashMap<>();
             userCosts.forEach(userCost -> exAmountsPerUser.put(
