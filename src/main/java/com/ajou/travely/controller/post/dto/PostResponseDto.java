@@ -17,6 +17,10 @@ public class PostResponseDto {
 
     private final Long scheduleId;
 
+    private final String placeName;
+
+    private final String placeUrl;
+
     private final SimpleUserInfoDto userInfo;
 
     private final String title;
@@ -32,6 +36,8 @@ public class PostResponseDto {
     public PostResponseDto(Post entity) {
         this.postId = entity.getId();
         this.scheduleId = entity.getSchedule().getId();
+        this.placeName = entity.getSchedule().getPlace().getPlaceName();
+        this.placeUrl = entity.getSchedule().getPlace().getPlaceUrl();
         this.userInfo = new SimpleUserInfoDto(entity.getUser());
         this.title = entity.getTitle();
         this.text = entity.getText();

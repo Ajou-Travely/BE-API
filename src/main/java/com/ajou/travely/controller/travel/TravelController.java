@@ -2,10 +2,10 @@ package com.ajou.travely.controller.travel;
 
 import com.ajou.travely.config.auth.LoginUser;
 import com.ajou.travely.config.auth.SessionUser;
+import com.ajou.travely.controller.cost.dto.*;
 import com.ajou.travely.controller.material.dto.MaterialCreateRequestDto;
 import com.ajou.travely.controller.material.dto.MaterialResponseDto;
 import com.ajou.travely.controller.material.dto.MaterialUpdateRequestDto;
-import com.ajou.travely.controller.cost.dto.*;
 import com.ajou.travely.controller.schedule.dto.ScheduleCreateRequestDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleResponseDto;
 import com.ajou.travely.controller.schedule.dto.ScheduleUpdateRequestDto;
@@ -16,11 +16,7 @@ import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.domain.kakao.KakaoMessageResponse;
 import com.ajou.travely.exception.ErrorCode;
 import com.ajou.travely.exception.custom.KakaoNotAuthenticationExcpetion;
-import com.ajou.travely.service.CostService;
-import com.ajou.travely.service.MaterialService;
-import com.ajou.travely.service.ScheduleService;
-import com.ajou.travely.service.TravelService;
-import com.ajou.travely.service.UserService;
+import com.ajou.travely.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,17 +25,13 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.stream.Collectors;
-
-import org.springframework.web.multipart.MultipartFile;
 
 @RequestMapping("/v1/travels")
 @RequiredArgsConstructor
