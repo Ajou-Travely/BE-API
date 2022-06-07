@@ -22,12 +22,7 @@ public class CostResponseDto {
         this.content = entity.getContent();
         this.title = entity.getTitle();
         this.userCosts = entity.getUserCosts().stream().map(userCost -> {
-            return new UserCostResponseDto(
-                    userCost.getId(),
-                    userCost.getAmount(),
-                    new SimpleUserInfoDto(userCost.getUser()),
-                    userCost.getIsRequested()
-            );
+            return new UserCostResponseDto(userCost);
         }).collect(Collectors.toList());
         this.payerId = entity.getPayerId();
     }

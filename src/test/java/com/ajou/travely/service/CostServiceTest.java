@@ -159,16 +159,6 @@ class CostServiceTest {
         Assertions.assertThat(
                 costById.getUserCosts()
                     .stream()
-                    .map(UserCostResponseDto::getUserCostId)
-                    .toArray())
-            .isEqualTo(
-                createdCost.getUserCosts()
-                    .stream()
-                    .map(UserCost::getId)
-                    .toArray());
-        Assertions.assertThat(
-                costById.getUserCosts()
-                    .stream()
                     .map(userCostResponseDto ->
                         Arrays.asList(
                             userCostResponseDto.getSimpleUserInfoDto().getUserId(),
@@ -178,7 +168,7 @@ class CostServiceTest {
                 createdCost.getUserCosts()
                     .stream()
                     .map(userCost ->
-                        Arrays.asList(userCost.getUser().getId(), userCost.getUser().getName()))
+                        Arrays.asList(userCost.getSimpleUserInfoDto().getUserId(), userCost.getSimpleUserInfoDto().getUserName()))
                     .toArray());
     }
 

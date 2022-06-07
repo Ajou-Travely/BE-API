@@ -9,6 +9,7 @@ import com.ajou.travely.domain.user.User;
 import lombok.Getter;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 public class CostCreateResponseDto {
@@ -16,7 +17,7 @@ public class CostCreateResponseDto {
     private Long totalAmount;
     private String content;
     private String title;
-    private List<UserCost> userCosts;
+    private List<UserCostResponseDto> userCosts;
     private SimpleUserInfoDto payer;
 
     public CostCreateResponseDto(Cost entity, User payer) {
@@ -25,6 +26,8 @@ public class CostCreateResponseDto {
         this.content = entity.getContent();
         this.title = entity.getTitle();
         this.payer = new SimpleUserInfoDto(payer);
-        this.userCosts = entity.getUserCosts();
+        this.userCosts = entity.getUserCosts()
+                .stream().map(UserCostResponseDto::new)
+                .collect(Collectors.toList());
     }
 }

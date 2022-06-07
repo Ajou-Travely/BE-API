@@ -209,7 +209,7 @@ public class TravelController {
     @PutMapping("/{travelId}/costs/{costId}")
     public ResponseEntity<CostResponseDto> updateCost(@PathVariable Long travelId,
                                            @PathVariable Long costId,
-                                           CostUpdateDto costUpdateDto) {
+                                           @RequestBody CostUpdateDto costUpdateDto) {
         return ResponseEntity.ok(this.costService.updateCostById(costId, costUpdateDto));
     }
 
