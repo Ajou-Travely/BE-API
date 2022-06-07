@@ -2,6 +2,7 @@ package com.ajou.travely.service;
 
 import com.ajou.travely.controller.notice.dto.NoticeCreateRequestDto;
 import com.ajou.travely.controller.notice.dto.NoticeResponseDto;
+import com.ajou.travely.controller.notice.dto.NoticeUpdateDto;
 import com.ajou.travely.controller.notice.dto.SimpleNoticeResponseDto;
 import com.ajou.travely.domain.Notice;
 import com.ajou.travely.domain.Photo;
@@ -67,6 +68,23 @@ public class NoticeService {
         return noticeRepository
                 .findAll(pageable)
                 .map(SimpleNoticeResponseDto::new);
+    }
+
+    @Transactional
+    public NoticeResponseDto updateNotice(Long noticeId, NoticeUpdateDto noticeUpdateDto) {
+        Notice notice = noticeRepository.findById(noticeId)
+                .orElseThrow(() -> new RecordNotFoundException(
+                        "해당 ID를 가진 공지사항을 찾을 수 없습니다.",
+                        ErrorCode.NOTICE_NOT_FOUND
+                ));
+        if (noticeUpdateDto.getPhotoIdsToRemove() != null) {
+            photoService.removePhotoIds(noticeUpdateDto.getPhotoIdsToRemove());
+        }
+        if (noticeUpdateDto.getPhotos() != null) {
+            photoService.createPhotosOfSomething(notice, noticeUpdateDto.getPhotos());
+        }
+        notice.update(noticeUpdateDto);
+        return new NoticeResponseDto(notice);
     }
 
     @Transactional

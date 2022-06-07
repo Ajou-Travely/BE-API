@@ -4,6 +4,7 @@ import com.ajou.travely.config.auth.LoginUser;
 import com.ajou.travely.config.auth.SessionUser;
 import com.ajou.travely.controller.notice.dto.NoticeCreateRequestDto;
 import com.ajou.travely.controller.notice.dto.NoticeResponseDto;
+import com.ajou.travely.controller.notice.dto.NoticeUpdateDto;
 import com.ajou.travely.controller.notice.dto.SimpleNoticeResponseDto;
 import com.ajou.travely.service.NoticeService;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +45,12 @@ public class NoticeController {
                     direction = Sort.Direction.DESC) Pageable pageable) {
         Page<SimpleNoticeResponseDto> notices = noticeService.getNotices(pageable);
         return ResponseEntity.ok(notices);
+    }
+
+    @PatchMapping("/{noticeId}")
+    public ResponseEntity<NoticeResponseDto> updateNotice(@PathVariable Long noticeId,
+                                                          @RequestBody NoticeUpdateDto noticeUpdateDto) {
+        return ResponseEntity.ok(noticeService.updateNotice(noticeId, noticeUpdateDto));
     }
 
     @DeleteMapping("/{noticeId}")

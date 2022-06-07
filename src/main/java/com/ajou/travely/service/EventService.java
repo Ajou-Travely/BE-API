@@ -2,8 +2,11 @@ package com.ajou.travely.service;
 
 import com.ajou.travely.controller.event.dto.EventCreateRequestDto;
 import com.ajou.travely.controller.event.dto.EventResponseDto;
+import com.ajou.travely.controller.event.dto.EventUpdateDto;
 import com.ajou.travely.controller.event.dto.SimpleEventResponseDto;
+import com.ajou.travely.controller.notice.dto.NoticeResponseDto;
 import com.ajou.travely.domain.Event;
+import com.ajou.travely.domain.Notice;
 import com.ajou.travely.domain.user.User;
 import com.ajou.travely.exception.ErrorCode;
 import com.ajou.travely.exception.custom.RecordNotFoundException;
@@ -61,6 +64,23 @@ public class EventService {
         return eventRepository
                 .findAll(pageable)
                 .map(SimpleEventResponseDto::new);
+    }
+
+    @Transactional
+    public EventResponseDto updateEvent(Long eventId, EventUpdateDto eventUpdateDto) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new RecordNotFoundException(
+                        "해당 ID를 가진 이벤트를 찾을 수 없습니다.",
+                        ErrorCode.EVENT_NOT_FOUND
+                ));
+        if (eventUpdateDto.getPhotoIdsToRemove() != null) {
+            photoService.removePhotoIds(eventUpdateDto.getPhotoIdsToRemove());
+        }
+        if (eventUpdateDto.getPhotos() != null) {
+            photoService.createPhotosOfSomething(event, eventUpdateDto.getPhotos());
+        }
+        event.update(eventUpdateDto);
+        return new EventResponseDto(event);
     }
 
     @Transactional

@@ -1,5 +1,6 @@
 package com.ajou.travely.domain;
 
+import com.ajou.travely.controller.notice.dto.NoticeUpdateDto;
 import com.ajou.travely.domain.user.User;
 import lombok.Builder;
 import lombok.Getter;
@@ -40,5 +41,14 @@ public class Notice extends BaseEntity {
         this.author = author;
         this.photos = photos;
         this.createdAt = createdAt;
+    }
+
+    public void update(NoticeUpdateDto noticeUpdateDto) {
+        if (noticeUpdateDto.getTitle() != null) {
+            this.title = noticeUpdateDto.getTitle();
+        }
+        if (noticeUpdateDto.getContent() != null) {
+            this.content = noticeUpdateDto.getContent();
+        }
     }
 }
