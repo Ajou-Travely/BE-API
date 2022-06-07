@@ -1,5 +1,7 @@
 package com.ajou.travely.controller.cost.dto;
 
+import com.ajou.travely.controller.travel.dto.SimpleTravelResponseDto;
+import com.ajou.travely.controller.user.dto.SimpleUserInfoDto;
 import com.ajou.travely.domain.cost.Cost;
 import com.ajou.travely.domain.travel.Travel;
 import com.ajou.travely.domain.UserCost;
@@ -11,20 +13,20 @@ import java.util.List;
 @Getter
 public class CostCreateResponseDto {
     private Long id;
-    private Travel travel;
+    private SimpleTravelResponseDto travel;
     private Long totalAmount;
     private String content;
     private String title;
     private List<UserCost> userCosts;
-    private User payer;
+    private SimpleUserInfoDto payer;
 
     public CostCreateResponseDto(Cost entity, User payer) {
         this.id = entity.getId();
-        this.travel = entity.getTravel();
+        this.travel = new SimpleTravelResponseDto(entity.getTravel());
         this.totalAmount = entity.getTotalAmount();
         this.content = entity.getContent();
         this.title = entity.getTitle();
-        this.payer = payer;
+        this.payer = new SimpleUserInfoDto(payer);
         this.userCosts = entity.getUserCosts();
     }
 }
