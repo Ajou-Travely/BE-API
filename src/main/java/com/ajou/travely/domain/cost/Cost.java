@@ -56,18 +56,10 @@ public class Cost {
     }
 
     public void updateCost(CostUpdateDto costUpdateDto) {
-        if (costUpdateDto.getTotalAmount() != null) {
-            this.totalAmount = costUpdateDto.getTotalAmount();
-        }
-        if (costUpdateDto.getContent() != null) {
-            this.content = costUpdateDto.getContent();
-        }
-        if (costUpdateDto.getTitle() != null) {
-            this.title = costUpdateDto.getTitle();
-        }
-        if (costUpdateDto.getPayerId() != null) {
-            this.payerId = costUpdateDto.getPayerId();
-        }
+        this.totalAmount = costUpdateDto.getTotalAmount();
+        this.content = costUpdateDto.getContent();
+        this.title = costUpdateDto.getTitle();
+        this.payerId = costUpdateDto.getPayerId();
     }
 
 }
