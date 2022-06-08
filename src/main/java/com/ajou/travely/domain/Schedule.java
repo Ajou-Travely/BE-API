@@ -43,6 +43,9 @@ public class Schedule {
 
     private LocalTime endTime;
 
+    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<Post> posts = new ArrayList<>();
+
     @Builder
     public Schedule(@NonNull TravelDate travelDate, @NonNull Place place, LocalTime startTime, LocalTime endTime) {
 //        this.travel = travel;
