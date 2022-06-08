@@ -18,14 +18,14 @@ public class CostCreateResponseDto {
     private String content;
     private String title;
     private List<UserCostResponseDto> userCosts;
-    private SimpleUserInfoDto payer;
+    private Long payerId;
 
     public CostCreateResponseDto(Cost entity, User payer) {
         this.id = entity.getId();
         this.totalAmount = entity.getTotalAmount();
         this.content = entity.getContent();
         this.title = entity.getTitle();
-        this.payer = new SimpleUserInfoDto(payer);
+        this.payerId = payer.getId();
         this.userCosts = entity.getUserCosts()
                 .stream().map(UserCostResponseDto::new)
                 .collect(Collectors.toList());
