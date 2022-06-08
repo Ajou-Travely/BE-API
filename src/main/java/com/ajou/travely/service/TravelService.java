@@ -79,10 +79,9 @@ public class TravelService {
                 .travel(travel)
                 .build();
         userTravelRepository.save(userTravel);
-        travel.addUserTravel(userTravel);
-        Travel returnTravel = travelRepository.save(travel);
         List<TravelDate> travelDates =  createTravelDates(travel, requestDto.getStartDate(), requestDto.getEndDate());
-        return new TravelResponseDto(returnTravel, travelDates, new ArrayList<>());
+        addUserToTravelWithNoValidation(travel, requestDto.getUserEmails());
+        return new TravelResponseDto(travel, travelDates, new ArrayList<>());
     }
 
     @Transactional
@@ -163,6 +162,23 @@ public class TravelService {
         }
     }
 
+    private void addUserToTravelWithNoValidation(Travel travel, List<String> userEmails) {
+        List<String> validEmails = userEmails.stream()
+                .distinct()
+                .collect(Collectors.toList());
+        validEmails.forEach(email -> {
+            Optional<User> isUser = userRepository.findByEmail(email);
+            if (isUser.isPresent()) {
+                User user = isUser.get();
+                UserTravel userTravel = UserTravel.builder()
+                        .user(user)
+                        .travel(travel)
+                        .build();
+                userTravelRepository.save(userTravel);
+            }
+        });
+    }
+
     @Transactional
     public void inviteUserToTravelWithNoValidation(Long travelId, List<String> userEmails) {
         Travel travel = checkTravelRecord(travelId);
@@ -170,12 +186,15 @@ public class TravelService {
                 .distinct()
                 .collect(Collectors.toList());
         validEmails.forEach(email -> {
-            UUID code = UUID.randomUUID();
-            String text = baseUrl + "invite/accept/" + code;
-            customMailSender.sendInvitationEmail(email, text);
-            invitationRepository.save(
-                    new Invitation(email, travel, code)
-            );
+            Optional<User> isUser = userRepository.findByEmail(email);
+            if (isUser.isEmpty()) {
+                UUID code = UUID.randomUUID();
+                String text = baseUrl + "invite/accept/" + code;
+                customMailSender.sendInvitationEmail(email, text);
+                invitationRepository.save(
+                        new Invitation(email, travel, code)
+                );
+            }
         });
     }
 
