@@ -102,7 +102,7 @@ class CostServiceTest {
         );
 
         Assertions.assertThat(costCreateResponseDto.getTotalAmount()).isEqualTo(30000L);
-        Assertions.assertThat(costCreateResponseDto.getPayer().getUserId()).isEqualTo(user1.getId());
+        Assertions.assertThat(costCreateResponseDto.getPayerId()).isEqualTo(user1.getId());
         Assertions.assertThat(costCreateResponseDto.getUserCosts().size()).isEqualTo(amountPerUser.keySet().size());
     }
 
@@ -155,7 +155,7 @@ class CostServiceTest {
 
         Assertions.assertThat(costById.getCostId()).isEqualTo(createdCost.getId());
         Assertions.assertThat(costById.getContent()).isEqualTo(createdCost.getContent());
-        Assertions.assertThat(costById.getPayerId()).isEqualTo(createdCost.getPayer().getUserId());
+        Assertions.assertThat(costById.getPayerId()).isEqualTo(createdCost.getPayerId());
         Assertions.assertThat(
                 costById.getUserCosts()
                     .stream()
@@ -246,7 +246,7 @@ class CostServiceTest {
                 .toArray()).isEqualTo(amountsPerUser.keySet().toArray());
         Assertions.assertThat(
             updatedCost.getUserCosts().stream().map(UserCost::getAmount).toArray()).isEqualTo(
-            amountsPerUser.keySet().stream().map(userId -> amountsPerUser.get(userId))
+            amountsPerUser.keySet().stream().map(amountsPerUser::get)
                 .toArray());
     }
 
